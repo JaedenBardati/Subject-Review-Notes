@@ -1,0 +1,36 @@
+\ProvidesPackage{custom-package}
+
+
+% PACKAGES USED %
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage[latin1]{inputenc}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{blindtext}
+\usepackage{textcomp}
+\usepackage{pgfplots}
+\usepackage{amsthm}
+\usepackage{titling}
+
+
+% NEW COMMANDS %
+
+
+% Tests if the custom package has been loaded properly
+\newcommand{\TestCustomPackage}{{Custom Package Loaded Correctly!}}
+% Usage: \TestCustomPackage
+
+
+% Integrates a /subtitle command (on top of the /title and /author commands)
+% Uses titling package
+\newcommand{\subtitle}[1]{
+	\posttitle{
+		\par\end{center}
+	\begin{center}\large#1\end{center}
+	\vskip0.5em}
+}
+% Usage: \subtitle{This is the subtitle}
+
