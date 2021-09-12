@@ -2,22 +2,37 @@
 
 % Packages
 %\usepackage[dvipsnames]{xcolor}  % for coloring
+\usepackage{tensor}  % tensors, but also for stuff like superscript on the left
+\usepackage{enumitem} % for enumerating alphabetically
+\usepackage{tabto}		% for tabbing to a certain length
+\usepackage{scrextend} % for local margins
+\usepackage{titling}	% for subtitle custom command
+
+% Custom Commands
+\newcommand{\subtitle}[1]{
+	\posttitle{
+		\par\end{center}
+	\begin{center}\large#1\end{center}
+	\vskip0.5em}
+}
 
 % Title
-\title{Introduction to Computer Science Notes}
+\title{CS 201 Notes}
+\subtitle{Introduction to Computer Science}
 \author{Jaeden Bardati}
+
+\setcounter{section}{-1}	% 0-indexes the section
 
 \begin{document}
 
 \maketitle
 \bigbreak
 
+% Course Video 1
 \section{Course Overview\\ {\large \normalfont September 10, 2021}}
-
 \bigbreak
 
 \subsection{What is Computer Science?}
-
 \bigbreak
 
 Computer science is the study of \textbf{algorithms}.\\\\
@@ -31,6 +46,174 @@ The development of algorithms works in this recurring order:
 \end{itemize}
 
 \noindent In the \textbf{design} phase, we design an algorithm using pseudo-code. In the \textbf{analysis} phase, we need to analyze the correctness and the efficiency. That is to say, we make sure that our algorithm will work and completes in a reasonable amount of time. During the \textbf{implementation}, the algorithm is written in code on a computer. Finally, the algorithm is run and debugged in the \textbf{experiment} phase. This process repeats.
+
+
+\section{Introduction to Algorithms}
+\bigbreak
+
+% Course Video 2
+\subsection{Design\\ {\normalfont September 11, 2021}}
+\bigbreak
+
+An algorithm is a step by step procedure to solve a problem. For example, 
+\begin{itemize}
+	\item Step 1: Do something
+	\item Step 2: Do something
+	\item ...
+	\item Step n: Do something\smallskip
+\end{itemize}
+
+\noindent There are three basic types of steps. Note that there is a fourth (recursion), but it is not covered in this course. 
+\subsubsection{Sequential Steps}
+\bigbreak
+	\textbf{Do a single task}.\\\\
+	\textit{For example:} Let $x$ be a variable. A sequential step could be to add 1 to $x$.
+\subsubsection{Conditional Steps}
+\bigbreak
+	\textbf{Ask a question} that supports only \textbf{logic answers} (true or false answer). \\\\
+	\textit{For example:} Let $x$ be a variable. A conditional step could be to ask if $x > 0$. If so, add 1 to $x$; otherwise, subtract 1 from $x$.
+\subsubsection{Iterative Steps (loops)}
+\bigbreak
+	\textbf{Repeat a task} until a certain condition is satisfied. This step links the sequential step to the conditional steps.\\\\
+	\textit{For example:} If you have a recipe that you need to add water until its dry. An iterative step would be one where you add $\frac{1}{2}$ cup to mixture while mixture is dry.
+
+
+% Course Video 3 and 4
+\subsection{Case Study: Addition Algorithm\\ {\normalfont September 11, 2021}}
+\bigbreak
+
+Let's say we want to add 472 to 593. We would to it like so:\\\\
+\begin{tabular}{cccc}
+	& \tiny 1 & \tiny & \tiny \\
+	& 4 & 7 & 2 \\
+	+ & 5  & 9 & 3 \\
+	\hline
+	1 & 0 & 6 & 5 \\
+\end{tabular}
+\medbreak
+\noindent If you know how to add these numbers, you know how to do it for any numbers. Why? Because we used a sequence of steps to solve it: We used an algorithm. What is this algorithm?\\
+
+\noindent We know that we can break down the work for each of the digits. It is an iterative statement for each digit. What is the work we need to do at each iteration?\\
+
+\noindent First, we add the digits plus the carry in (starts at 0). This is a \textbf{sequential step}. Then, we ask if it is greater than 9. If so, we set the resulting digit as the addition subtracted by 10 and set the carry out (which is te carry in for the next step) to 1; otherwise, we simply set the resulting digit as the addition and set the carry out to be 0. This is a \textbf{conditional step}. Then we repeat this process until we have no more digits to add. This is an \textbf{iterative step}.\\
+
+\noindent Now, we need to conceptualize this. Let's let $m \geq 1$ be the number of digits. Let us define $a_i$ (first number digits), $b_i$ (second number digits) and $c_i$ (resulting number digits) as follows:
+
+\begin{tabular}{ccccc}
+	& \tiny & \tiny & \tiny & \tiny \\
+	& $a_{m-1}$ & ... & $a_{1}$ & $a_{0}$ \\
+	+ & $b_{m-1}$ & ... & $b_{1}$ & $b_{0}$ \\
+	\hline
+	$c_{m}$ & $c_{m-1}$ & ... & $c_{1}$ & $c_{0}$ \\\smallskip
+\end{tabular}
+
+\noindent Let's write the steps of our algorithm:
+\begin{enumerate}
+	\item Get $m$ (provided by user)
+	\item Get $a_{m-1}$, ...  $a_{1}$, $a_{0}$ and $b_{m-1}$, ...  $b_{1}$, $b_{0}$ (provided by user)
+	\item Set $i = 0$ (digit index) and set carry = 0 
+	\item While ($i \leq m - 1$) Do step 5 to 7 \setlength{\itemindent}{0.5cm}
+	\item Set $c_i = a_i + b_i$ + carry
+	\item If ($c_i \geq 10$) Then\\
+			\tabto{1cm}Set $c_i = c_i - 10$\\
+			\tabto{1cm}Set carry = 1\\ 
+		\tabto{0.5cm}Else\\
+			\tabto{1cm}Set carry = 0 
+	\item Set $i = i + 1$
+	\setlength{\itemindent}{0cm}\item Set $c_m$ = carry
+	\item Print $c_{m-1}$, ...  $c_{1}$, $c_{0}$ 
+	\item Stop\smallskip
+\end{enumerate}
+
+\noindent This can be programmed now using a programming language.\\
+
+\noindent If you want to test your algorithm, you can perform a \textbf{trace}. A trace is when you go through the algorithm yourself step by step for a test case (e.g. the example we did earlier).
+
+
+% Course Video 5, 6, 7 and 8
+\subsection{Pseudocode\\ {\normalfont September 11, 2021}}
+\bigbreak
+
+Pseudocode is:
+
+\begin{itemize}
+	\item Simplified
+	\item A tradeoff between natural and programming languages
+	\item Not unique\smallskip
+\end{itemize}
+
+\noindent We will now look into the types of statements and the syntax we will use.
+
+\subsubsection{Sequential statements}
+\bigbreak
+\begin{itemize}
+	\item \textbf{Input}: Get "variable". E.g. Get $m$, Get radius
+	\item \textbf{Computation}: Set variable = expression. E.g. Set area = $\pi \times$ radius$^2$
+	\item \textbf{Output}: Print "variable". E.g. Print area.\smallskip
+\end{itemize}
+
+\noindent \textbf{Example algorithm:} Calculating the average of three numbers.
+\begin{enumerate}
+	\item Get $x, y, z$
+	\item Set average = $\frac{x + y + z}{3}$
+	\item Print average \smallskip
+\end{enumerate}
+
+\subsubsection{Conditional statements}
+\bigbreak
+\begin{itemize}
+	\item If (condition) Then\\
+				\tabto{0.5cm}operation T$_1$\\
+				\tabto{0.5cm}operation T$_2$\\ 
+				\tabto{0.5cm}...\\
+				\tabto{0.5cm}operation T$_\mathrm{m}$\\
+			Else\\
+				\tabto{0.5cm}operation F$_1$\\
+				\tabto{0.5cm}operation F$_2$\\ 
+				\tabto{0.5cm}...\\
+				\tabto{0.5cm}operation F$_\mathrm{n}$\smallskip
+\end{itemize}
+
+\noindent \textbf{Example algorithm:} Prints average of three number if the first number is larger than 0, otherwise prints an error message
+\begin{enumerate}
+	\item Get $x, y, z$
+	\item If ($x \geq 0$) Then\\
+			\tabto{0.5cm}Set average = $\frac{x + y + z}{3}$\\
+			\tabto{0.5cm}Print average\\
+		Else\\
+			\tabto{0.5cm}Print "Bad Data"
+	\item Stop\smallskip
+\end{enumerate}
+
+\noindent When a conditional statements within a conditional statement it is called a \textbf{nested} conditional statements (or nested ifs). This also applies to nested iterative statements (or nested loops).
+
+
+\subsubsection{Iterative statements}
+\bigbreak
+\begin{itemize}
+	\item While (condition) Do step $i$ to step $j$ \setlength{\itemindent}{0.5cm}
+		\item Step $i$: operation
+		\item Step $i + 1$: operation
+		\item ...
+		\item Step $j$: operation
+	\setlength{\itemindent}{0cm}\item Stop\smallskip
+\end{itemize}
+
+\noindent There are some considerations that you have to be careful of when writing a while loop:\\
+\begin{addmargin}[2em]{0em}
+	If the condition is initially false, the loop will not execute at all.\\\\
+	If the condition is initially true, the loop is iterated until the condition is false. This means that \textit{at least one step should change the condition at some point}. If this is forgotten, the loop will run forever (called an \textbf{infinite loop})! This is considered a \textbf{fatal error}.\\
+\end{addmargin}
+
+\noindent \textbf{Example algorithm:} Computes and prints the square of the first 100 integers.
+\begin{enumerate}
+	\item Set index=1
+	\item While (index $\leq$ 100) Do step 3 to step 5\setlength{\itemindent}{0.5cm}
+		\item Set square = index * index
+		\item Print square
+		\item Set index = index + 1
+	\setlength{\itemindent}{0cm}\item Stop\smallskip
+\end{enumerate}
 
 
 \end{document}

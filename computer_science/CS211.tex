@@ -2,9 +2,43 @@
 
 % Packages
 %\usepackage[dvipsnames]{xcolor}  % for coloring
+\usepackage{titling}	% for subtitle custom command
+
+%for flowchart:
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{siunitx}
+\usepackage[a4paper,left=3cm,right=2cm,top=2.5cm,bottom=2.5cm]{geometry}
+\usepackage{tikz}
+\usetikzlibrary{patterns}
+\usepackage{caption}
+\usetikzlibrary{arrows}
+\usepackage{color}
+\usepackage[colorlinks]{hyperref}
+\usepackage{pgfplots}
+\usepackage{listings}
+\usepackage[utf8]{inputenc}
+\usetikzlibrary{shapes.geometric}
+\usepackage{tikz-cd}
+\usetikzlibrary{positioning}
+
+\tikzset{
+	shift left/.style ={commutative diagrams/shift left={#1}},
+	shift right/.style={commutative diagrams/shift right={#1}}
+}
+
+% Custom Commands
+\newcommand{\subtitle}[1]{
+	\posttitle{
+		\par\end{center}
+	\begin{center}\large#1\end{center}
+	\vskip0.5em}
+}
 
 % Title
-\title{Introduction to Programming Notes}
+\title{CS 211 Notes}
+\subtitle{Introduction to Programming}
 \author{Jaeden Bardati}
 
 \begin{document}
@@ -12,15 +46,138 @@
 \maketitle
 \bigbreak
 
+% Course Video 1
 \section{Course Overview\\ {\large \normalfont September 10, 2021}}
-
 \bigbreak
 
 \subsection{Objectives}
-
 \bigbreak
 
 The course is intended to teach how to develop a computer program to solve a problem. C++ is a tools that will be used to develop these skills and logical thinking. These skills will be transferable to other languages.
+
+\section{Computer Organization}
+\bigbreak
+
+% Course Video 2
+\subsection{Hardware\\ {\large \normalfont September 11, 2021}}
+\bigbreak
+
+\subsubsection{Components}
+\bigbreak
+
+Modern computers are built using the \textbf{Von Neumann machine}. There are three aspects:
+
+\begin{itemize}
+	\item \textbf{Architecture}: \textbf{I/O} (User interaction) + \textbf{Memory} (Storage) + \textbf{CPU} (\textit{CU}: Control Unit, \textit{ALU}: Arithmetic and Logic Unit). These are all connected by a shared bus.
+	\item \textbf{Stored Programs}: All programs and data are stored in memory (binary).
+	\item \textbf{Sequential Execution}: Also called the \textbf{fetch-decode-execute} cycle. Instructions are \textbf{fetched} from memory, \textbf{decoded} by the CU and then \textbf{executed} by the ALU. If there is a result, it is stored back in memory. \smallskip
+\end{itemize}
+
+% Course Video 3
+\subsection{Memory\\ {\large \normalfont September 11, 2021}}
+\bigbreak
+
+The memory is organized in a \textbf{hierarchy}. At the bottom of the hierarchy is the Hard Drive (in TB). At the top is the CPU. Since the hard drive is slow, when some data from the hard drive is needed, it is first loaded into \textbf{RAM (Random Access Memory)} (in GB). The RAM is still too slow for the RAM, so the data is stored in \textbf{cache} (in KB or MB). Yet still, this is not fast enough for the CPU, so \textbf{registers} (in Bytes) in the CPU itself are used to store variables.
+
+\begin{center}
+	\tikzstyle{top} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=purple!30]
+	\tikzstyle{medtop} = [rectangle, minimum width=5cm, minimum height=1cm, text centered, draw=black, fill=red!30]
+	\tikzstyle{medbot} = [rectangle, minimum width=8cm, minimum height=1cm, text centered, draw=black, fill=orange!30]
+	\tikzstyle{bot} = [rectangle, minimum width=12cm, minimum height=1cm, text centered, draw=black, fill=yellow!30]
+	
+	\begin{tikzpicture}[node distance=2cm, >=latex', auto, thick]
+		\node (ntop) [top] {CPU};
+		\node (nmedtop) [medtop, below of=ntop] {Cache};
+		\node (nmedbot) [medbot, below of=nmedtop] {RAM (Random Access Memory)};
+		\node (nbot) [bot, below of=nmedbot] {Hard Drive};
+		
+		\path[->, shift left=2em]
+			(ntop) edge node {store} (nmedtop)
+			(nmedtop) edge node {load} (ntop);
+		\path[->, shift left=3.5em]
+			(nmedtop) edge node {update} (nmedbot)
+			(nmedbot) edge node {load} (nmedtop);
+		\path[->, shift left=6em]
+			(nmedbot) edge node {save} (nbot)
+			(nbot) edge node {load} (nmedbot);	
+	\end{tikzpicture}
+\end{center}
+\bigbreak
+
+\noindent As you \textbf{go up} the hierarchy, the \textbf{speed increases}, but the \textbf{size decreases} and the \textbf{cost increases}.\\
+
+\subsubsection{RAM}
+\bigbreak
+
+Random access memory is organized in an array of Bytes ("words"). \\\\
+Words in RAM are addressed with a byte themselves (e.g. 01101101 is an address). These are typically written in hexadecimal (e.g. 6D). \\\\
+Words in RAM can be data or machine code instructions. Instructions contain a binary code for each operation (for example, addition). Instructions codes are dependent on the CPU.\\
+
+% Course Video 4, 5, 6 for code blocks setup and first code: no notes.
+
+% Course Video 7
+\subsection{A Flow Chart: Program to Binary\\ {\large \normalfont September 12, 2021}}
+\bigbreak
+
+This is a flow chart of what is done by the computer when compiling a C++ file. In blue is the Python equivalent.
+
+\begin{center}
+	\tikzstyle{greenbox} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=green!30]
+	\tikzstyle{bluebox} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=blue!30]
+	\tikzstyle{arrow} = [thick,->,>=stealth]
+	
+	\begin{tikzpicture}[node distance=2cm, >=latex', auto, thick]
+		\node (editfile) [greenbox] {Edit file.cpp};
+		\node (compile) [greenbox, below of=editfile] {Compile};
+		\node (instructions) [greenbox, below of=compile] {Machine Code instructions};
+		\node (libraries) [greenbox, left of=compile, xshift=-2cm] {Libraries};
+		\node (linker) [greenbox, below of=instructions] {Linker};
+		\node (executable) [greenbox, below of=linker] {Executable};
+		\node (python) [bluebox, right of=editfile, xshift=2cm] {Python};
+		\node (compile2) [bluebox, right of=compile, xshift=2cm] {Compile};
+		
+		\draw [arrow] (editfile) -- (compile);
+		\draw [arrow] (compile) -- (instructions);
+		\draw [arrow] (instructions) -- (linker);
+		\draw [arrow] (linker) -- (executable);
+		\draw [arrow] (libraries) |- (linker);
+		\draw [arrow] (python) -- (compile2);
+		\draw [arrow] (compile2) |- (instructions);
+		\draw [arrow] (compile2) |- (executable);
+	\end{tikzpicture}
+\end{center}
+\bigbreak
+
+\noindent Note that the bottom of the flow chart is the same for all programming languages, because in all languages, CPU-specific machine code is needed to execute code.\\
+
+\noindent The process of catching errors is as according to the following flow chart.
+
+\begin{center}
+	\tikzstyle{yellowbox} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=yellow!30]
+	\tikzstyle{reddiamond} = [diamond, minimum width=2cm, minimum height=2cm, text centered, draw=black, fill=red!30]
+	\tikzstyle{arrow} = [thick,->,>=stealth]
+	
+	\begin{tikzpicture}[node distance=2cm, >=latex', auto, thick]
+		\node (edit) [yellowbox] {Edit};
+		\node (compile) [yellowbox, below of=edit] {Compile};
+		\node (error) [reddiamond, below of=compile, yshift=-0.4cm] {Error};
+		\node (test) [yellowbox, below of=error, yshift=-0.4cm] {Test};
+		\node (runtimeerror) [reddiamond, below of=test, yshift=-0.8cm] {Runtime Error};
+		\node (useit) [yellowbox, below of=runtimeerror, yshift=-0.8cm] {Use it};
+		
+		\draw [arrow] (edit) -- (compile);
+		\draw [arrow] (compile) -- (error);
+		\draw [arrow] (error) -- node[anchor=west] {no} (test);
+		\draw [arrow] (test) -- (runtimeerror);
+		\draw [arrow] (runtimeerror) -- node[anchor=east] {no} (useit);
+		\draw [arrow] (error) -- node[anchor=north, yshift=-0.1cm] {yes} ++(-2.5cm,0) |- (edit);
+		\draw [arrow] (runtimeerror) -- node[anchor=north, yshift=-0.1cm] {yes} ++(2.5cm,0) |- (edit);
+	\end{tikzpicture}
+\end{center}
+\bigbreak
+
+\noindent In this context, \textbf{errors} are caught by the compiler. This is opposed to \textbf{runtime errors}, which are not caught by the compiler. These can be something like division by zero or infinite loops.
+
 
 
 \end{document}
