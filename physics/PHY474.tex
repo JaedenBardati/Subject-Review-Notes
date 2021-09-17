@@ -1,0 +1,171 @@
+\documentclass[]{article}
+
+% --- PACKAGES ---
+
+\usepackage{titling}	% for subtitle custom command
+\usepackage{amsmath}	% for many math things like \begin{align}
+\usepackage[thinc]{esdiff}	% for derivatives and partial derivatives
+
+% Fixes weird backwards quote thing
+\usepackage [english]{babel}
+\usepackage [autostyle, english = american]{csquotes}
+\MakeOuterQuote{"}
+
+% ----------------
+
+% --- CUSTOM COMMANDS ---
+\newcommand{\subtitle}[1]{
+	\posttitle{
+		\par\end{center}
+	\begin{center}\large#1\end{center}
+	\vskip0.5em}
+}
+
+% -----------------------
+
+% stop indentation
+\setlength{\parindent}{0pt}
+
+% Title
+\title{PHY 474 Notes}
+\subtitle{Cosmology}
+\author{Jaeden Bardati}
+
+\begin{document}
+
+\maketitle
+\bigbreak
+
+% Course Video 1
+\section{Introduction to Cosmology}
+\bigbreak
+
+\subsection{Isotropic and Homogeneous Space-times\\ {\large \normalfont Sept. 9, 2021}}
+\bigbreak
+
+The universe is \underline{homogenous} and \underline{isotropic}.\\
+
+\begin{itemize}
+	\renewcommand{\labelitemi}{$\Rightarrow$}
+	\item \textbf{Homogenous}: Looks the same everywhere
+	\item \textbf{Isotropic}: Looks the same in all directions\\
+\end{itemize}
+
+Observational evidence that support this assumption are from the Cosmic Microwave Background (CMB) and large-scale structure observations. \\
+
+\subsection{Expansion of the Universe\\ {\large \normalfont Sept. 9, 2021}}
+\bigbreak
+
+\textbf{Redshift} ($z$): The doppler shift of the light from galaxies observed through emission/absorption lines in spectra.\\
+
+\begin{equation}
+	z = \frac{\lambda_{\mathrm{observed}} - \lambda_{\mathrm{emitted}}}{\lambda_{\mathrm{emitted}}}
+\end{equation}\\
+
+For an expanding universe, $z_{\mathrm{galaxy}} > 0$.\\\\
+The larger $z$ is, the further the distance the galaxy is. 
+
+\subsection{Hubble Constant\\ {\large \normalfont Sept. 9, 2021}}
+\bigbreak
+
+Imagine 3 galaxies. Let the relative distances, at  t = $t_0$, be $r_{12}(t_0)$, $r_{23}(t_0)$, and $r_{13}(t_0)$. In an expanding universe, the distances increase by a scale factor $a(t)$. Thus,
+
+\begin{align*}
+	r_{12}(t) &= a(t)~r_{12}(t_0)\\
+	r_{23}(t) &= a(t)~r_{23}(t_0)\\
+	r_{13}(t) &= a(t)~r_{13}(t_0)
+\end{align*}\\
+
+Imagine you are an observer in galaxy 1. You will see galaxies 2 and 3 moving with velocity:
+
+\begin{align*}
+	v_{12} &= \diff{r_{12}}{t} \\
+	&= \dot{a}~r_{12}(t_0)\\
+	&= \frac{\dot{a}}{a}~r_{12}(t)
+\end{align*}\\
+
+A similar relation is true for $v_{23}$ and $v_{13}$.\\\\
+
+The factor $\frac{\dot{a}}{a}$ relates the velocity of galaxies to their distance away from us. It is called the Hubble constant ($H_0 \equiv \frac{\dot{a}}{a}$). Thus for galaxies:
+
+\begin{equation}
+	v = H_0 r
+\end{equation}\\
+
+This relation can be described with the Hubble diagram. It is a graph of velocity vs. distance of a bunch of galaxies. There is a linear trend with slop of $H_0$.\\\\
+
+Doppler shift is $z = \frac{v}{c}$, so
+
+\begin{equation}
+	z = \frac{H_0}{c}r
+\end{equation}\\
+
+\subsection{Age of the Universe\\ {\large \normalfont Sept. 9, 2021}}
+\bigbreak
+
+$H_0$ is measured to be around 70 km/s /Mpc. If we assume a constant $H_0$, we can calculate an age of the universe:
+
+\begin{equation*}
+	t_0 = \frac{r}{v} = \frac{r}{H_0 r} = \frac{1}{H_0}
+\end{equation*}\\
+
+For $H_0 \approx$ 70 km/s/Mpc, $t_0 \approx$ 14 Gyr.\\
+
+
+\subsection{Contents of the Universe\\ {\large \normalfont Sept. 9, 2021}}
+\bigbreak
+
+\begin{center}
+	\begin{tabular}{lcr}
+		Dark matter & & 25\% \\
+		Dark energy & & ~75\% \\
+		Stars & & 0.2\% \\
+		All baryons & & 5\% \\
+		Radiation (primarily CMB) & & 0.01\% \\
+	\end{tabular}
+\end{center}\bigbreak
+
+\subsection{Timeline of the Universe\\ {\large \normalfont Sept. 9, 2021}}
+\bigbreak
+
+\begin{center}
+	\begin{tabular}{lcl}
+		$t = 0$ & & Big Bang \\
+		$t = 10^{-39}$ s & & Classical gravity breaks down \\
+		$t = 10^{-35}$ s & & Inflation \\ 
+						 & & \textit{(density fluctuations formed)} \\
+		$t = 10^{-14}$ s & & Baryogenesis  \\
+						 & & \textit{(formation of protons/electrons and} \\
+						 & & ~\textit{matter dominates over anti-matter)}\\
+		$t = 100$ s & & Big Bang nucleosynthesis \\
+					& & \textit{(formation of Hydrogen nuclei)} \\
+		$t = 5 \times 10^{4}$ s & & Matter dominates over radiation \\
+		$t = 4 \times 10^{5}$ yr & & Recombination \\
+								 & & \textit{(formation of neutron atoms and} \\
+								 & & ~\textit{the CMB was emitted)} \\
+		$t = 100$ Myr & & First population III stars form \\
+		$t = 500$ Myr & & First galaxies form \\
+		$t = 0.5$-1 Gyr & & Reionization or "Cosmic Dawn" \\
+		$t = 2$-3 Gyr & & "Cosmic Noon" \\ 
+					  & & \textit{(peak of stellar formation and SMBH accretion)} \\
+		$t = 10$ Gyr & & Dark energy dominates \\
+		$t = 14$ Gyr & & Present day \\
+	\end{tabular}
+\end{center}\bigbreak
+
+\subsection{Geometries of isotropic and homogeneous space-times\\ {\large \normalfont Sept. 13, 2021}}
+\bigbreak
+
+In cosmology, we often need to measure distances in an expanding (and sometimes curved) space-time.\\
+
+Space can be flat(Euclidean) with ($k = 0$), positively curved ($k = +1$), or negatively curved ($k = -1$).
+
+\subsubsection{In 2D}
+\bigbreak
+
+In flat space, 
+
+
+
+
+\end{document}
