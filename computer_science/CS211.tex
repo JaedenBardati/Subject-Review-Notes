@@ -132,94 +132,17 @@ The memory is organized in a \textbf{hierarchy}. At the bottom of the hierarchy 
 \end{center}
 \bigbreak
 
-\noindent As you \textbf{go up} the hierarchy, the \textbf{speed increases}, but the \textbf{size decreases} and the \textbf{cost increases}.\\
+\noindent As you \textbf{go up} the hierarchy, the \textbf{speed increases}, but the \textbf{size decreases} and the \textbf{cost increases}.
 
 \subsubsection{RAM}
 \bigbreak
 
 Random access memory is organized in an array of Bytes ("words"). \\\\
 Words in RAM are addressed with a byte themselves (e.g. 01101101 is an address). These are typically written in hexadecimal (e.g. 6D). \\\\
-Words in RAM can be data or machine code instructions. Instructions contain a binary code for each operation (for example, addition). Instructions codes are dependent on the CPU.\\
+Words in RAM can be data or machine code instructions. Instructions contain a binary code for each operation (for example, addition). Instructions codes are dependent on the CPU.
 
-% Course Video 4, 5, 6 for code blocks setup and first code.
-\subsection{First C++ Code\\ {\large \normalfont September 12, 2021}}
-\bigbreak
 
-The following code is a hello world program in C++.
-
-\begin{lstlisting}
-	// helloworld.cpp
-	#include <iostream>		// include statement allows the use of C++ libraries
-	#include <stdio.h>		// this library contains getchar()
-	
-	using namespace std;	// a standard environment (input from keyboard, output is the screen)
-	
-	int main() {
-		
-		cout << "Hello world!" << endl;		// Prints "Hello world!" to the screen
-		
-		getchar();      // wait for user to type a character
-		
-		return 0;		// 0 means that the execution was successful
-	}
-\end{lstlisting}
-\bigbreak
-
-\subsection{Data types\\ {\large \normalfont September 12, 2021}}
-\bigbreak
-
-Variables are referred to as identifiers. Identifiers are memory locations accessed and modified. \\\\
-Inside a main function (as above), the following code declares a variable of integer type in C++. 
-
-\begin{lstlisting}
-	int numYears;       /// allocated space in memory to contain num of years
-\end{lstlisting}
-\bigbreak
-
-You can also initialize the variable with a value on declaration:
-\begin{lstlisting}	
-	int number = 5;     /// declare and initialize (give a value too)
-\end{lstlisting}
-\bigbreak
-
-Some rules to follow when naming variables are:
-\begin{itemize}
-	\item Names have meanings
-	\item Must be case sensitive (e.g. numYears is not numyears)
-	\item Consists of letters, numbers and underscores
-	\item First character cannot be a number
-\end{itemize}
-\bigbreak
-
-Some types of variables are:
-\begin{itemize}
-	\item Integers (e.g. -5, 0, +2) [int]
-	\item Real numbers (floating point numbers or doubles, e.g. 2.453, -4.1987e7) [float or double]
-	\item Booleans (e.g. true, false) [bool]
-	\item Characters [char]
-\end{itemize}	    
-\bigbreak
-    
-You can assign a value to a variable after declaring it:
-\begin{lstlisting}	
-	int width, height;
-	int area;
-	
-	width = 5;
-	height = 3;
-	
-	area = width * height;
-\end{lstlisting}
-\bigbreak
-
-Constants (denoted with the keyword "const") cannot be changed throughout the program. The convention is to use capital letters for constants.
-\begin{lstlisting}	
-	const double PI = 3.14159265;
-	cout << "pi is " << PI << endl;
-	
-	int radius = 6;
-	double area2 = PI * radius * radius;
-\end{lstlisting}
+\section{Computer Organization}
 \bigbreak
 
 % Course Video 7
@@ -284,6 +207,238 @@ This is a flow chart of what is done by the computer when compiling a C++ file. 
 \bigbreak
 
 \noindent In this context, \textbf{errors} are caught by the compiler. This is opposed to \textbf{runtime errors}, which are not caught by the compiler. These can be something like division by zero or infinite loops.
+
+% Course Video 4, 5, 6 for code blocks setup and first code.
+\subsection{First C++ Code\\ {\large \normalfont September 12, 2021}}
+\bigbreak
+
+The following code is a hello world program in C++.
+
+\begin{lstlisting}
+	// helloworld.cpp
+	#include <iostream>		// include statement allows the use of C++ libraries
+	#include <stdio.h>		// this library contains getchar()
+	
+	using namespace std;	// a standard environment (input from keyboard, output is the screen)
+	
+	int main() {
+		
+		cout << "Hello world!" << endl;		// Prints "Hello world!" to the screen
+		
+		getchar();      // wait for user to type a character
+		
+		return 0;		// 0 means that the execution was successful
+	}
+\end{lstlisting}
+\bigbreak
+
+\subsection{Data types\\ {\large \normalfont September 12, 2021}}
+\bigbreak
+
+Variables are referred to as identifiers. Identifiers are memory locations accessed and modified. \\\\
+Inside a main function (as above), the following code declares a variable of integer type in C++. 
+
+\begin{lstlisting}
+	int numYears;       // allocated space in memory to contain num of years
+\end{lstlisting}
+\bigbreak
+
+You can also initialize the variable with a value on declaration:
+\begin{lstlisting}	
+	int number = 5;     // declare and initialize (give a value too)
+\end{lstlisting}
+\bigbreak
+
+Some rules to follow when naming variables are:
+\begin{itemize}
+	\item Names have meanings
+	\item Must be case sensitive (e.g. numYears is not numyears)
+	\item Consists of letters, numbers and underscores
+	\item First character cannot be a number
+\end{itemize}
+\bigbreak
+
+Some types of variables are:
+\begin{itemize}
+	\item Integers (e.g. -5, 0, +2) [int]
+	\item Real numbers (floating point numbers or doubles, e.g. 2.453, -4.1987e7) [float or double]
+	\item Booleans (e.g. true, false) [bool]
+	\item Characters [char]
+\end{itemize}	    
+\bigbreak
+
+You can assign a value to a variable after declaring it:
+\begin{lstlisting}	
+	int width, height;
+	int area;
+	
+	width = 5;
+	height = 3;
+	
+	area = width * height;
+\end{lstlisting}
+\bigbreak
+
+Constants (denoted with the keyword "const") cannot be changed throughout the program. The convention is to use capital letters for constants.
+\begin{lstlisting}	
+	const double PI = 3.14159265;
+
+	int radius = 6;
+	double area = PI * radius * radius;
+\end{lstlisting}
+\bigbreak
+
+You would get an error if you were to try to reassign a constant.
+\begin{lstlisting}
+	const double PI = 3.14159265;
+	PI = 3.14; 	/// ERROR
+\end{lstlisting}
+\bigbreak
+
+\subsection{Arithmetic Operations\\ {\large \normalfont September 22, 2021}}
+\bigbreak
+
+There are 5 basic arithmetic operations supported by C++
+\begin{itemize}
+	\item Addition (+)
+	\item Subtraction (-)
+	\item Multiplication (*)
+	\item Division (/)
+	\item Modulus or "Remainder" (\%)
+\end{itemize}
+\bigbreak
+
+For example,
+
+\begin{lstlisting}
+	int a = 5;
+	int b = 2;
+	
+	cout << a + b / 2 << endl;  	/// 6
+	cout << (a + b) / 2 << endl;  	/// 3
+	cout << a / 2 + 3 << endl;  	/// 5
+	cout << a / b / 3 << endl;  	/// 0
+\end{lstlisting}
+\bigbreak
+
+This is done with integer operations since both arguments of each operation are integers (round down if the result of a division is a decimal). If one argument is a double/float, the result is a double/float. For example,
+
+\begin{lstlisting}
+	int a = 5;
+	int b = 2;
+	
+	cout << a + b / 2 << endl;  	/// 6
+	cout << (a + b) / 2 << endl;  	/// 3.5
+	cout << a / 2 + 3 << endl;  	/// 5
+	cout << a / b / 3 << endl;  	/// 0.83333333
+\end{lstlisting}
+
+\subsubsection{Division when initializing or assigning a variable}
+
+Naively, to initialize a variable to the result of a division, you could try
+
+\begin{lstlisting}
+	int div = 7/3;		/// 2
+\end{lstlisting}
+\bigbreak
+
+However, this results in 2, not the desired result of 2.3333. You could also try changing the variable type
+
+\begin{lstlisting}
+	double div = 7/3;		/// 2
+\end{lstlisting}
+\bigbreak
+
+This does not work either, since the integer division happens before the result is assigned to the variable div. Instead, you have to force the compiler to recognize an argument as a float.
+
+\begin{lstlisting}
+	double div = 7.0/3;		/// 2.333333
+\end{lstlisting}
+\bigbreak
+
+If instead you had decided to make the variable type of div and integer and run it
+
+\begin{lstlisting}
+	int div = 7.0/3;		/// 2
+\end{lstlisting}
+\bigbreak
+
+It will perform the double operation, but save it in var as an integer. \\\\
+
+A way of doing the float operation with two integers is by \textbf{casting} types. This can be done as follows.
+
+\begin{lstlisting}
+	double div = (double) 7/3;		/// 2.333333
+	double div2 = 7/(double)3;		/// 2.333333
+	
+	int c = 7
+	double div3 = (double) c/3;		/// 2.333333
+	// Note, this does not change the type of c.
+\end{lstlisting}
+\bigbreak
+
+The remainder (\%) operation returns the remainder of the division between two integers:
+
+\begin{lstlisting}
+	cout << 7 % 3 << endl;		/// 1
+	cout << 10 % 6 << endl;		/// 4
+	cout << 13 % 4 << endl;		/// 1
+\end{lstlisting}
+
+\subsubsection{Type conversion}
+
+We can also convert types from doubles to integers by truncation or rounding: 
+
+\begin{lstlisting}
+	double price = 2.55;
+	
+	int sum = price;		/// truncate
+	int sum2 = price + 0.5 	/// round to the nearest int
+\end{lstlisting}
+\bigbreak
+
+
+\subsection{I/Os\\ {\large \normalfont September 22, 2021}}
+\bigbreak
+
+
+To do this, we will use the iostream library and standard namespace.
+
+\begin{lstlisting}
+	#include <iostream>
+	using namespace std;
+\end{lstlisting}
+\bigbreak
+
+\subsubsection{Reading inputs}
+
+You can get input from the keyboard using cin. For example,
+
+\begin{lstlisting}
+	int number;
+	
+	cout << "Please enter a value between 0 and 10." << endl;
+	
+	cin >> number;		// reads integer
+	
+	cout << "The entered number is " << number;
+\end{lstlisting}
+\bigbreak
+
+You can also get multiple variables with the same cin.
+
+\begin{lstlisting}
+	int length, width;
+	
+	cout << "Please enter the length and width of the rectangle: ";
+	
+	cin >> length >> width;
+	
+	int area = length * width;
+	cout << "The area is " << area
+\end{lstlisting}
+\bigbreak
+
 
 
 
