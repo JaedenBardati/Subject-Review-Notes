@@ -22,11 +22,39 @@
 \usetikzlibrary{shapes.geometric}
 \usepackage{tikz-cd}
 \usetikzlibrary{positioning}
-
 \tikzset{
 	shift left/.style ={commutative diagrams/shift left={#1}},
 	shift right/.style={commutative diagrams/shift right={#1}}
 }
+
+
+% for code snippets
+\usepackage{listings}
+\usepackage{color}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\lstset{frame=none,
+	language=Java,
+	aboveskip=3mm,
+	belowskip=3mm,
+	showstringspaces=false,
+	columns=flexible,
+	basicstyle={\small\ttfamily},
+	numbers=none,
+	numberstyle=\tiny\color{gray},
+	keywordstyle=\color{blue},
+	commentstyle=\color{dkgreen},
+	stringstyle=\color{mauve},
+	breaklines=true,
+	breakatwhitespace=true,
+	tabsize=3
+}
+
+
+% stop indentation
+\setlength{\parindent}{0pt}
+
 
 % Custom Commands
 \newcommand{\subtitle}[1]{
@@ -113,7 +141,86 @@ Random access memory is organized in an array of Bytes ("words"). \\\\
 Words in RAM are addressed with a byte themselves (e.g. 01101101 is an address). These are typically written in hexadecimal (e.g. 6D). \\\\
 Words in RAM can be data or machine code instructions. Instructions contain a binary code for each operation (for example, addition). Instructions codes are dependent on the CPU.\\
 
-% Course Video 4, 5, 6 for code blocks setup and first code: no notes.
+% Course Video 4, 5, 6 for code blocks setup and first code.
+\subsection{First C++ Code\\ {\large \normalfont September 12, 2021}}
+\bigbreak
+
+The following code is a hello world program in C++.
+
+\begin{lstlisting}
+	// helloworld.cpp
+	#include <iostream>		// include statement allows the use of C++ libraries
+	#include <stdio.h>		// this library contains getchar()
+	
+	using namespace std;	// a standard environment (input from keyboard, output is the screen)
+	
+	int main() {
+		
+		cout << "Hello world!" << endl;		// Prints "Hello world!" to the screen
+		
+		getchar();      // wait for user to type a character
+		
+		return 0;		// 0 means that the execution was successful
+	}
+\end{lstlisting}
+\bigbreak
+
+\subsection{Data types\\ {\large \normalfont September 12, 2021}}
+\bigbreak
+
+Variables are referred to as identifiers. Identifiers are memory locations accessed and modified. \\\\
+Inside a main function (as above), the following code declares a variable of integer type in C++. 
+
+\begin{lstlisting}
+	int numYears;       /// allocated space in memory to contain num of years
+\end{lstlisting}
+\bigbreak
+
+You can also initialize the variable with a value on declaration:
+\begin{lstlisting}	
+	int number = 5;     /// declare and initialize (give a value too)
+\end{lstlisting}
+\bigbreak
+
+Some rules to follow when naming variables are:
+\begin{itemize}
+	\item Names have meanings
+	\item Must be case sensitive (e.g. numYears is not numyears)
+	\item Consists of letters, numbers and underscores
+	\item First character cannot be a number
+\end{itemize}
+\bigbreak
+
+Some types of variables are:
+\begin{itemize}
+	\item Integers (e.g. -5, 0, +2) [int]
+	\item Real numbers (floating point numbers or doubles, e.g. 2.453, -4.1987e7) [float or double]
+	\item Booleans (e.g. true, false) [bool]
+	\item Characters [char]
+\end{itemize}	    
+\bigbreak
+    
+You can assign a value to a variable after declaring it:
+\begin{lstlisting}	
+	int width, height;
+	int area;
+	
+	width = 5;
+	height = 3;
+	
+	area = width * height;
+\end{lstlisting}
+\bigbreak
+
+Constants (denoted with the keyword "const") cannot be changed throughout the program. The convention is to use capital letters for constants.
+\begin{lstlisting}	
+	const double PI = 3.14159265;
+	cout << "pi is " << PI << endl;
+	
+	int radius = 6;
+	double area2 = PI * radius * radius;
+\end{lstlisting}
+\bigbreak
 
 % Course Video 7
 \subsection{A Flow Chart: Program to Binary\\ {\large \normalfont September 12, 2021}}
