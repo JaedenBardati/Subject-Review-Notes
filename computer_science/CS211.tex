@@ -52,6 +52,12 @@
 }
 
 
+% Fixes weird backwards quote thing
+\usepackage [english]{babel}
+\usepackage [autostyle, english = american]{csquotes}
+\MakeOuterQuote{"}
+
+
 % stop indentation
 \setlength{\parindent}{0pt}
 
@@ -395,7 +401,6 @@ We can also convert types from doubles to integers by truncation or rounding:
 	int sum = price;		/// truncate
 	int sum2 = price + 0.5 	/// round to the nearest int
 \end{lstlisting}
-\bigbreak
 
 
 \subsection{I/Os\\ {\large \normalfont September 22, 2021}}
@@ -408,7 +413,6 @@ To do this, we will use the iostream library and standard namespace.
 	#include <iostream>
 	using namespace std;
 \end{lstlisting}
-\bigbreak
 
 \subsubsection{Reading inputs}
 
@@ -438,6 +442,145 @@ You can also get multiple variables with the same cin.
 	cout << "The area is " << area
 \end{lstlisting}
 \bigbreak
+
+\subsubsection{Formatting outputs}
+
+When outputting the result of a float, we inevitably run into an issue:
+
+\begin{lstlisting}
+	double result = 123456789.1284567;		/// 1.23457e+008
+	
+	cout << result << endl;
+\end{lstlisting}
+\bigbreak
+
+This returns 1.23457e+008. To see all the digits, we must first pass result to fixed before cout.
+\begin{lstlisting}
+	double result = 123456789.1284567;
+	
+	cout << fixed << result << endl;		/// 123456789.128457
+\end{lstlisting}
+\bigbreak
+
+To properly format the output of doubles, we must include the iomanip library and use the setprecision(n) function.
+
+\begin{lstlisting}
+	#include <iomanip>
+	
+	double result = 123456789.1284567;
+	
+	cout << fixed << setprecision(2) << result << endl;		/// 123456789.13
+	cout << result << endl;									/// 123456789.13
+\end{lstlisting}
+\bigbreak
+
+This rounds the double to the nearest nth decimal. Note that result will now format that way if outputted without the fixed and setprecision call. However, this does not actually change the value of the result variable. 
+
+\begin{lstlisting}
+	double result2 = result + 1;
+	
+	cout << setprecision(3) << result2 << endl;			/// 123456790.128
+\end{lstlisting}
+\bigbreak
+
+Finally, to set a limit to the number of characters that are displayed to an integer n, we can use the setw(n) function from the iomanip library like this
+
+\begin{lstlisting}
+	cout << fixed << setprecision(2) << setw(15) << left << result << "End of line" << endl;
+\end{lstlisting}
+\bigbreak
+
+The result is "123456789.13~~~End of line". Note the exactly 15 characters until "End of line".
+
+\subsection{Strings\\ {\large \normalfont September 22, 2021}}
+\bigbreak
+
+To use strings, you have to include the string library:
+
+\begin{lstlisting}
+	#include <string>
+\end{lstlisting}
+
+\subsubsection{Declaration}
+
+You can declare, initialize, assign, and output strings as such
+\begin{lstlisting}
+	string lname;
+	string fname = "Jaeden";
+	lname = "Bardati";
+	
+	cout << fname << " " << lname;		/// Jaeden Bardati
+\end{lstlisting}
+
+\subsubsection{Concatenation}
+
+To combine strings together, we must use \textbf{concatenation}.
+\begin{lstlisting}
+	string name = fname + " " + lname;		/// Jaeden Bardati
+\end{lstlisting}
+\bigbreak
+
+This method does not work for constants
+\begin{lstlisting}
+	string greeting = "Hello" + " " + " World";		/// ERROR
+\end{lstlisting}
+\bigbreak
+
+An error occurs because we are trying to add the string " " to the constant string "Hello". A way to get around this is by adding a dummy variable before the concatenation.
+\begin{lstlisting}
+	string empt; 		// empt = ""
+	string greeting = empt + "Hello" + " " + " World";		/// Hello World
+\end{lstlisting}
+
+\subsubsection{Inputting strings}
+
+To read in a string, we can naively try
+
+\begin{lstlisting}
+	string myname;
+	
+	cin >> myname;		/// Jaeden Bardati
+	
+	cout << myname;		/// Jaeden
+\end{lstlisting}
+\bigbreak
+
+Only one word at a time is read in because cin treats things separated by spaces as distinct.
+
+\begin{lstlisting}
+	string myname;
+	string myfname, mylname;
+	
+	cin >> myfname >> mylname;				/// Jaeden Bardati
+	
+	myname = myfname + " " + mylname;
+	
+	cout << myname << endl;					/// Jaeden Bardati
+\end{lstlisting}
+
+\subsubsection{String functions}
+
+A useful quantity to know for a given string could be its length. You can get it as follows
+
+\begin{lstlisting}
+	int n = myname.length();
+	
+	cout << "Your name has" << n-1 << "characters" << endl;
+\end{lstlisting}
+\bigbreak
+
+Here the number of characters is $n - 1$ since the space is not included.\\\\
+
+You can also get substrings using substr($i$, $n$) to get the $n$ characters proceeding the character at location $i$. If only $i$ in entered, it will extract all characters preceding the character at location $i$.
+
+\begin{lstlisting}
+	string sub = myname.substr(0, 6);		/// Jaeden
+	string sub2 = myname.substr(7);			/// Bardati
+\end{lstlisting}
+
+\subsection{The If Statement\\ {\large \normalfont September 23, 2021}}
+\bigbreak
+
 
 
 
