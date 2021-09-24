@@ -8,13 +8,35 @@
 \usepackage{scrextend} % for local margins
 \usepackage{titling}	% for subtitle custom command
 
-% Custom Commands
+% Algorithms
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage[noend]{algpseudocode}
+\newcommand{\Get}{\State \textbf{get}~}
+\newcommand{\Set}{\State \textbf{set}~}
+\newcommand{\Print}{\State \textbf{print}~}
+\newcommand{\Stop}{\State \textbf{stop}~}
+\algdef{SE}[DOWHILE]{Do}{doWhile}{\algorithmicdo}[1]{\algorithmicwhile\ (#1)}
+
+
+
+% custom subtitle command
 \newcommand{\subtitle}[1]{
 	\posttitle{
 		\par\end{center}
 	\begin{center}\large#1\end{center}
 	\vskip0.5em}
 }
+
+
+% Fixes weird backwards quote thing
+\usepackage [english]{babel}
+\usepackage [autostyle, english = american]{csquotes}
+\MakeOuterQuote{"}
+
+% fix upside down exclaimation points for less thans or greater thans
+\usepackage[T1]{fontenc}
+
 
 % Title
 \title{CS 201 Notes}
@@ -28,7 +50,7 @@
 \maketitle
 \bigbreak
 
-% Course Video 1
+% Course Video 0
 \section{Course Overview\\ {\large \normalfont September 10, 2021}}
 \bigbreak
 
@@ -51,7 +73,7 @@ The development of algorithms works in this recurring order:
 \section{Introduction to Algorithms}
 \bigbreak
 
-% Course Video 2
+% Course Video 1
 \subsection{Design\\ {\normalfont September 11, 2021}}
 \bigbreak
 
@@ -78,7 +100,7 @@ An algorithm is a step by step procedure to solve a problem. For example,
 	\textit{For example:} If you have a recipe that you need to add water until its dry. An iterative step would be one where you add $\frac{1}{2}$ cup to mixture while mixture is dry.
 
 
-% Course Video 3 and 4
+% Course Video 2 and 3
 \subsection{Case Study: Addition Algorithm\\ {\normalfont September 11, 2021}}
 \bigbreak
 
@@ -108,29 +130,35 @@ Let's say we want to add 472 to 593. We would to it like so:\\\\
 \end{tabular}
 
 \noindent Let's write the steps of our algorithm:
-\begin{enumerate}
-	\item Get $m$ (provided by user)
-	\item Get $a_{m-1}$, ...  $a_{1}$, $a_{0}$ and $b_{m-1}$, ...  $b_{1}$, $b_{0}$ (provided by user)
-	\item Set $i = 0$ (digit index) and set carry = 0 
-	\item While ($i \leq m - 1$) Do step 5 to 7 \setlength{\itemindent}{0.5cm}
-	\item Set $c_i = a_i + b_i$ + carry
-	\item If ($c_i \geq 10$) Then\\
-			\tabto{1cm}Set $c_i = c_i - 10$\\
-			\tabto{1cm}Set carry = 1\\ 
-		\tabto{0.5cm}Else\\
-			\tabto{1cm}Set carry = 0 
-	\item Set $i = i + 1$
-	\setlength{\itemindent}{0cm}\item Set $c_m$ = carry
-	\item Print $c_{m-1}$, ...  $c_{1}$, $c_{0}$ 
-	\item Stop\smallskip
-\end{enumerate}
+
+\begin{algorithm}
+	\caption{\\Addition Algorithm}
+	\begin{algorithmic}[1]
+		\Get $m$ (provided by user)
+		\Get $a_{m-1}$, ...  $a_{1}$, $a_{0}$ and $b_{m-1}$, ...  $b_{1}$, $b_{0}$ (provided by user)
+		\Set $i = 0$ (digit index) and carry = 0
+		\While{($i \leq m - 1$)}
+			\Set $c_i = a_i + b_i$ + carry
+			\If{($c_i \geq 10$)}
+				\Set $c_i = c_i - 10$
+				\Set carry = 1
+			\Else
+				\Set carry = 0
+			\EndIf
+			\Set $i = i + 1$
+		\EndWhile
+		\Set $c_m$ = carry
+		\Print $c_{m-1}$, ...  $c_{1}$, $c_{0}$
+		\Stop
+	\end{algorithmic}
+\end{algorithm}
 
 \noindent This can be programmed now using a programming language.\\
 
-\noindent If you want to test your algorithm, you can perform a \textbf{trace}. A trace is when you go through the algorithm yourself step by step for a test case (e.g. the example we did earlier).
+\noindent If you want to test your algorithm, you can perform a \textbf{trace}. A trace is when you go through the algorithm yourself step by step for a test case.
 
 
-% Course Video 5, 6, 7 and 8
+% Course Video 4, 5, 6 and 7
 \subsection{Pseudocode\\ {\normalfont September 11, 2021}}
 \bigbreak
 
@@ -152,12 +180,15 @@ Pseudocode is:
 	\item \textbf{Output}: Print "variable". E.g. Print area.\smallskip
 \end{itemize}
 
-\noindent \textbf{Example algorithm:} Calculating the average of three numbers.
-\begin{enumerate}
-	\item Get $x, y, z$
-	\item Set average = $\frac{x + y + z}{3}$
-	\item Print average \smallskip
-\end{enumerate}
+\begin{algorithm}
+	\caption{\\Calculates the average of three numbers.}
+	\begin{algorithmic}[1]
+		\Get $x, y, z$
+		\Set average = $\frac{x + y + z}{3}$
+		\Print average
+		\Stop
+	\end{algorithmic}
+\end{algorithm}
 
 \subsubsection{Conditional statements}
 \bigbreak
@@ -174,16 +205,19 @@ Pseudocode is:
 				\tabto{0.5cm}operation F$_\mathrm{n}$\smallskip
 \end{itemize}
 
-\noindent \textbf{Example algorithm:} Prints average of three number if the first number is larger than 0, otherwise prints an error message
-\begin{enumerate}
-	\item Get $x, y, z$
-	\item If ($x \geq 0$) Then\\
-			\tabto{0.5cm}Set average = $\frac{x + y + z}{3}$\\
-			\tabto{0.5cm}Print average\\
-		Else\\
-			\tabto{0.5cm}Print "Bad Data"
-	\item Stop\smallskip
-\end{enumerate}
+\begin{algorithm}
+	\caption{\\Print average of three number if the first number is larger than 0, otherwise print an error message.}
+	\begin{algorithmic}[1]
+		\Get $x, y, z$
+		\If{($x \geq 0$)}
+			\Set average = $\frac{x + y + z}{3}$
+			\Print average
+		\Else	
+			\Print "Bad Data"
+		\EndIf
+		\Stop
+	\end{algorithmic}
+\end{algorithm}
 
 \noindent When a conditional statements within a conditional statement it is called a \textbf{nested} conditional statements (or nested ifs). This also applies to nested iterative statements (or nested loops).
 
@@ -205,15 +239,61 @@ Pseudocode is:
 	If the condition is initially true, the loop is iterated until the condition is false. This means that \textit{at least one step should change the condition at some point}. If this is forgotten, the loop will run forever (called an \textbf{infinite loop})! This is considered a \textbf{fatal error}.\\
 \end{addmargin}
 
-\noindent \textbf{Example algorithm:} Computes and prints the square of the first 100 integers.
-\begin{enumerate}
-	\item Set index=1
-	\item While (index $\leq$ 100) Do step 3 to step 5\setlength{\itemindent}{0.5cm}
-		\item Set square = index * index
-		\item Print square
-		\item Set index = index + 1
-	\setlength{\itemindent}{0cm}\item Stop\smallskip
-\end{enumerate}
+
+\begin{algorithm}
+	\caption{\\Compute and print the square of the first 100 integers.}
+	\begin{algorithmic}[1]
+		\Set index=1
+		\While{(index $\leq$ 100)}
+			\Set square = index * index
+			\Print square
+			\Set index = index + 1
+		\EndWhile
+		\Stop
+	\end{algorithmic}
+\end{algorithm}
+
+
+% Course video 8
+\subsubsection{The Do-While\\ {\normalfont September 23, 2021}}
+\bigbreak
+
+The do-while is similar to the while-do, but you check the condition after the do section.
+
+\begin{itemize}
+	\item Do \setlength{\itemindent}{0.5cm}
+	\item Step $i$: operation
+	\item Step $i + 1$: operation
+	\item ...
+	\item Step $j$: operation
+	\setlength{\itemindent}{0cm}\item While (condition)\smallskip
+\end{itemize}
+
+This will always execute at least once. It will only execute once if the condition is false, and multiple if it is true. For example,
+
+\begin{algorithm}
+	\caption{\\Read a var $x$, print $\sqrt{x}$ and repeat the process as long as requested by user.}
+	\begin{algorithmic}[1]
+		\Get $x$
+		\Do
+			\Get $x$
+			\If{($x \geq 0 $)}
+				\Set root = $\sqrt{x}$
+				\Print root
+			\Else
+				\Print "Bad data"
+			\EndIf
+			\Print "Do you want to continue? Y/N"
+			\Get continue
+		\doWhile{continue == 'Y'}
+		\Stop
+	\end{algorithmic}
+\end{algorithm}
+
+
+
+
+
 
 
 \end{document}
