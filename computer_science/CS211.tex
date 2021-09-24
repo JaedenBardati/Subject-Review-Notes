@@ -61,6 +61,8 @@
 % stop indentation
 \setlength{\parindent}{0pt}
 
+% fix upside down exclaimation points for less thans or greater thans
+\usepackage[T1]{fontenc}
 
 % Custom Commands
 \newcommand{\subtitle}[1]{
@@ -301,7 +303,7 @@ You would get an error if you were to try to reassign a constant.
 \end{lstlisting}
 \bigbreak
 
-\subsection{Arithmetic Operations\\ {\large \normalfont September 22, 2021}}
+\subsection{Arithmetic operations\\ {\large \normalfont September 22, 2021}}
 \bigbreak
 
 There are 5 basic arithmetic operations supported by C++
@@ -320,10 +322,10 @@ For example,
 	int a = 5;
 	int b = 2;
 	
-	cout << a + b / 2 << endl;  	/// 6
-	cout << (a + b) / 2 << endl;  	/// 3
-	cout << a / 2 + 3 << endl;  	/// 5
-	cout << a / b / 3 << endl;  	/// 0
+	cout << a + b / 2 << endl;			/// 6
+	cout << (a + b) / 2 << endl;		/// 3
+	cout << a / 2 + 3 << endl;			/// 5
+	cout << a / b / 3 << endl;			/// 0
 \end{lstlisting}
 \bigbreak
 
@@ -333,11 +335,27 @@ This is done with integer operations since both arguments of each operation are 
 	int a = 5;
 	int b = 2;
 	
-	cout << a + b / 2 << endl;  	/// 6
-	cout << (a + b) / 2 << endl;  	/// 3.5
-	cout << a / 2 + 3 << endl;  	/// 5
-	cout << a / b / 3 << endl;  	/// 0.83333333
+	cout << a + b / 2 << endl;			/// 6
+	cout << (a + b) / 2 << endl;		/// 3.5
+	cout << a / 2 + 3 << endl;			/// 5
+	cout << a / b / 3 << endl;			/// 0.83333333
 \end{lstlisting}
+
+\subsubsection{Assigning and operations}
+
+When you are assigning a variable and performing an operation to it at the same time you can do the following:
+
+\begin{lstlisting}
+	int x = 25;
+	
+	x += 1		// equivalent to x = x + 1
+	x -= 2;		// equivalent to x = x - 2
+	x *= 3;		// equivalent to x = x * 3
+	x /= 4;		// equivalent to x = x / 4
+	x %= 5;		// equivalent to x = x / 5
+\end{lstlisting}
+
+
 
 \subsubsection{Division when initializing or assigning a variable}
 
@@ -565,7 +583,7 @@ A useful quantity to know for a given string could be its length. You can get it
 \begin{lstlisting}
 	int n = myname.length();
 	
-	cout << "Your name has" << n-1 << "characters" << endl;
+	cout << "Your name has " << n-1 << " characters" << endl;
 \end{lstlisting}
 \bigbreak
 
@@ -578,8 +596,216 @@ You can also get substrings using substr($i$, $n$) to get the $n$ characters pro
 	string sub2 = myname.substr(7);			/// Bardati
 \end{lstlisting}
 
+
+\subsubsection{Characters}
+
+Characters are strings of length 1, however, they can be declared explicitly with the char keyword and are expressed using single quotes.
+
+\begin{lstlisting}
+	char c = 'Y';
+\end{lstlisting}
+
+
 \subsection{The If Statement\\ {\large \normalfont September 23, 2021}}
 \bigbreak
+
+We can also use conditional statements.
+
+\subsubsection{Flow Chart}
+\bigbreak
+
+\begin{center}
+	\tikzstyle{greenbox} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=green!30]
+	\tikzstyle{greendiamond} = [diamond, minimum width=2cm, minimum height=2cm, text centered, draw=black, fill=green!30]
+	\tikzstyle{arrow} = [thick,->,>=stealth]
+	
+	\begin{tikzpicture}[node distance=2cm, >=latex', auto, thick]
+		\node (code) [greenbox] {Code};
+		\node (condition) [greendiamond, below=1cm of code] {Condition};
+		\node (statement1) [greenbox, below left=1cm of condition] {Statement 1};
+		\node (statement2) [greenbox, below right=1cm of condition] {Statement 2};
+		\node (latercode) [greenbox, below=2cm of condition] {More Code};
+		
+		\draw [arrow] (code) -- (condition);
+		\draw [arrow] (condition) -| node[anchor=south west] {True} (statement1);
+		\draw [arrow] (condition) -| node[anchor=south east] {False} (statement2);
+		\draw [arrow] (statement1) |- (latercode);
+		\draw [arrow] (statement2) |- (latercode);
+	\end{tikzpicture}
+\end{center}
+\bigbreak
+
+\subsubsection{Syntax}
+\bigbreak
+
+The if statement has the syntax
+
+\begin{lstlisting}
+	if (condition)
+		statement1;
+	else
+		statement2;
+\end{lstlisting}
+\bigbreak
+
+Or, if there is no second statement, simply
+
+\begin{lstlisting}
+	if (condition)
+		statement1;
+\end{lstlisting}
+\bigbreak
+
+For multiple statements, we can use parentheses
+
+\begin{lstlisting}
+	if (condition) {
+		statement;
+		statement;
+		...
+	}
+	else {
+		statement;
+		statement;
+		...
+	}
+\end{lstlisting}
+\bigbreak
+
+
+\subsubsection{The condition}
+\bigbreak
+
+A condition is a \textbf{boolean expression}. A boolean type can be \textbf{true} or \textbf{false}.\\
+
+Boolean expressions are written using \textbf{relational operators}:
+
+\begin{center}
+	\begin{tabular}{rl}
+		< & Less than \\
+		> & Greater than\\
+		<= & Less than or equal\\
+		>= & Greater than or equal\\
+		== & Equal to\\
+		!= & Not equal to\\
+	\end{tabular}
+\end{center}
+
+You can also chain relational operators with \textbf{logic operators}:\\
+\begin{center}
+	\begin{tabular}{rl}
+		|| & OR \\
+		\&\& & AND \\
+		! & NOT \\
+	\end{tabular}
+\end{center}
+
+For example,
+
+\begin{lstlisting}
+	if (num < 20 || num % 3 == 1)	// if num is < 20 or if the remainder of num / 3 is 1
+		num = num * 2
+	else
+		num = num / 2
+\end{lstlisting}
+\bigbreak
+
+\subsubsection{Floating point precision error}
+
+Let us show an example of a floating point precision error. Note that here we are including the cmath library.
+
+\begin{lstlisting}
+	double root, number;
+	
+	root = sqrt(3);
+	number = pow(root, 2);
+	
+	cout << setprecision(18) << "Number is : " << number << endl;	// 2.999999999999999956, not 3
+	
+	if (number == 3)
+		cout << "sqrt(3) * sqrt(3) = 3" << endl;
+	else
+		cout << "What just happened?" << endl;
+\end{lstlisting}
+\bigbreak
+
+
+When running this in a main function, we obtain the "What just happened?" result. What just happened indeed? The issue is that floating point numbers are only precise to a certain number of digits. To account for this, we must set our own precision as follows:
+
+\begin{lstlisting}
+	double precision = 1E-14;
+	
+	if (abs(number - 3) < precision)
+		cout << "sqrt(3) * sqrt(3) = 3" << endl;
+	else
+		cout << "What just happened?" << endl;
+\end{lstlisting}
+\bigbreak
+ 
+ This returns the desired result of "sqrt(3) * sqrt(3) = 3".\\
+ 
+
+\subsubsection{String comparison (alphabetical order)}
+
+We can also use comparison operators for strings. For example,
+
+\begin{lstlisting}
+	string name1, name2;
+	
+	cin >> name1 >> name 2;
+	
+	if (name1 < name2)
+		cout << name1 << endl << name2;
+	else
+		cout << name2 << endl << name1;
+\end{lstlisting}
+\bigbreak
+
+This will return two entered strings in alphabetical order.
+
+
+\subsubsection{Nested ifs}
+
+
+Sometimes there are more than one options. To do this we can use nested ifs. You check conditions within conditions for multiple branchings.
+
+For example, we can assign a letter grade for a given percentage grade. 
+
+\begin{center}
+	\begin{tabular}{rl}
+		A & 80 <= grade <= 100 \\
+		B & 65 <= grade < 80 \\
+		C & 50 <= grade < 65 \\
+		F & 0 <= grade < 50 \\
+	\end{tabular}
+\end{center}
+
+The implementation of this in code is
+
+\begin{lstlisting}
+	int grade;
+	char letter;
+	
+	cout << "Please enter a numeric grade: ";
+	cin >> grade;
+	
+	if (grade >= 50)
+		if (grade >= 65)
+			if (grade >= 80)
+				letter = 'A';
+			else
+				letter = 'B';
+		else
+			letter = 'C';
+	else
+		letter = 'F';
+		
+	cout << "The letter grade is " << letter << endl;
+\end{lstlisting}
+\bigbreak
+
+
+
 
 
 
