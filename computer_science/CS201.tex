@@ -18,7 +18,8 @@
 \newcommand{\Stop}{\State \textbf{stop}~}
 \algdef{SE}[DOWHILE]{Do}{doWhile}{\algorithmicdo}[1]{\algorithmicwhile\ (#1)}
 
-
+% stop indentation
+\setlength{\parindent}{0pt}
 
 % custom subtitle command
 \newcommand{\subtitle}[1]{
@@ -291,7 +292,7 @@ This will always execute at least once. It will only execute once if the conditi
 \end{algorithm}
 
 
-% Course video 9
+% Course video 9 and 10
 \subsection{The Sequential Search Algorithm\\ {\normalfont September 24, 2021}}
 \bigbreak
 
@@ -310,7 +311,7 @@ Let us assume we have a list of size $N$ whose elements are $L_1$, $L_2$, ..., $
 		\Set Found = No
 		\Set $i$ = 1
 		\While{Found = No AND $i$ <= $N$}
-			\If{$L_i$ == Target}
+			\If{($L_i$ == Target)}
 				\Set Found = Yes
 			\Else
 				\Set $i$ = $i$ + 1
@@ -324,6 +325,90 @@ Let us assume we have a list of size $N$ whose elements are $L_1$, $L_2$, ..., $
 		\Stop
 	\end{algorithmic}
 \end{algorithm}
+
+% Course video 12 and 13 (what happened to 11?... no clue, probably best not to ask)
+\subsection{Find Largest\\ {\normalfont September 25, 2021}}
+\bigbreak
+
+Given a list of $N$ elements, what is the largest element in the list?\\
+
+For example, if the list is [19, 41, 12, 63, 22] with $N = 5$. Each element has an index (1, 2, 3, 4, and 5, respectively). The largest element is 63.\\
+
+To solve, we can store a value for the largest value starting with the first number and then iterate through each other element of the list and update the largest number to the current element if it is larger than the stored value for the largest element.\\
+
+Let us assume we have a list of size $N$ whose elements are $L_1$, $L_2$, ..., $L_N$.
+
+\begin{algorithm}
+	\caption{\\Find Largest}
+	\begin{algorithmic}[1]
+		\Get $N$, $L_1$, $L_2$, ..., $L_N$
+		\Set $i$ = 2
+		\Set largest = $L_1$
+		\Set index = 1
+		\algstore{findlargest}
+	\end{algorithmic}
+\end{algorithm}
+\begin{algorithm}
+	\begin{algorithmic}[1]
+		\algrestore{findlargest}
+		\While{$i$ <= $N$}
+			\If{($L_i$ > largest)}
+				\Set largest = $L_i$
+				\Set index = $i$
+			\EndIf
+			\Set $i$ = $i$ + 1
+		\EndWhile
+		\Print largest
+		\Stop
+	\end{algorithmic}
+\end{algorithm}
+
+
+% Course video 14
+\subsection{The Swap Algorithm\\ {\normalfont September 25, 2021}}
+\bigbreak
+
+Assume we have two variables $x$ and $y$ and want to swap them. Let us say, $x = 5$ and $y = 5$. After the swap we want $x = 3$ and $y = 5$.\\
+
+To do this, we could try simply setting $x = y$ and then $y = x$. Doing this would simply make $x = y = 3$. Thus, we need a temporary variable to store the value of $x$ in during the swap.
+
+\begin{algorithm}
+	\caption{\\Swap(x, y)}
+	\begin{algorithmic}[1]
+		\Require $x$, $y$
+		\Set temp = $y$
+		\Set $y$ = $x$
+		\Set $x$ = temp
+	\end{algorithmic}
+\end{algorithm}
+
+
+% Course video 15
+\subsection{The Gauss Sum\\ {\normalfont September 25, 2021}}
+\bigbreak
+
+Gauss was a mathematician who came up with a method to do the following. Let's assume $n > 1$. We want to find the result of the sum = 1 + 2 + 3 + ... + $n$. For $n = 5$, then sum = 1 + 2 + 3 + 4 + 5 = 15.
+
+\begin{algorithm}
+	\caption{\\Gauss Sum}
+	\begin{algorithmic}[1]
+		\Get $n$
+		\Set sum = 0
+		\Set $i$ = 1
+		\While{($i \leq n$)}
+			\Set sum = sum + $i$
+			\Set $i$ = $i + 1$
+		\EndWhile
+		\Print sum
+		\Stop
+	\end{algorithmic}
+\end{algorithm}
+
+
+Gauss, however, noticed that sum = $\frac{n(n+1)}{2}$. For $n = 5$, sum = $\frac{5(5+1)}{2} = 15$. This makes the algorithm much faster.
+
+
+
 
 
 
