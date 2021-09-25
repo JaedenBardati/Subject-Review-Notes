@@ -291,8 +291,39 @@ This will always execute at least once. It will only execute once if the conditi
 \end{algorithm}
 
 
+% Course video 9
+\subsection{The Sequential Search Algorithm\\ {\normalfont September 24, 2021}}
+\bigbreak
 
+Given a dataset of a given size $N$ and given a target, is the target in the dataset?\\
 
+For example, if the dataset is the list [13, 4, 5, -20, 45, 112] with $N = 6$. Is the target 45 in the dataset? Yes. Is the target 130 in the dataset? No. \\
+
+To solve for much larger values of N, we can search sequentially through the list until we reach the target (the target is in the list), or the end of the list (the target is not in the list).\\
+
+Let us assume we have a list of size $N$ whose elements are $L_1$, $L_2$, ..., $L_N$ and a target element called Target.
+
+\begin{algorithm}
+	\caption{\\Sequential Search Algorithm}
+	\begin{algorithmic}[1]
+		\Get $L_1$, $L_2$, ..., $L_N$, $N$, Target
+		\Set Found = No
+		\Set $i$ = 1
+		\While{Found = No AND $i$ <= $N$}
+			\If{$L_i$ == Target}
+				\Set Found = Yes
+			\Else
+				\Set $i$ = $i$ + 1
+			\EndIf
+		\EndWhile
+		\If{Found = Yes}
+			\Print "Target in list."
+		\Else
+			\Print "Target not in list."
+		\EndIf
+		\Stop
+	\end{algorithmic}
+\end{algorithm}
 
 
 
