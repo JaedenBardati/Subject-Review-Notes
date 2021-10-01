@@ -73,9 +73,10 @@
 }
 
 % Title
-\title{CS 211 Notes}
+\title{\textbf{CS 211 Notes}}
 \subtitle{Introduction to Programming}
 \author{Jaeden Bardati}
+\date{\textit{Last modified \today}}
 
 \begin{document}
 
@@ -805,9 +806,127 @@ The implementation of this in code is
 \bigbreak
 
 
+\subsection{The Switch Statement\\ {\large \normalfont September 30, 2021}}
+\bigbreak
+
+The \textbf{switch statement} is an alternative to nested ifs. This statement can be used if it compares a boolean, integer or character against a constant of the same type. Each constant creates an \textbf{alternative} or \textbf{branch}.\\
+
+The syntax is as follows:
+
+\begin{lstlisting}
+	int n;
+	cin >> n;
+	
+	switch (n) {
+		case 1: cout << "ONE"; break;
+		case 2: cout << "TWO"; break;
+		case 3: cout << "THREE"; break;
+		case 4: cout << "FOUR"; break;
+		case 5: cout << "FIVE"; break;
+		default: cout << "Not a number between 1 and 5";
+	}
+\end{lstlisting}\bigbreak
+
+The general process of the switch statement is that it will check each "case" until it finds a match, then it will run what comes next. The "default" will run if no other case has run. Remember to put breaks after each case! No break is needed after the default case.\\
+
+You can also stack cases as follows:
+
+\begin{lstlisting}
+	char c;
+	cin >> c;
+	
+	switch (c) {
+		case 'y': case 'Y': cout << "YES"; break;
+		case 'n': case 'N': cout << "NO"; break;
+		default: cout << "Not y or n";
+	}
+\end{lstlisting}\bigbreak
 
 
+\subsection{The While Loop\\ {\large \normalfont September 30, 2021}}
+\bigbreak
 
+The \textbf{while loop} can be used when a sequence of statements must be repeated multiple times so long as a condition is true. The following is a flow chart of the process.
+
+\begin{center}
+	\tikzstyle{greenbox} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=green!30]
+	\tikzstyle{greendiamond} = [diamond, minimum width=2cm, minimum height=2cm, text centered, draw=black, fill=green!30]
+	\tikzstyle{arrow} = [thick,->,>=stealth]
+	\tikzstyle{dottedarrow} = [dotted,->,>=stealth]
+	
+	\begin{tikzpicture}[node distance=2cm, >=latex', auto, thick]
+		\node (condition) [greendiamond] {Condition};
+		\node (statement1) [greenbox, below=0.8cm of condition] {Statement 1};
+		\node (statement2) [greenbox, below=0.8cm of statement1] {Statement 2};
+		\node (statementn) [greenbox, below=0.8cm of statement2] {Statement n};
+		\node (latercode) [greenbox, below=0.8cm of statementn] {More Code};
+		
+		\draw [dottedarrow] (condition) ++(0, 2.1cm) -- ++(0, -1cm) (statement1);
+		\draw [arrow] (condition) --  node[anchor=east, yshift=0.3cm]{True} (statement1);
+		\draw [arrow] (statement1) -- (statement2);
+		\draw [dottedarrow] (statement2) -- (statementn);
+		\draw [arrow] (statementn) -- ++(-2.5cm,0) |- (condition);
+		\draw [arrow] (condition) -- node[anchor=north, yshift=-0.1cm] {False} ++(2.5cm,0) |- (latercode);
+	\end{tikzpicture}
+\end{center}
+\bigbreak
+
+
+The syntax for a while loop of \textit{one statement} is
+
+\begin{lstlisting}
+	while (condition)
+		statement;
+\end{lstlisting}
+
+Similarly, a while loop of \textit{multiple statements} is made possible using parenthesis
+
+\begin{lstlisting}
+	while (condition) {
+		statement;
+		statement;
+		...
+	}
+\end{lstlisting}
+
+There are a few consideration we need to take into account:
+
+\begin{itemize}
+	\item The condition must be initially true, other wise the loop will never execute
+	\item If the condition is initially true, the loop executes at least once
+	\item The loop executes until the condition becomes false
+	\item The condition becomes false as a results of a statement in the loop
+	\item If the condition never becomes false, the loop will be infinite
+\end{itemize}
+
+The following code is an example program using a while loop, to calculate how many years it takes for a bank account balance to double with a given rate:
+
+\begin{lstlisting}
+	#include <iostream>
+	using namespace std;
+	
+	int main() {
+		// Calculates the number of years to double the balance of a bank account.
+		const double RATE = 0.03;
+		
+		double bal;
+
+		cout << "Please enter an initial balance: ";
+		cin >> bal;
+		
+		double target = 2 * bal;
+		int years = 0;
+		
+		while(bal < target){
+			bal += (bal * RATE);
+			years++;
+		}
+		
+		cout << "You require " << years << " years to double your balance.";
+		
+		return 0;
+	}
+\end{lstlisting}
 
 
 
