@@ -7,8 +7,15 @@
 \usepackage{tabto}		% for tabbing to a certain length
 \usepackage{scrextend} % for local margins
 \usepackage{titling}	% for subtitle custom command
-\usepackage[svgnames]{xcolor} % avoid the option clash for hyperref command 
+\usepackage[svgnames, table]{xcolor} % avoid the option clash for hyperref command  + TABLE REP
 \usepackage[colorlinks=true, linkcolor=Blue, urlcolor=Blue]{hyperref} % for hyperref command 
+\usepackage{pgfplots} % plots
+
+
+%tables for list representation
+\usepackage{arydshln, collcell}
+\newcolumntype{C}{>{\collectcell\mathsf}c<{\endcollectcell}}
+
 
 % Algorithms
 \usepackage{algorithm}
@@ -438,7 +445,7 @@ Assume we have some arbitrary algorithm for a dataset of size $n$ with a loop an
 Thus, \textbf{efficiency} is related to the loops in the algorithm. When we say \textbf{efficiency analysis}, we really mean \textit{loop analysis}.
 
 
-% Course video 17
+% Course video 17 and 18
 \subsubsection{Case Study: Sequential Search\\ {\normalfont October 5, 2021}}
 \bigbreak
 
@@ -446,14 +453,181 @@ We will analyze the efficiency of the \hyperref[sequentialsearchalgorithm]{Seque
 
 \textbf{Best case scenario:} The algorithm will stop immediately. The number of iterations is 1.\\
 
-\textbf{Worse case scenario:} The algorithm will go through all elements before stopping. The number of iterations is $n$.\\
+\textbf{Worst case scenario:} The algorithm will go through all elements before stopping. The number of iterations is $n$.\\
 
-\textbf{Average case scenario:} The target has an equal likelihood to be in any location (1, 2, 3, 4, ..., n). The average is therefore $\frac{1+2+3+4+...+n}{n}$. This is a Gauss sum which equals $\frac{(n+1)n}{2n} = \frac{n+1}{2}$. Thus, the average case scenario has a number of iterations $\frac{n+1}{2}$.\\
+\textbf{Average case scenario:} The target has an equal likelihood to be in any location (1, 2, 3, 4, ..., n). The average is therefore $\frac{1+2+3+4+...+n}{n}$. This is a Gauss sum which equals $\frac{(n+1)n}{2n} = \frac{n+1}{2} = \frac{n}{2} + \frac{1}{2}$. Thus, the average case scenario has a number of iterations $\frac{n+1}{2}$.\\
 
 
 We will now do a \textbf{time analysis:}\\
 
 Assume that the time required for 1 iteration is $C$ (depending on the computer).\\
+
+\textbf{Worst case scenario:} $t_{\mathrm{worst}} = C n$
+\textbf{Average case scenario:} $t_{\mathrm{avg}} = C (\frac{n}{2} + \frac{1}{2}) = \frac{1}{2}Cn + \frac{1}{2}C 
+\approx \frac{1}{2}Cn$ for large $n$.\\
+
+
+We can interpret these results in the following graph.\bigbreak
+
+\begin{center}
+	\begin{tikzpicture}
+		\begin{axis}[ 
+			xlabel=$n$,
+			ylabel={time},
+			xmin=0,
+			ymin=0,
+			xmax=100,
+			ymax=100,
+			yticklabels={,,},
+			xticklabels={,,},
+			tick style={draw=none}
+			] 
+			\addplot[domain=0:100, samples=10, color=blue]{3*x/2};
+			\addlegendentry{\(t_{\mathrm{worst}}\)};
+			
+			\addplot[domain=0:100, samples=10, color=red]{3*x/4}; 
+			\addlegendentry{\(t_{\mathrm{avg}}\)};
+		\end{axis}
+	\end{tikzpicture}
+\end{center}
+
+Note that the relationship between $n$ and time is \textbf{linear}. That is to say, "if you scale by a certain factor in the dataset size, you scale by that same factor in time." We say that it such an algorithm \textit{scales linearly}. These are very efficient algorithms.\\
+
+The \textbf{complexity} of this algorithm is $\Theta(n)$. That means linear scalability.
+
+\pagebreak
+% Course video 18.5?? Not sure what's going on with the lecture numbering..
+\subsection{The Selection Sort Algorithm\\ {\normalfont October 5, 2021}}
+\bigbreak
+
+Given a list of $n$ elements, we need to sort the list from smallest to largest.\\
+
+For example, if the list = 5, 7, 2, 8, 3, then the sorted list should = 2, 3, 5, 7, 8. Here $n = 5$.\\
+
+We want to search the entire algorithm for the largest value (here, it is 8). We also start with marker = 5 (denoted by the red vertical line). Our list is: 
+
+\[
+	\renewcommand\arraystretch{1.5}
+	\begin{array}{|C|C|C|C|C!{\color{red}\vline}}\hline
+		5 & 7 & 2 & 8 & 3 \\\hline
+	\end{array}
+\]
+
+
+Then, we swap the largest element with the last element (here, we swap 8 and 3). Now marker = 4.
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{|C|C|C|C!{\color{red}\vline}C|}\hline
+	5 & 7 & 2 & 3 & 8 \\\hline
+\end{array}
+\]
+
+These steps repeat until marker = 1. So the next few iterations would make the list look like the following.
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{|C|C|C!{\color{red}\vline}C|C|}\hline
+	5 & 3 & 2 & 7 & 8 \\\hline
+\end{array}
+\]
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{|C|C!{\color{red}\vline}C|C|C|}\hline
+	2 & 3 & 5 & 7 & 8 \\\hline
+\end{array}
+\]
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{|C!{\color{red}\vline}C|C|C|C|}\hline
+	2 & 3 & 5 & 7 & 8 \\\hline
+\end{array}
+\]
+
+\bigbreak\bigbreak
+Now, the list is sorted. We can write the algorithm.\\
+
+
+\begin{algorithm}
+	\caption{\\Gauss Sum}
+	\begin{algorithmic}[1]
+		\Get $n, L_1, ..., L_n$
+		\Set Marker = $n$
+		\While{(Marker > 1)}
+			\Set largest = FindLargest($L_1, ..., L_{\mathrm{Marker}}$)
+			\State Swap(largest, $L_{\mathrm{Marker}}$)
+			\Set Marker = Marker - 1
+		\EndWhile
+		\Stop
+	\end{algorithmic}
+\end{algorithm}
+
+% Course video 19
+\subsubsection{Analysis of the Efficiency}
+\bigbreak
+
+Note that there is actually not only one loop in the algorithm, since FindLargest contains a hidden loop. This is called nested loops.\\
+
+In FindLargest, we need to go through the whole list exactly once. There is no best or worst case scenario. \textit{The number of iterations will always be equal to the size of the list.}\\
+
+Similarly, in the selection sort algorithm loop, there will always be $n$ iterations. The size of the list that is given to FindLargest decreases (not always $n$).\\
+
+So the total number of iterations of the selection sort algorithm is 
+
+\[ n + (n-1) + (n-2) + ... + 3 + 2 + 1\]
+
+This is once again a Gauss sum. So the number of iterations required for selection sort is
+
+\[\frac{n(n+1)}{2}\]
+
+
+For very large $n$, 
+
+\[\mathrm{num~of~iterations} = \frac{1}{2}n^2 + \frac{1}{2}n \approx \frac{1}{2}n^2\]
+
+Therefore, the execution time is 
+
+\[\frac{1}{2}Cn^2\]
+
+We say that this algorithm scales \textbf{quadratically}. Plotting this in a graph, we can interpret this result and comparing it to a linearly scaling algorithm.
+
+\bigbreak
+\begin{center}
+	\begin{tikzpicture}
+		\begin{axis}[ 
+			xlabel=$n$,
+			ylabel={time},
+			xmin=0,
+			ymin=0,
+			xmax=2.5,
+			ymax=2.5,
+			yticklabels={,,},
+			xticklabels={,,},
+			tick style={draw=none}
+			] 
+			\addplot[domain=0:2.5, samples=100, color=blue]{x};
+			\addlegendentry{\(t_{\mathrm{linear}}\)};
+			
+			\addplot[domain=0:2.5, samples=100, color=red]{x^2}; 
+			\addlegendentry{\(t_{\mathrm{quadratic}}\)};
+		\end{axis}
+	\end{tikzpicture}
+\end{center}
+
+
+We can see that for small values of $n$ quadratic may be better than linear. However, with large values of $n$, a linear algorithm is much better than a quadratic one.\\
+
+
+This has a complexity of $\Theta(n^2)$. This means that "if we double the size of $n$, we quadruple the time that the algorithm takes to complete."\\
+
+
+
+% Course video 20, 21, 22, 23
+\subsection{The Binary Search Algorithm\\ {\normalfont October 5, 2021}}
+\bigbreak
+
 
 
 
