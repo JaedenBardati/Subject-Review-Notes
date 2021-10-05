@@ -1,6 +1,7 @@
 \documentclass[]{article}
 
 % Packages
+\usepackage{amsmath} % math stuff
 %\usepackage[dvipsnames]{xcolor}  % for coloring
 \usepackage{tensor}  % tensors, but also for stuff like superscript on the left
 \usepackage{enumitem} % for enumerating alphabetically
@@ -551,7 +552,7 @@ Now, the list is sorted. We can write the algorithm.\\
 
 
 \begin{algorithm}
-	\caption{\\Gauss Sum}
+	\caption{\\Selection Sort}
 	\begin{algorithmic}[1]
 		\Get $n, L_1, ..., L_n$
 		\Set Marker = $n$
@@ -565,7 +566,7 @@ Now, the list is sorted. We can write the algorithm.\\
 \end{algorithm}
 
 % Course video 19
-\subsubsection{Analysis of the Efficiency}
+\subsubsection{Complexity Analysis}
 \bigbreak
 
 Note that there is actually not only one loop in the algorithm, since FindLargest contains a hidden loop. This is called nested loops.\\
@@ -578,12 +579,7 @@ So the total number of iterations of the selection sort algorithm is
 
 \[ n + (n-1) + (n-2) + ... + 3 + 2 + 1\]
 
-This is once again a Gauss sum. So the number of iterations required for selection sort is
-
-\[\frac{n(n+1)}{2}\]
-
-
-For very large $n$, 
+This is once again a Gauss sum. So the number of iterations required for selection sort is $\frac{n(n+1)}{2}$. For very large $n$, 
 
 \[\mathrm{num~of~iterations} = \frac{1}{2}n^2 + \frac{1}{2}n \approx \frac{1}{2}n^2\]
 
@@ -601,17 +597,17 @@ We say that this algorithm scales \textbf{quadratically}. Plotting this in a gra
 			ylabel={time},
 			xmin=0,
 			ymin=0,
-			xmax=2.5,
-			ymax=2.5,
+			xmax=3,
+			ymax=3,
 			yticklabels={,,},
 			xticklabels={,,},
 			tick style={draw=none}
-			] 
-			\addplot[domain=0:2.5, samples=100, color=blue]{x};
-			\addlegendentry{\(t_{\mathrm{linear}}\)};
-			
-			\addplot[domain=0:2.5, samples=100, color=red]{x^2}; 
+			]
+			\addplot[domain=0:3, samples=100, color=red]{x^2}; 
 			\addlegendentry{\(t_{\mathrm{quadratic}}\)};
+			
+			\addplot[domain=0:3, samples=100, color=blue]{x};
+			\addlegendentry{\(t_{\mathrm{linear}}\)};
 		\end{axis}
 	\end{tikzpicture}
 \end{center}
@@ -628,6 +624,129 @@ This has a complexity of $\Theta(n^2)$. This means that "if we double the size o
 \subsection{The Binary Search Algorithm\\ {\normalfont October 5, 2021}}
 \bigbreak
 
+The objective of this algorithm is to search for an item in a list.\\
+
+The \textit{sequential search} is one way to do this. Recall that it has a complexity of $\Theta(n)$. \\
+
+\textit{Can we make the search faster?}\\
+
+The answer is \textbf{yes, but the list must be sorted}. If the list is sorted, then we can use the \textbf{binary search} (also called the \textit{half interval search}).
+
+For example, we will use the following list with $n = 7$.
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{|C|C|C|C|C|C|C|}\hline
+	5 & 16 & 25 & 32 & 38 & 57 & 58 \\\hline
+	\multicolumn{1}{c}{\color{green}\uparrow} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{\color{blue}\uparrow} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{\color{red}\uparrow}
+\end{array}
+\]
+
+And let our be target = 57.\\
+
+We will define Start = 1 and End = 7 and we will also define Mid = $\frac{\mathrm{Start + End}}{2}=\frac{1 + 7}{2} = 4$. The value at the index Start is denoted by the green colored arrow, End by the red colored arrow, and Mid by the blue colored arrow. \\
+
+We then get the value at mid and check if it is less than target. It is, therefore, we set start = mid + 1 = 5. And we recalculate mid =  $\frac{\mathrm{Start + End}}{2}=\frac{5 + 7}{2} = 6$. Our new list is
+
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{|C|C|C|C|C|C|C|}\hline
+	5 & 16 & 25 & 32 & 38 & 57 & 58 \\\hline
+	\multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{\color{green}\uparrow} & \multicolumn{1}{c}{\color{blue}\uparrow} & \multicolumn{1}{c}{\color{red}\uparrow}
+\end{array}
+\]
+
+
+Now, we get the value at mid which is 57. We check if it equals our target and it does, therefore, we say that our target is found (and at the index mid). We stop the algorithm there. \\
+
+For this particular setup, it took 2 iterations. This is much faster than the 6 steps that it would have taken to do with sequential search.\\
+
+Does this mean that the binary search is better than sequential search? Well, for finding a target it is. However, there is some time that is taken when initially sorting the list in the first place. If fast storage of data is required, perhaps the binary search is not the best option.\\
+
+
+We will build now the algorithm.
+
+\begin{algorithm}
+	\caption{\\Binary Search}
+	\begin{algorithmic}[1]
+		\Get $n, L_1, ..., L_n$
+		\Get Target
+		\Set Found = No
+		\Set Start, End = 1, N
+		\While{(Found = No AND Start $\ne$ End)}
+			\Set Mid = $\frac{\mathrm{Start + End}}{2}$
+			\If{($L_{\mathrm{Mid}}$ = Target)}
+				\Set Found = Yes
+			\Else
+				\If{(Target < $L_{\mathrm{Mid}}$)}
+					\Set End = Mid - 1
+				\Else
+					\Set Start = Mid + 1
+				\EndIf
+			\EndIf
+		\EndWhile
+		\If{(Found = Yes)}
+			\Print "Target found"
+		\Else
+			\Print "Target not found"
+		\EndIf
+		\Stop
+	\end{algorithmic}
+\end{algorithm}
+
+
+\subsubsection{Complexity Analysis}
+
+\textbf{Best case scenario:} The target is found in the middle. The number of iterations is 1.\\
+
+
+\textbf{Worst case scenario:} This happens when the target is not in the list. To do the analysis we will look at varying data sizes $n$:
+
+\begin{itemize}
+	\item $n = 4 = 2^2$ ---------> 3 iterations
+	\item $n = 4 = 2^3$ ---------> 4 iterations
+	\item $n = 4 = 2^4$ ---------> 5 iterations
+	\item ...
+	\item $n = 4 = 2^m$ ---------> $m + 1$ iterations
+\end{itemize}
+
+
+
+So, $n = 2^m \implies m = \log_2n$. Thus, the number of iterations is $\log_2n + 1$. This means that this algorithm scales \textbf{logarithmically} with $n$.\\
+
+This means that the complexity of the algorithm is $\Theta(\log_2n)$. This is much more efficient than linear scaling.\\
+
+Plotting quadratic, linear, and logarithmic scaling, 
+
+
+\bigbreak
+\begin{center}
+	\begin{tikzpicture}
+		\begin{axis}[ 
+			xlabel=$n$,
+			ylabel={time},
+			xmin=0,
+			ymin=0,
+			xmax=3,
+			ymax=3,
+			yticklabels={,,},
+			xticklabels={,,},
+			tick style={draw=none}
+			]
+			\addplot[domain=0:3, samples=100, color=red]{x^2}; 
+			\addlegendentry{\(t_{\mathrm{quadratic}}\)};
+			 
+			\addplot[domain=0:3, samples=100, color=blue]{x};
+			\addlegendentry{\(t_{\mathrm{linear}}\)};
+			
+			\addplot[domain=0:3, samples=100, color=green]{ln(x+1)}; 
+			\addlegendentry{\(t_{\mathrm{logarithmic}}\)};
+		\end{axis}
+	\end{tikzpicture}
+\end{center}
+
+We can see that logarithmic is the best scaling of the three, linear is worse, and quadratic is much worse.
 
 
 
