@@ -7,6 +7,8 @@
 \usepackage{tabto}		% for tabbing to a certain length
 \usepackage{scrextend} % for local margins
 \usepackage{titling}	% for subtitle custom command
+\usepackage[svgnames]{xcolor} % avoid the option clash for hyperref command 
+\usepackage[colorlinks=true, linkcolor=Blue, urlcolor=Blue]{hyperref} % for hyperref command 
 
 % Algorithms
 \usepackage{algorithm}
@@ -294,7 +296,7 @@ This will always execute at least once. It will only execute once if the conditi
 
 
 % Course video 9 and 10
-\subsection{The Sequential Search Algorithm\\ {\normalfont September 24, 2021}}
+\subsection{The Sequential Search Algorithm\\ {\normalfont September 24, 2021}} \label{sequentialsearchalgorithm}
 \bigbreak
 
 Given a dataset of a given size $N$ and given a target, is the target in the dataset?\\
@@ -407,6 +409,53 @@ Gauss was a mathematician who came up with a method to do the following. Let's a
 
 
 Gauss, however, noticed that sum = $\frac{n(n+1)}{2}$. For $n = 5$, sum = $\frac{5(5+1)}{2} = 15$. This makes the algorithm much faster.
+
+
+% Course video 16
+\subsection{Algorithms Efficiency (Complexity)}
+\bigbreak
+
+An algorithm is \textbf{efficient} if it uses the smallest number of steps to solve the problem. What we are really interested in is how well the algorithm \textit{scales} with large datasets. \\
+
+For example, assume the size of the data is $n$ and two correct algorithms. \\ 
+
+Algorithm 1 is 20 steps. \par 
+Algorithm 2 is 15 steps. \\
+
+Which is the best algorithm? You might think that the best algorithm is the one that uses 15 steps. You are probably wrong.\\
+
+Why? When we refer to "steps" in the algorithmic efficiency definition, we really mean the number of CPU operations not the number of steps written in the algorithm. We could have a loop that causes the algorithm to run much longer than one without a loop. So the number of steps in the written algorithm is not a good measure of efficiency.\\
+
+Assume we have some arbitrary algorithm for a dataset of size $n$ with a loop and some sequential steps. 
+
+\begin{itemize}
+	\item $n$ small ---------------------------------> very large $n$
+	\item Sequential statement ---------------> Cost is the same
+	\item Conditional statement --------------> Cost is the same
+	\item Iterative statement ------------------> Cost increases
+\end{itemize}
+
+Thus, \textbf{efficiency} is related to the loops in the algorithm. When we say \textbf{efficiency analysis}, we really mean \textit{loop analysis}.
+
+
+% Course video 17
+\subsubsection{Case Study: Sequential Search\\ {\normalfont October 5, 2021}}
+\bigbreak
+
+We will analyze the efficiency of the \hyperref[sequentialsearchalgorithm]{Sequential Search Algorithm}. \\
+
+\textbf{Best case scenario:} The algorithm will stop immediately. The number of iterations is 1.\\
+
+\textbf{Worse case scenario:} The algorithm will go through all elements before stopping. The number of iterations is $n$.\\
+
+\textbf{Average case scenario:} The target has an equal likelihood to be in any location (1, 2, 3, 4, ..., n). The average is therefore $\frac{1+2+3+4+...+n}{n}$. This is a Gauss sum which equals $\frac{(n+1)n}{2n} = \frac{n+1}{2}$. Thus, the average case scenario has a number of iterations $\frac{n+1}{2}$.\\
+
+
+We will now do a \textbf{time analysis:}\\
+
+Assume that the time required for 1 iteration is $C$ (depending on the computer).\\
+
+
 
 
 
