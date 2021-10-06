@@ -929,6 +929,41 @@ The following code is an example program using a while loop, to calculate how ma
 		return 0;
 	}
 \end{lstlisting}
+\bigbreak
+
+\textbf{Quick Aside:} In order to get the last number of a digit, you can use mod 10. For example, to get the last number of 729, we find that 729 \% 10 = 9. We can use integer division by 10 to make 729 become 72 and then get the last number of that in order to get the second number form the right (here, 2).\\
+
+\textbf{Another Quick Aside:} If a variable is entered that is not of the right type in cin, it will fail. There is a function that checks if it fails: cin.fail(). It will return false if cin has not failed, and true if it has. After a cin fails, all the subsequent cins will fail. To allow for subsequent cins after failure, we can use cin.clear(). However, since the failed character is still in the buffer, you cin will fail again. Therefore, we need to also call cin.ignore(n, lastchar) after cin.clear() to ignore what is in the buffer that caused it to fail (up to n characters or up to lastchar). The following code demonstrates this. \\
+
+\begin{lstlisting}
+	#include <iostream>
+	using namespace std;
+	
+	int main(){
+		
+		int input;
+		
+		cout << "Enter an integer value: " << endl;
+		
+		cin >> input;
+		cout << "You have entered: " << input << " Status of cin: " << cin.fail() << endl;
+		
+		cin.clear();
+		cin.ignore(10000, '\n');
+		
+		cout << "The cin status is now : " << cin.fail() << endl;
+		
+		cin >> input;
+		cout << "You have entered: " << input << " Status of cin: " << cin.fail() << endl;
+		
+		return 0;
+	}
+\end{lstlisting}
+
+
+
+
+
 
 
 
