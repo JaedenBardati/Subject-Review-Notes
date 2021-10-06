@@ -958,7 +958,68 @@ The following code is an example program using a while loop, to calculate how ma
 		
 		return 0;
 	}
-\end{lstlisting}
+\end{lstlisting}\bigbreak
+
+
+\subsection{The Do-While Loop\\ {\large \normalfont October 6, 2021}}
+\bigbreak
+
+The \textbf{do-while loop} can be used when a sequence of statements must be repeated multiple times so long as a condition is true. The following is a flow chart of the process.
+
+\begin{center}
+	\tikzstyle{greenbox} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=green!30]
+	\tikzstyle{greendiamond} = [diamond, minimum width=2cm, minimum height=2cm, text centered, draw=black, fill=green!30]
+	\tikzstyle{arrow} = [thick,->,>=stealth]
+	\tikzstyle{dottedarrow} = [dotted,->,>=stealth]
+	
+	\begin{tikzpicture}[node distance=2cm, >=latex', auto, thick]
+		\node (statement1) [greenbox] {Statement 1};
+		\node (statement2) [greenbox, below=0.8cm of statement1] {Statement 2};
+		\node (statementn) [greenbox, below=0.8cm of statement2] {Statement n};
+		\node (condition) [greendiamond, below=0.8cm of statementn] {Condition};
+		\node (latercode) [greenbox, below=0.8cm of condition] {More Code};
+		
+		\draw [dottedarrow] (statement1) ++(0, 1.5cm) -- ++(0, -1cm) (statement2);
+		\draw [arrow] (statement1) -- (statement2);
+		\draw [arrow] (statement1) -- (statement2);
+		\draw [dottedarrow] (statement2) -- (statementn);
+		\draw [arrow] (statementn) -- (condition);
+		\draw [arrow] (condition) --  node[anchor=south, xshift=0.3cm]{True} ++(-2.5cm,0) |- (statement1);
+		\draw [arrow] (condition) -- node[anchor=west]{False} (latercode);
+	\end{tikzpicture}
+\end{center}
+\bigbreak
+
+This is different form the regular while loop because it always executes at least once. If the condition is initially false, there is one one execution. If the condition is initial true, the body of the loop is executed until the condition becomes false. The minimum number of iterations of a do-while loop is 1, whereas the minimum number of iterations for a while-loop is 0.\\
+
+The syntax in C++ for one statement is
+
+\begin{lstlisting}
+	do
+		statement;
+	while(condition);
+\end{lstlisting}\bigbreak
+
+For many statements, you need curly braces as usual.
+
+\begin{lstlisting}
+	do {
+		statement1;
+		statement2;
+		...
+	}
+	while(condition);
+\end{lstlisting}\bigbreak
+
+An example application of a do-while loop is in input validation:
+
+\begin{lstlisting}
+	/// input validation using a do-while
+	do {
+		cout << "Please enter a value for 0 < n < 100 ";
+		cin >> n;
+	} while(n <= 0 || n >= 100);
+\end{lstlisting}\bigbreak
 
 
 
