@@ -351,13 +351,12 @@ When you are assigning a variable and performing an operation to it at the same 
 \begin{lstlisting}
 	int x = 25;
 	
-	x += 1		// equivalent to x = x + 1
+	x += 1		// equivalent to x = x + 1  (or x++)
 	x -= 2;		// equivalent to x = x - 2
 	x *= 3;		// equivalent to x = x * 3
 	x /= 4;		// equivalent to x = x / 4
 	x %= 5;		// equivalent to x = x / 5
 \end{lstlisting}
-
 
 
 \subsubsection{Division when initializing or assigning a variable}
@@ -579,6 +578,8 @@ Only one word at a time is read in because cin treats things separated by spaces
 	cout << myname << endl;					/// Jaeden Bardati
 \end{lstlisting}
 
+To get a full sentence (string) with cin, use the function getline(cin, sentence); This will get the whole line and put it in the  variable sentence.
+
 \subsubsection{String functions}
 
 A useful quantity to know for a given string could be its length. You can get it as follows
@@ -651,14 +652,6 @@ The if statement has the syntax
 \end{lstlisting}
 \bigbreak
 
-Or, if there is no second statement, simply
-
-\begin{lstlisting}
-	if (condition)
-		statement1;
-\end{lstlisting}
-\bigbreak
-
 For multiple statements, we can use parentheses
 
 \begin{lstlisting}
@@ -711,7 +704,6 @@ For example,
 	else
 		num = num / 2
 \end{lstlisting}
-\bigbreak
 
 \subsubsection{Floating point precision error}
 
@@ -805,7 +797,6 @@ The implementation of this in code is
 		
 	cout << "The letter grade is " << letter << endl;
 \end{lstlisting}
-\bigbreak
 
 
 \subsection{The Switch Statement\\ {\large \normalfont September 30, 2021}}
@@ -1022,6 +1013,170 @@ An example application of a do-while loop is in input validation:
 \end{lstlisting}\bigbreak
 
 
+\subsection{The For Loop\\ {\large \normalfont October 6, 2021}}
+\bigbreak
+
+The for loop is yet another iterative statement. For loops are based on the use of counters. It has the syntax:
+
+\begin{lstlisting}
+	for(statement1;statement2;statement3)
+		statement;
+\end{lstlisting}\bigbreak
+
+Or, for multiple statement loops
+
+\begin{lstlisting}
+	for(statement1;statement2;statement3) {
+	...
+	statement;
+	...
+	}
+\end{lstlisting}\bigbreak
+
+The statement1 is for counter initialization.\\
+The statement2 is for the loop condition.\\
+The statement3 is to update the counter.\\
+
+To demonstrate this we will compare it to the while loop.
+
+\begin{minipage}[t]{0.5\textwidth}
+	\begin{lstlisting}
+		int i = 1;
+		while (i <= n) {
+			sum = sum + i;
+			i = i + 1;
+		}
+	\end{lstlisting}
+\end{minipage}
+\begin{minipage}[t]{0.5\textwidth}
+	\begin{lstlisting}
+		for (int i=1; i<=n; i++)
+			sum = sum + i
+	\end{lstlisting}
+\end{minipage}
+
+
+We can see that the for loop is much more compact. It is preferred to use a for loop when you are using counters.\\
+
+\bigbreak
+\subsubsection{Nested For Loops}
+\bigbreak
+
+Just as if statements can be nested, so can loops. Nested loops are usuful since sometimes it is necessary to loop over loops (or repeat loops a certain number of times).\\
+
+For example, if we wanted to draw an $n$ by $n$ square of *s. We could use a nested loop:
+
+\begin{lstlisting}
+	int n = 4;
+	
+	for(int i = 1; i <= n; i++) {
+		for (int j = 1; j <= n; j++)
+			cout << "*";
+		cout << endl;
+	}
+\end{lstlisting}
+
+You can even change the number of iterations in the inner loop via nested loops. For example, if we wanted the pattern\\
+
+*\\
+**\\
+***\\
+****\\
+
+Then, we could use the following code.
+
+\begin{lstlisting}
+	int n = 4;
+	
+	for(int i = 1; i <= n; i++) {
+		for (int j = 1; j <= i; j++)
+		cout << "*";
+		cout << endl;
+	}
+\end{lstlisting}
+
+
+\subsection{Random Variables\\ {\large \normalfont October 6, 2021}}
+\bigbreak
+
+Sometimes it is useful to have (pseudo)random numbers to use in a program. The library that we need to include is
+
+\begin{lstlisting}
+	#include <cstdlib>
+\end{lstlisting}
+
+Then, to get two random numbers, we can do
+
+\begin{lstlisting}
+	int r1, r2;
+	 
+	r1 = rand();
+	r2 = rand();
+	
+	cout << r1 << endl << r2 << endl;
+\end{lstlisting}
+
+Running it again though, you can notice that it gives you the same numbers as before!\\
+
+This is because the the number is not truly random, only pseudo-random (random-looking). They are really just values that are generated from a mathematical sequence.\\
+
+This sequence has to start somewhere and that number is called the "seed". We can set the seed value using
+
+\begin{lstlisting}
+	srand(765);	// 765 is some arbituary number
+\end{lstlisting}
+
+If we want this to change with time, we need to input the computer time. To do this we will import the following library:
+
+\begin{lstlisting}
+	#include <ctime>
+\end{lstlisting}
+
+We can get the time in seconds since January 1st 1970 using
+
+\begin{lstlisting}
+	cout << time(0);
+\end{lstlisting}
+
+We can use this as the seed to make the starting random numbers change over time.
+
+\begin{lstlisting}
+	srand(time(0));
+\end{lstlisting}
+
+What is the range of the outputted randome numbers by rand()? It is between 0 and RAND\textunderscore MAX. This is a constant defined in the cstdlib library. We can get this value ourselves:
+
+\begin{lstlisting}
+	cout << RAND_MAX << endl;
+\end{lstlisting}
+
+If we want doubles instead, we can do
+
+\begin{lstlisting}
+	int r = rand();
+	double x = r*1.0/RAND_MAX;
+\end{lstlisting}
+
+The variable x is a random variable between 0 and 1.\\\bigbreak
+
+What if we want to generate random variables between and arbitrary a and b? To do this, we need to follow this procedure:
+\begin{itemize}
+	\item Generate r between 0 and RAND$\textunderscore$MAX (via rand())
+	\item Generate x between 0 and 1 (via x = r*1.0/RAND$\textunderscore$MAX))
+	\item Generate y = a + (b-a)*x
+\end{itemize} 
+
+So, if x = 0, y = a + (b-a)*0 = a. If x = 1, y = a + (b-a)*1 = a + b - a = b.\\
+
+In code, this is
+
+\begin{lstlisting}
+	int r = rand();
+	double x = r*1.0/RAND_MAX;
+	double y = -1 + 2 * x;
+	
+	cout << y << endl;
+\end{lstlisting}
 
 
 
