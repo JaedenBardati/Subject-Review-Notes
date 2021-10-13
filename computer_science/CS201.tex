@@ -510,7 +510,7 @@ The \textbf{complexity} of this algorithm is $\Theta(n)$. That means linear scal
 
 \pagebreak
 % Course video 18.5?? Not sure what's going on with the lecture numbering..
-\subsection{The Selection Sort Algorithm\\ {\normalfont October 5, 2021}}
+\subsection{The Selection Sort Algorithm\\ {\normalfont October 5, 2021}} \label{selectionsort}
 \bigbreak
 
 Given a list of $n$ elements, we need to sort the list from smallest to largest.\\
@@ -1118,6 +1118,142 @@ We can now build the algorithm.
 We will now do the complexity analysis.\\
 
 There is, again, no best or worse cases. The number of iterations is always $n$. Therefore, the complexity is $\Theta(n)$. 
+
+
+
+\pagebreak
+% Course video 31?
+\subsection{Other Sorting Algorithms: Selection \& Bubble Sort\\ {\normalfont October 13, 2021}}
+\bigbreak
+
+
+\subsubsection{Selection Sort}
+\bigbreak
+
+
+Let's say we have the list 
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{|C|C|C|C!{\color{red}\vline}}\hline
+	2 & 15 & 8 & 7 \\\hline
+	\multicolumn{1}{c}{~} & \multicolumn{1}{c}{\color{red}\uparrow} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~}
+\end{array}
+\]\bigbreak
+
+We scan the list and find the largest (denoted by the red arrow). We also start with a marker (red line) equal to the length of the list. Then, we swap the element at that index with the last element and decrement the marker. Then, we repeat on all elements before the marker.
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{|C|C|C!{\color{red}\vline}C|}\hline
+	2 & 7 & 8 & 15 \\\hline
+	\multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{\color{red}\uparrow} & \multicolumn{1}{c}{~}
+\end{array}
+\]\bigbreak
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{|C|C!{\color{red}\vline}C|C|}\hline
+	2 & 7 & 8 & 15 \\\hline
+	\multicolumn{1}{c}{~} & \multicolumn{1}{c}{\color{red}\uparrow} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~}
+\end{array}
+\]\bigbreak
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{|C!{\color{red}\vline}C|C|C|}\hline
+	2 & 7 & 8 & 15 \\\hline
+	\multicolumn{1}{c}{\color{red}\uparrow} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~}
+\end{array}
+\]\bigbreak
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{!{\color{red}\vline}C|C|C|C|}\hline
+	2 & 7 & 8 & 15 \\\hline
+\end{array}
+\]\bigbreak
+
+The list is now sorted. The complexity of this algorithm is $\Theta(n^2)$. See Section \ref{selectionsort} for more details.
+
+
+\subsubsection{Bubble Sort}
+\bigbreak
+
+
+Let's say we have the following list of size $n = 8$. 
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{|C|C|C|C|C|C|C|C|}\hline
+	34 & 7 & 19 & 35 & 2 & 8 & 10 & 22\\\hline
+	\multicolumn{1}{c}{\color{red}\uparrow} & \multicolumn{1}{c}{\color{blue}\uparrow} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~}
+\end{array}
+\]\bigbreak
+
+We start by comparing the first two elements with each other. If the element at the right (blue) arrow is larger than the left (red) one, then they swap. The red and blue counter advances. 
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{|C|C|C|C|C|C|C|C|}\hline
+	7 & 34 & 19 & 35 & 2 & 8 & 10 & 22\\\hline
+	\multicolumn{1}{c}{~} & \multicolumn{1}{c}{\color{red}\uparrow} & \multicolumn{1}{c}{\color{blue}\uparrow} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~}
+\end{array}
+\]\bigbreak
+
+This process repeats until the arrows reach the end of the list... 
+
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{|C|C|C|C|C|C|C|C|}\hline
+	7 & 19 & 34 & 2 & 8 & 10 & 22 & 35\\\hline
+	\multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{\color{red}\uparrow} & \multicolumn{1}{c}{\color{blue}\uparrow}
+\end{array}
+\]\bigbreak
+
+
+Now, we have ensured that the largest element in the list is at its final location. We can repeat the same process on all elements that are not sorted yet (at the moment, the first 7 elements). This takes $(n-1)$ iterations to do. After repeated the process once, the list will become
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{|C|C|C|C|C|C|C|C|}\hline
+	7 & 19 & 2 & 8 & 10 & 22 & 34 & 35\\\hline
+	\multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{\color{red}\uparrow} & \multicolumn{1}{c}{\color{blue}\uparrow} & \multicolumn{1}{c}{~}
+\end{array}
+\]\bigbreak
+
+This takes $(n-2)$ iterations to do. This repeats until we obtain the fully sorted list
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{|C|C|C|C|C|C|C|C|}\hline
+	2 & 7 & 8 & 10 & 19 & 22 & 34 & 35\\\hline
+	\multicolumn{1}{c}{\color{red}\uparrow} & \multicolumn{1}{c}{\color{blue}\uparrow} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~}
+\end{array}
+\]\bigbreak
+
+The total number of iterations this algorithm will take is $(n-1) + (n-2) + ... + 1 = \frac{n(n-1)}{2}$. This is a Gauss sum (minus $n$), so the complexity will be $\Theta(n^2)$ in the \textbf{worst case}.\\
+
+In the \textbf{best case}, if we include a Boolean variable to the algorithm called "sorted" which is initially true and switches to false if a swap occurs. In that case, if the list is initially fully sorted, then the number of iterations is $n - 1$ and the complexity if $\Theta(n)$.\\
+
+
+\subsubsection{Quick Sort}
+\bigbreak
+
+This algorithm uses a divide and conquer strategy. \\
+
+Such a strategy works by the following steps:\\
+
+\begin{itemize}
+	\item Define a pivot
+	\item Rearrange the list such that all elements that are less than the pivot are before it and all that are greater than the pivot come after it
+	\item We now know that the picot is in the right location. We then apply this strategy on the left and right sub-lists.
+\end{itemize}\bigbreak
+
+Using the following list,
+
+
 
 
 
