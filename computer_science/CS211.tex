@@ -1176,7 +1176,224 @@ In code, this is
 	double y = -1 + 2 * x;
 	
 	cout << y << endl;
+\end{lstlisting}\bigbreak
+
+
+\subsection{Functions}
+\bigbreak
+
+\subsubsection{Introduction}
+\bigbreak
+
+
+A function is a sequence of instructions with a name. It is almost like a mini-program.\\
+
+
+Why do we use functions?
+
+\begin{itemize}
+	\item Convenient for splitting the work into modules
+	\item Hiding details from the main() and making main() easier to understand (e.g. library function)
+	\item Avoid repetitions, when portions of the code have to be used more than once
+\end{itemize}\bigbreak
+
+A function can either
+
+\begin{itemize}
+	\item Calculate and return a value
+	\item Perform a task
+\end{itemize}\bigbreak
+
+
+\subsubsection{Declaration and Call}
+\bigbreak
+
+The function is \textbf{declared}, \textbf{defined} and \textbf{called} with a statement, just like any library function.\\
+
+For example, 
+
+\begin{lstlisting}
+	#include <cmath>
+	double x = 50.75;
+	double y = sqrt(x);
+	double z = pow(x, 3);
+	double cube(x); //but cube is not declared
+	int n = incr_by_value(n, value) //same as above
+\end{lstlisting}\bigbreak
+
+
+To declare a function, we need a \textbf{function heading}. We also should comment and explain what the function does. Something like
+
+\begin{lstlisting}
+	return_type fnct_name*(type ident, type ident, ...) {
+		\\ function b ody
+		Local declaration 
+		Calculations 
+		Return statement
+	}
+\end{lstlisting}\bigbreak
+
+For example, a function that calculates the cube of a value for a given variable of type double could be
+
+\begin{lstlisting}
+	#include <iostream>
+	using namespace std;
+	
+	/*********************************************
+	Function cube calculates the volume of a cube.
+	Parameter side: The side of the cube.
+	**********************************************/
+	
+	double cube(double s){
+		double v = s*s*s;
+		return v;
+	}
+
+
+	int main(){
+		double side;
+		cout << "Please enter the value of side: ";
+		cin >> side;
+		
+		double volume = cube(side);
+		
+		cout << "The volume is : " << volume;
+		
+		return 0;
+	}
+\end{lstlisting}\bigbreak
+
+
+The parameter of the call are called the \textit{actual parameters} (e.g. volume). The parameters of the function are called the \textit{formal parameters} (e.g. s). It is important that the actual parameters match the formal parameters the formal parameters in type and number.
+The formal parameters and the actual parameters might have different names.\\
+
+
+You must declare the function before it is called. For example, cube() must be before the function. \\
+
+There is an exception to this, if you use \textbf{function prototyping}. This is where you first declare the function before it is used and then assign it later. In prototyping it is not necessary to put the parameter names. For example, 
+
+\begin{lstlisting}
+ 	#include <iostream>
+ 	using namespace std;
+ 	
+ 	/*********************************************
+ 	Function cube calculates the volume of a cube.
+ 	Parameter side: The side of the cube.
+ 	**********************************************/
+ 	
+ 	double cube(double);  // prototyping
+ 	
+ 	int main(){
+ 		double side;
+ 		cout << "Please enter the value of side: ";
+ 		cin >> side;
+ 		
+ 		double volume = cube(side);
+ 		
+ 		cout << "The volume is : " << volume;
+ 		
+ 		return 0;
+ 	}
+ 	
+ 	 double cube(double s){
+ 		return s*s*s;
+ 	}
+ 	
+\end{lstlisting}\bigbreak
+
+Another example of a function is
+
+\begin{lstlisting}
+	#include <iostream>
+	using namespace std;
+	
+	
+	/*************************************
+	The function incr_by_val() increments
+	an integer v1 by another integer v2.
+	**************************************/
+	
+	int incr_by_val(int v1, int v2){	
+		return v1 + v2;	
+	}
+	
+	int main(){
+		int n = 4;
+		int increment = 3;
+		
+		n = incr_by_val(n,2);
+		cout << n << endl;
+	}	
+\end{lstlisting}\bigbreak
+
+
+We can also make functions that only perform a task, which does not return a value. We can use \textbf{void} in the place of the return type. For example,
+
+\begin{lstlisting}
+	void printline(int length) {
+		if (length >= 1) {
+			for (int i=1; i<=length; i++) {
+				cout << "-";
+			}
+		}
+		else {
+			return;	
+		}
+	
+		cout << "I am done with the function." << endl;
+	}
+\end{lstlisting}\bigbreak
+
+
+The following is a function that reads an integer between two values and keeps asking if it is not within that range.
+
+\begin{lstlisting}
+	int read_between(string what, int low, int high){
+		int input;
+		
+		do{
+			cout << "Please enter " << what << " between " << low << " and " << high << " :";
+			cin >> input;
+		} while(input < low || input > high);
+		
+		return input;
+	}
 \end{lstlisting}
+\bigbreak
+
+\subsubsection{The scope of a variable}
+\bigbreak
+
+
+The scope of a variable is the portion fo the program where the variable is defined and can be used. These variables are \textbf{local}. For example, 
+
+\begin{lstlisting}
+	int main() {
+		int var = 5;	// scope of var is the main	
+		printline(var);
+	}
+	
+	void printline(int n) {	// the scope of n is printline()
+		int index;		// The scope of index is printline()	
+	}
+\end{lstlisting}\bigbreak
+
+You can only access variables in their scope. This is why you can use the same name in different scopes and the values of the variables can be different.\\
+
+A variable declared in a block {} is visible in all the block, unless a var with the same name is declared in a n inner block.\\
+
+\begin{lstlisting}
+	int main() {
+		int n = 25;
+		if (choice == 'D') {
+			int n = 0;
+			cout << n;	// This prints 0
+		}
+		cout << n;	// This prints 25
+	}
+\end{lstlisting}\bigbreak
+
+
 
 
 
