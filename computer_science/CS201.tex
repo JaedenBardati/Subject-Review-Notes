@@ -1123,7 +1123,7 @@ There is, again, no best or worse cases. The number of iterations is always $n$.
 
 \pagebreak
 % Course video 31?
-\subsection{Other Sorting Algorithms: Selection \& Bubble Sort\\ {\normalfont October 13, 2021}}
+\subsection{Sorting Algorithms\\ {\normalfont October 13, 2021}}
 \bigbreak
 
 
@@ -1252,6 +1252,238 @@ Such a strategy works by the following steps:\\
 \end{itemize}\bigbreak
 
 Using the following list,
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{|C|C|C|C|C|C|C|C|}\hline
+	34 & 2 & 15 & 7 & 33 & 9 & 20 & 4 \\\hline
+\end{array}
+\]\bigbreak
+
+
+Where do we put the pivot?
+\begin{itemize}
+	\item Last element in the list
+	\item First element in the list
+	\item Median of sub-list
+\end{itemize}
+
+For our implementation, we will consider the first of these: Where the pivot (denoted by the red arrow) is initially at the last element in the list.\\
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{!{\color{green}\vline}C|C|C|C|C|C|C|C!{\color{green}\vline}}\arrayrulecolor{green}\hline
+	34 & 2 & 15 & 7 & 33 & 9 & 20 & 4 \\\hline\arrayrulecolor{black}
+	\multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~}  & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{\color{red}\uparrow}
+\end{array}
+\]\bigbreak
+
+Then, elements that are less than the pivot go to the left of the pivot, and elements that are greater than the pivot goes to the right.\\
+
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{!{\color{green}\vline}C!{\color{green}\vline}C!{\color{green}\vline}C|C|C|C|C|C!{\color{green}\vline}}\arrayrulecolor{green}\cline{1-1}\arrayrulecolor{black}\cline{2-3}\arrayrulecolor{green}\cline{3-8}\arrayrulecolor{black}
+	2 & 4 & 34 & 15 & 7 & 33 & 9 & 20 \\\arrayrulecolor{green}\cline{1-1}\arrayrulecolor{black}\cline{2-3}\arrayrulecolor{green}\cline{3-8}\arrayrulecolor{black}
+	\multicolumn{1}{c}{~} & \multicolumn{1}{c}{\color{red}\uparrow} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~}  & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~}
+\end{array}
+\]\bigbreak
+
+We know know that the pivot is in the correct position. We end up with two sub-lists now. Since the left sub-list is of size 1, we leave it as it is. And now we pick a pivot for the right sub-list (green boxes). We choose the rightmost element (20) and proceed with the algorithm. 
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{|C|C!{\color{green}\vline}C|C|C|C|C|C!{\color{green}\vline}}\arrayrulecolor{black}\cline{1-3}\arrayrulecolor{green}\cline{3-8}\arrayrulecolor{black}
+	2 & 4 & 34 & 15 & 7 & 33 & 9 & 20 \\\arrayrulecolor{black}\cline{1-3}\arrayrulecolor{green}\cline{3-8}\arrayrulecolor{black}
+	\multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~}  & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{\color{red}\uparrow}
+\end{array}
+\]\bigbreak
+
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{|C|C!{\color{green}\vline}C|C|C!{\color{green}\vline}C!{\color{green}\vline}C|C!{\color{green}\vline}}\arrayrulecolor{black}\cline{1-3}\arrayrulecolor{green}\cline{3-6}\arrayrulecolor{black}\cline{6-7}\arrayrulecolor{green}\cline{7-8}\arrayrulecolor{black}
+	2 & 4 & 15 & 7 & 9 & 20 & 34 & 33 \\\arrayrulecolor{black}\cline{1-3}\arrayrulecolor{green}\cline{3-6}\arrayrulecolor{black}\cline{6-7}\arrayrulecolor{green}\cline{7-8}\arrayrulecolor{black}
+	\multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~}  & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{\color{red}\uparrow} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~}
+\end{array}
+\]\bigbreak
+
+
+Now we repeat this on the new sub-lists.
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{|C|C!{\color{green}\vline}C|C|C!{\color{green}\vline}C!{\color{green}\vline}C|C!{\color{green}\vline}}\arrayrulecolor{black}\cline{1-3}\arrayrulecolor{green}\cline{3-6}\arrayrulecolor{black}\cline{6-7}\arrayrulecolor{green}\cline{7-8}\arrayrulecolor{black}
+	2 & 4 & 15 & 7 & 9 & 20 & 34 & 33 \\\arrayrulecolor{black}\cline{1-3}\arrayrulecolor{green}\cline{3-6}\arrayrulecolor{black}\cline{6-7}\arrayrulecolor{green}\cline{7-8}\arrayrulecolor{black}
+	\multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~}  & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{\color{red}\uparrow} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{\color{red}\uparrow}
+\end{array}
+\]\bigbreak
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{|C|C!{\color{green}\vline}C!{\color{green}\vline}C!{\color{green}\vline}C!{\color{green}\vline}C|C!{\color{green}\vline}C!{\color{green}\vline}}\arrayrulecolor{black}\cline{1-3}\arrayrulecolor{green}\cline{3-4}\arrayrulecolor{black}\cline{4-5}\arrayrulecolor{green}\cline{5-6}\arrayrulecolor{black}\cline{6-7}\arrayrulecolor{green}\cline{8-8}\arrayrulecolor{black}
+	2 & 4 & 7 & 9 & 15 & 20 & 33 & 34 \\\arrayrulecolor{black}\cline{1-3}\arrayrulecolor{green}\cline{3-4}\arrayrulecolor{black}\cline{4-5}\arrayrulecolor{green}\cline{5-6}\arrayrulecolor{black}\cline{6-7}\arrayrulecolor{green}\cline{8-8}\arrayrulecolor{black}
+	\multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~}  & \multicolumn{1}{c}{\color{red}\uparrow} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{\color{red}\uparrow} & \multicolumn{1}{c}{~}
+\end{array}
+\]\bigbreak
+
+Since all the sub-lists are of size one, the algorithm is finished and the sorted list is 
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{|C|C|C|C|C|C|C|C|}\hline
+	2 & 4 & 7 & 9 & 15 & 20 & 33 & 34\\\hline
+\end{array}
+\]\bigbreak
+
+As for the complexity, the \textbf{worse case} will happen when each pivot that is selected fails to divide the list. In this case, the complexity is $\Theta(n^2)$.\\
+
+In the \textbf{best case}, we divide each list in half. In this case, the complexity is $\Theta(n \log_2n)$.\\
+
+
+
+\section{Hardware}
+\bigbreak
+
+\subsection{Binary Numbering Systems}
+\bigbreak
+\subsubsection{Introduction and Definitions\\ {\normalfont October 13, 2021}}
+\bigbreak
+
+A \textbf{positional numbering system} of base $b$ and is given by
+
+\begin{itemize}
+	\item A natural number for the base $b$ (e.g. 2, 3, 4, 5, ...)
+	\item A set of simple digits that contain $b$ digits (e.g. digits 0, 1, 2, ...,  ($b-1$))
+	\item Position is used to determine the power of $b$ by which the digit is multiplied
+\end{itemize}\bigbreak
+
+
+A number in that numbering system is written as $(A)_b = A_mA_{m-1}...A_1A_0.A_{-1}A_{-2}...A_{-n}$. The part in front of the fractional dot is the \textit{integer part} and the part after is the \textit{fractional part}.\\
+
+This is equivalent to $(A)_b = A_m\times b^m + A_{m-1}\times b^{m-1} + ... + A_1\times b^1 + A_0\times b^0 + A_{-1}\times b^{-1} + A_{-2}\times b^{-2} + ... + A_{-n}\times b^{-n}$.\\
+
+If no base is specified, we assume that the base is base 10.\\
+
+For example, $(4327)_{10} = 4 \times 10^3 + 3 \times 10^2 + 3 \times 10^1 + 7 \times 10^0 = 4327$.\\
+Similarly, $(3.25)_{10} = 3 \times 10^0 + 2 \times 10^{-1} + 5 \times 10^{-2} = 3.25$.\\
+
+Let's say now we have $(4021)_5$. By the formula above, 
+
+\begin{align*}
+	(4021)_5 &= 4 \times 5^3 + 0 \times 5^2 + 2 \times 5^1 + 1 \times 5^0\\
+	&=  4 \times 125 + 0 \times 25 + 2 \times 5 + 1 \times 1\\
+	&= (511)_{10}
+\end{align*}\bigbreak
+
+
+Another example, 
+
+\begin{align*}
+	(127.4)_5 &= 1 \times 5^2 + 2 \times 5^1 + 7 \times 5^0 + 4 \times 5^{-1}\\
+	&=  1 \times 25 + 2 \times 5 + 7 \times 1 + \frac{4}{8}\\
+	&= (87.5)_{10}
+\end{align*}\bigbreak
+
+
+In we write $(521)_4$, this is incorrect. This is because there is no digit 5 in base 4 (the only allowed symbols are 0, 1, 2, and 3).\\
+
+The most frequent bases are decimal (base 10), binary (base 2), octal (base 8), and hexadecimal (base 16). Note that both octal and hexdecimal have bases that are powers of two ($8=2^3$ and $16=2^4$), so it is convenient to use for computers (since they run on binary).\\
+
+For a binary example, 
+
+\begin{align*}
+	(11011.01)_2 &= 1 \times 2^4 + 1 \times 2^3 + 0 \times 2^2 + 1 \times 2^1 + 1 \times 2^0 + 0 \times 2^{-1} + 1 \times 2^{-2} \\
+	&=  1 \times 16 + 1 \times 8 + 0 \times 4 + 1 \times 2 + 1 \times 1 + \frac{0}{2} + \frac{1}{4} \\
+	&= (27.25)_{10}
+\end{align*}\bigbreak
+
+In binary, the allowed symbols are 0 and 1.\\
+In octal, the allowed symbols are 0,1,2,3,4,5,6,7.\\
+In hexadecimal, the allowed symbols are 0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F.\\
+
+For a hexadecimal example,
+
+\begin{align*}
+	(\mathrm{B657})_{16} &= 11 \times 16^3 + 6 \times 16^2 + 5 \times 16^1 + 7 \times 16^0 \\
+	&= (46687)_{10}
+\end{align*}\bigbreak
+
+Notice that hexadecimal is much more compact than in decimal or binary.\\
+
+
+\subsubsection{Base conversion\\ {\normalfont October 13, 2021}}
+\bigbreak
+
+We have already converted from an arbitrary base to base 10. But how do we convert from base 10 to another base?\\
+
+Starting with the \textit{integer part}, we will apply successive \textit{divisions} by the base and accumulate the remainders. \\
+
+For example, if we want to convert $(53)_10$ to binary ($b=2$), we divide by 2 to get \textit{26} with a remainder of \textbf{1}. Then, we divide again by 2 to get \textit{13} with a remainder of \textbf{0}, again to get \textit{6} with remainder \textbf{1}, again to get \textit{3} with a remainder of \textbf{0}, again to get \textit{1} with a remainder of \textbf{1} and once more to get \textit{0} with a remainder of \textbf{1}. When we reach 0, we stop. Now, we accumulate the remainders (going \textbf{backwards}) to get that $(53)_{10} = (110101)_2$.\\
+
+We can apply the same method to convert $(53)_10$ to octal, giving that $(53)_10 = (65)_8$.\\
+
+For the \textit{fractional part},we successively \textit{multiply} by the base and accumulate the integer parts.\\
+
+For example, if we want to convert $(0.6875)_10$ to binary ($b = 2$), we multiply by 2 to get \textit{\textbf{1}.375}. We multiply the fractional part of the result by 2 again to get \textit{\textbf{0}.75}, again to get \textit{\textbf{1}.5}, and again to get \textit{\textbf{1}.0}. Since the fractional part is now 0, we stop. Now, we accumulate the integer parts (going \textbf{forwards}) to get that $(0.6875)_{10} = (0.1011)_2$.\\
+
+\subsubsection{Octal \& Hexadecimal systems\\ {\normalfont October 13, 2021}}
+\bigbreak
+
+The following table shows the conversions between octal and binary.
+
+\begin{center}
+	\begin{table}[h]\centering
+		\begin{tabular}{|c|c|}
+			\hline
+			Octal & Binary \\ \hline
+			0     & 000     \\
+			1     & 001     \\
+			2     & 010     \\
+			3     & 011     \\
+			4     & 100     \\
+			5     & 101     \\
+			6     & 110     \\
+			7     & 111    \\\hline
+		\end{tabular}
+	\end{table}\bigbreak
+\end{center}
+
+Using this table, we can easily convert, for example, $(562)_8$ to binary. It is simply $(562)_8 = (101~110~010)_2$. Similarly, we know that $(110~011~010~001)_2 = (6321)_8$.\\
+
+We can use the same strategy for hexadecimal.
+
+\begin{center}
+	\begin{table}[h]\centering
+		\begin{tabular}{|c|c|}
+			\hline
+			Hexadecimal & Binary \\ \hline
+			0           & 0000   \\
+			1           & 0001   \\
+			2           & 0010   \\
+			3           & 0011   \\
+			4           & 0100   \\
+			5           & 0101   \\
+			6           & 0110   \\
+			7           & 0111   \\
+			8           & 1000   \\
+			9           & 1001   \\
+			A           & 1010   \\
+			B           & 1011   \\
+			C           & 1100   \\
+			D           & 1101   \\
+			E           & 1110   \\
+			F           & 1111   \\ \hline
+		\end{tabular}
+	\end{table}
+\end{center}
+
+Using this table, we can easily convert, for example, $(\mathrm{5AB1})_{16}$ to binary. It is simply $(\mathrm{5AB1})_{16} = (0101~1010~1011~0001)_2$. Similarly, we know that $(1101~0111~1111)_2 = (\mathrm{D7F})_{16}$.\\
+
+We use hexadecimal and octal because they are compact, and because conversion to/from binary is easier.\\
+
+Hexadecimal is used to represent memory addresses. \\
+
 
 
 
