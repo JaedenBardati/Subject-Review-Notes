@@ -72,6 +72,15 @@
 	\vskip0.5em}
 }
 
+
+% My colors
+\colorlet{mygray}{gray!3}
+\colorlet{myyellow}{yellow!40}
+\colorlet{mygreen}{green!40}
+\colorlet{myblack}{black!40}
+\colorlet{myblue}{blue!28}
+
+
 % Title
 \title{\textbf{CS 211 Notes}}
 \subtitle{Introduction to Programming}
@@ -1394,6 +1403,309 @@ A variable declared in a block {} is visible in all the block, unless a var with
 \end{lstlisting}\bigbreak
 
 
+\subsubsection{Global Variables\\ {\large \normalfont October 22, 2021}}
+\bigbreak
+
+Global variables are defined \textit{outside of the main and all other functions in the program}.\\
+
+Their scope extends to all functions \textbf{defined after}. That is to say, they can be accessed and modified (read/write) from all functions (including the main) defined after.\\
+
+Global variables are not recommended and are regarded as bad programming practice.\\
+
+For example, the following program uses a global variable (passing by value) to calculate a Gauss sum.\\
+
+\begin{lstlisting}
+	#include <iostream>
+	using namespace std;
+	
+	int sum = 0;	// Global variable
+	
+	void calculate_sum(int last) {
+		for (int i=0;i<=last;i++) {
+			sum += i;
+		}
+	}
+
+	int main() {
+		calculate_sum(5);
+		
+		cout << sum;
+	}
+	
+\end{lstlisting}\bigbreak
+
+The following is the \textbf{scope diagram} for the variables in the above program.\\
+
+\begin{center}
+	\begin{tikzpicture}\centering
+		% program box
+		\draw[fill=mygray] (-3,0) node [text=black,anchor=south,xshift=3cm] {Program} rectangle (3,-10.5) ;
+		
+		% calculate sum box
+		\draw[fill=myyellow] (-2,-2.5) node [text=black,anchor=south,xshift=2cm] {calculate\_sum()} rectangle (2,-5.5) ;
+		
+		% for sub-box
+		\draw[fill=mygreen] (-0.5,-3.5) node [text=black,anchor=south,xshift=1cm] {for loop} rectangle (1.5,-5) ;
+		
+		% main box
+		\draw[fill=myblack]
+		(-2,-6.5) node [text=black,anchor=south,xshift=2cm] {main()} rectangle (2,-9.5) ;
+		
+		\draw[fill=myblue] (-2,-1) circle (0.6) (-2,-1)  node [text=black] {sum}		% global variable sum
+		(-1.2,-3.3) circle (0.45) (-1.2,-3.3)  node [text=black] {last}				% calculate_sum last
+		(0,-4) circle (0.3) (0,-4)  node [text=black] {i} 							% for loop i
+		(-1.2,-7.3) circle (0.45) (-1.2,-7.3)  node [text=black] {n} ;				% main n
+	\end{tikzpicture}
+\end{center}\bigbreak\bigbreak
+
+If the above program were written using local variables (passing by value) instead, one could write:\\
+
+\begin{lstlisting}
+	#include <iostream>
+	using namespace std;
+	
+	int calculate_sum(int last){
+		int result = 0;		// local variable
+		
+		for(int i = 0; i <= last; i++) {
+			result += i;
+		}	
+		
+		return result;
+	}
+	
+	int main(){
+		int sum;		// local variable
+		
+		sum = calculate_sum(5);
+		
+		cout << sum;
+	}
+\end{lstlisting}\bigbreak
+
+
+\subsubsection{Reference parameters}
+\bigbreak
+
+The parameters we've used so far are called \textbf{value parameters}. When a function is called, the \textbf{value} of the actual parameter \textbf{is copied} into the formal parameter. In that case, we say that parameters are \textbf{passed by value}.\\
+
+When we passing by value, formal and actual parameters are \textbf{physically different} and only values can be passed. That is to say, both the formal and actual parameters have different locations in memory. Therefore, \textit{changes to the formal parameter in the function will not affect the actual parameter}. For example, \\
+
+\begin{lstlisting}
+	void foo(int last){
+		last = 2;
+	}
+	
+	int main(){
+		int n = 5;
+		
+		foo(n);
+		
+		// n is still 5, it has not been changed by foo()
+	}
+\end{lstlisting}\bigbreak
+
+
+
+An alternative solution is to pass parameters \textbf{by reference}. These are called \textbf{reference parameters}. In this case, the formal parameter (in the function header) \textit{is not a local variable} within the function.\\
+
+The function will instead have access to the \textit{actual parameter} within the main. The function can use the value of the actual parameter from the main (a local variable to main) and change it directly. \\
+
+To pass a parameter by reference in C++, we use the \& symbol. For example,\\
+
+
+\begin{lstlisting}
+	void foo(int &last){
+		last = 2;
+	}
+	
+	int main(){
+		int n = 5;
+		
+		foo(n);
+		
+		// n is now 2, it has been changed by foo()
+	}
+\end{lstlisting}\bigbreak
+
+Any change to last will affect n because of the use of the \& character. We would say that the variable last is a \textbf{pointer} for the variable n. There is \textit{no new variable physically} (in memory), last is simply another name for n.\\
+
+When passing by value, a function can only calculate one value and return to the main. However, all parameters passed by reference can be changed by the function within the main. Therefore, \textit{if we want to return multiple values}, we can use a function of type void and pass parameters by reference if we need to calculate multiple values by a function.\\
+
+We will now repeat the local and global variable (passing by value) example, now adjusted to pass by parameter.\\
+\begin{lstlisting}
+	#include <iostream>
+	using namespace std;
+	
+	void calculate_sum(int &result, int last) {
+		for(int i = 0; i <= last; i++) {
+			result += i;
+		}
+	}
+	
+	int main(){
+		int sum = 0;
+		
+		calculate_sum(sum, 5);
+		
+		cout << sum;
+	}
+\end{lstlisting}\bigbreak
+
+Note that the parameter result is passed by reference, but the parameter last is passed by value.\\
+
+Note also that we can not pass a constant by reference, since it has no location in memory.\\
+
+
+\subsection{Arrays}
+\bigbreak
+
+An array is a \textbf{structure} for storing \textbf{multiple values} of the \textbf{same type}.\\
+
+For example, suppose we are reading the numbers 5, 10, 3, 12, and 1.\\
+
+We could find the largest of the values and print the result and it's index in the list (here, 12 fourth position). This is much more convenient for large data, when, for instance, reading each input in a different integer variable (a=5, b=10, etc.). \\
+
+Instead, we could store all the values in one structure that is an array. The type of the array is int and the size is 5. All elemetns in the array are associateed with an incremental index that starts from zero.
+
+\begin{center}
+	\begin{table}[h]\centering
+		\begin{tabular}{|c|c|c|c|c|c|}\hline
+			index & 0 & 1 & 2 & 3 & 4 \\ \hline
+			element & 5 & 10 & 3 & 12 & 1 \\ \hline
+		\end{tabular}
+	\end{table}
+\end{center}
+
+\subsubsection{Defining arrays}
+\bigbreak
+
+We can define an array of type int with size 34 as follows:
+
+\begin{lstlisting}
+	int marks[34];  // define but not initialized
+\end{lstlisting}\bigbreak
+
+Often it is useful to create a constant variable for the size of the array.
+
+\begin{lstlisting}
+	int SIZE = 34
+	int marks[SIZE];  // define but not initialized
+\end{lstlisting}\bigbreak
+
+We can also initialize arrays.
+
+\begin{lstlisting}
+	int numbers[5] = {6, 3, -2, 0, 10};  // defined and initialized
+\end{lstlisting}\bigbreak
+
+There is no need to put the size of the array if we initialize it.
+
+\begin{lstlisting}
+	int numbers[] = {6, 3, -2, 0, 10};  // defined and initialized
+\end{lstlisting}\bigbreak
+
+If we give a size that is different from what is initialized. If the given size is greater than the size of the array passed to be initialized, it will fill the rest with zeros. Otherwise, if the given size is less than the size of the array passed to be initialized, it will give an error. 
+
+\begin{lstlisting}
+	int special[5] = {6, 3};  				// special = [6, 3, 0, 0, 0]
+	int error[2] = {6, 3, -2, 0, 10};		// This results in a compile error
+\end{lstlisting}\bigbreak
+
+If we want an array of size 5 to be initialized with all 0s, we can do
+
+\begin{lstlisting}
+	int grades[5] = {};
+\end{lstlisting}\bigbreak
+
+You can also declare an array of other types.
+
+\begin{lstlisting}
+	string names[34]; 								// names = ["", "", ...]
+	char vowels[] = {'a', 'e', 'i', 'o', 'u'};
+\end{lstlisting}\bigbreak
+
+
+\subsubsection{Accessing array elements}
+\bigbreak
+
+We can access arrays using square brackets as follows. We can read/write as with regular variables.
+
+\begin{lstlisting}
+	int A[5];
+	
+	A[3] = 25;					\\ set value at index 3 to 25
+	A[4] = A[3] + 1;			\\ set value at index 4 to the value at index 3 plus one
+\end{lstlisting}\bigbreak
+
+If we want to print the contents of an array, we must iterate through each of the elements and print them individually.
+
+\begin{lstlisting}
+	for (int i=0;i<5;i++){
+		cout << A[i] << endl;
+	}
+\end{lstlisting}\bigbreak
+
+Since we have not initialized A[0], A[1], and A[2], they contain \textbf{garbage} (arbitrary, meaningless values).\\
+
+
+The following is an example code to enter a sequence of grades using an array and calculate various properties of the set.\\
+
+\begin{lstlisting}
+	#include <iostream>
+	using namespace std;
+	
+	int main(){
+		
+		int Grades[5] = {}; 	// initialized with zeros
+		int grade;
+		int size = 0;
+		
+
+		// Get grades
+		for(int i=0;i<5;i++){
+			
+			cout << "Please enter a grade or -1 to quit: ";
+			cin >> grade;
+			
+			if(grade == -1){
+				break;		\\ exits for loop
+			} else {
+				Grades[i] = grade;
+				size++;
+			}
+		}
+		
+		
+		// Calculate average of grades
+		int sum = 0;
+		
+		for(int i=0; i<size; i++) {
+			sum = sum + Grades[i];
+		}
+		
+		double average = sum/(double)size;
+		
+		cout << "Average is: " << average;
+		
+		
+		/// Find the maximum and minimum grades
+		
+		int max = Grades[0];
+		int min = Grades[0];
+		
+		for(int i=1; i<size; i++) {
+			if(Grades[i] > max) {
+				max = Grades[i];
+			}
+			if(Grades[i] < min) {
+				min = Grades[i];
+			}
+		}
+		
+		cout << "Max is: " << Max << endl;
+		cout << "Min is: " << Min << endl;
+\end{lstlisting}\bigbreak
 
 
 
