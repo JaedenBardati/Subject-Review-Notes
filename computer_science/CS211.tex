@@ -52,6 +52,25 @@
 }
 
 
+% Algorithms
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage[noend]{algpseudocode}
+\newcommand{\Get}{\State \textbf{get}~}
+\newcommand{\Set}{\State \textbf{set}~}
+\newcommand{\Print}{\State \textbf{print}~}
+\newcommand{\Getx}[1]{\Statex \algindent{#1} \textbf{get}~}		% x denotes non-numbered lines
+\newcommand{\Setx}[1]{\Statex \algindent{#1} \textbf{set}~}	% enter the number of lines to indent
+\newcommand{\Printx}[1]{\Statex \algindent{#1} \textbf{print}~}
+\newcommand{\Stop}{\State \textbf{stop}~}
+\newcommand{\algindent}[1]{\Repeat{#1}{\hskip\algorithmicindent}}
+\algdef{SE}[DOWHILE]{Do}{doWhile}{\algorithmicdo}[1]{\algorithmicwhile\ (#1)}
+
+%tables for list representation
+\usepackage{arydshln, collcell}
+\newcolumntype{C}{>{\collectcell\mathsf}c<{\endcollectcell}}
+
+
 % Fixes weird backwards quote thing
 \usepackage [english]{babel}
 \usepackage [autostyle, english = american]{csquotes}
@@ -162,7 +181,7 @@ Words in RAM are addressed with a byte themselves (e.g. 01101101 is an address).
 Words in RAM can be data or machine code instructions. Instructions contain a binary code for each operation (for example, addition). Instructions codes are dependent on the CPU.
 
 
-\section{Computer Organization}
+\section{C++ Programming}
 \bigbreak
 
 % Course Video 7
@@ -1705,8 +1724,315 @@ The following is an example code to enter a sequence of grades using an array an
 		
 		cout << "Max is: " << Max << endl;
 		cout << "Min is: " << Min << endl;
+	
+		return 0;
+	}
 \end{lstlisting}\bigbreak
 
+\subsection{Implementation of Algorithms}
+
+\subsubsection{The Sequential Search Algorithm\\ {\normalfont November 2nd, 2021}} \label{sequentialsearchalgorithm}
+\bigbreak
+
+Given a dataset of a given size $N$ and given a target, is the target in the dataset?\\
+
+For example, if the dataset is the list [13, 4, 5, -20, 45, 112] with $N = 6$. Is the target 45 in the dataset? Yes. Is the target 130 in the dataset? No. \\
+
+To solve for much larger values of N, we can search sequentially through the list until we reach the target (the target is in the list), or the end of the list (the target is not in the list).\\
+
+Let us assume we have a list of size $N$ whose elements are $L_1$, $L_2$, ..., $L_N$ and a target element called Target.
+
+\begin{algorithm}
+	\caption{\\Sequential Search Algorithm}
+	\begin{algorithmic}[1]
+		\Get $L_1$, $L_2$, ..., $L_N$, $N$, Target
+		\Set Found = No
+		\Set $i$ = 1
+		\While{Found = No AND $i$ <= $N$}
+		\If{($L_i$ == Target)}
+		\Set Found = Yes
+		\Else
+		\Set $i$ = $i$ + 1
+		\EndIf
+		\EndWhile
+		\If{Found = Yes}
+		\Print "Target in list."
+		\Else
+		\Print "Target not in list."
+		\EndIf
+		\Stop
+	\end{algorithmic}
+\end{algorithm}\bigbreak
+
+We can implement the sequential search algorithm in C++ with the following code.
+
+\begin{lstlisting}
+	#include <iostream>
+	using namespace std;
+	
+	int main(){
+		
+		// Declarations
+		const int N = 10;
+		int data[N];		// data is L in the algorithm
+		int target;
+		
+		// Read data
+		cout << "Please enter " << N << " elements: ";
+		for (int i=0; i<N; i++)
+			cin >> data[i];
+		
+		cout << "Please enter a target: ";
+		cin >> target;
+		
+		// Search
+		bool found = false;
+		int index = 0;
+		while(!found && index<N) {
+			if (data[index] == target)
+				found = true;
+			else
+				index++;
+		}
+		
+		if(found)
+			cout << "Target is in the list at index " << index << endl;
+		else
+			cout << "Target is not in the list" << endl;
+		
+		return 0;
+	}
+\end{lstlisting}\bigbreak
+
+
+\subsubsection{The Selection Sort Algorithm} \label{selectionsort}
+\bigbreak
+
+Given a list of $n$ elements, we need to sort the list from smallest to largest.\\
+
+For example, if the ($n = 5$) list = 5, 7, 2, 8, 3, then the sorted list should = 2, 3, 5, 7, 8.\\
+
+Let's say we have the $n = 4$ list
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{|C|C|C|C!{\color{red}\vline}}\hline
+	2 & 15 & 8 & 7 \\\hline
+	\multicolumn{1}{c}{~} & \multicolumn{1}{c}{\color{red}\uparrow} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~}
+\end{array}
+\]\bigbreak
+
+We scan the list and find the largest (denoted by the red arrow). We also start with a marker (red line) equal to the length of the list. Then, we swap the element at that index with the last element and decrement the marker. Then, we repeat on all elements before the marker.
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{|C|C|C!{\color{red}\vline}C|}\hline
+	2 & 7 & 8 & 15 \\\hline
+	\multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{\color{red}\uparrow} & \multicolumn{1}{c}{~}
+\end{array}
+\]\bigbreak
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{|C|C!{\color{red}\vline}C|C|}\hline
+	2 & 7 & 8 & 15 \\\hline
+	\multicolumn{1}{c}{~} & \multicolumn{1}{c}{\color{red}\uparrow} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~}
+\end{array}
+\]\bigbreak
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{|C!{\color{red}\vline}C|C|C|}\hline
+	2 & 7 & 8 & 15 \\\hline
+	\multicolumn{1}{c}{\color{red}\uparrow} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~} & \multicolumn{1}{c}{~}
+\end{array}
+\]\bigbreak
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{!{\color{red}\vline}C|C|C|C|}\hline
+	2 & 7 & 8 & 15 \\\hline
+\end{array}
+\]\bigbreak\bigbreak
+
+Now, the list is sorted. We can write the algorithm.\\
+
+\begin{algorithm}
+	\caption{\\Selection Sort}
+	\begin{algorithmic}[1]
+		\Get $n, L_1, ..., L_n$
+		\Set Marker = $n$
+		\While{(Marker > 1)}
+		\Set largest = FindLargest($L_1, ..., L_{\mathrm{Marker}}$)
+		\State Swap(largest, $L_{\mathrm{Marker}}$)
+		\Set Marker = Marker - 1
+		\EndWhile
+		\Stop
+	\end{algorithmic}
+\end{algorithm}
+
+We can implement the selection sort algorithm in C++ with the following code.
+
+\begin{lstlisting}
+	#include <iostream>
+	using namespace std;
+	
+	int main(){
+		
+		// Declarations
+		const int N = 10;
+		int data[N];		// data is L in the algorithm
+		
+		// Read data
+		cout << "Please enter " << N << " elements: ";
+		for (int i=0; i<N; i++)
+			cin >> data[i];
+		
+		// Sort
+		for(int marker = N-1; marker>0; marker--){
+			
+			// find index with the largest value
+			int largest = 0;
+			for (int i=1; i<=marker;i++) {	
+				if(data[i] > data[largest]) {
+					largest = i;
+				}
+			}
+		
+			// swap L_largest and L_marker
+			int temp = data[largest];
+			data[largest] = data[marker];
+			data[marker] = temp;
+			
+		}
+		
+		// Return list
+		for (int i = 0; i<N; i++)
+			cout << data[i] << " ";
+		
+		return 0;
+	}
+\end{lstlisting}\bigbreak
+
+
+
+\subsubsection{The Binary Search Algorithm} \label{binarysearch}
+\bigbreak
+
+The objective of this algorithm is to search for an item in a list.\\
+
+The \textit{sequential search} is one way to do this. Recall that it has a complexity of $\Theta(n)$. \textit{Can we make the search faster?}\\
+
+The answer is \textbf{yes, but the list must be sorted}. If the list is sorted, then we can use the \textbf{binary search} (also called the \textit{half interval search}).\\
+
+For example, we will use the following list with $n = 7$.
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{|C|C|C|C|C|C|C|}\hline
+	5 & 16 & 25 & 32 & 38 & 57 & 58 \\\hline
+	\multicolumn{1}{c}{\color{green}\uparrow} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{\color{blue}\uparrow} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{\color{red}\uparrow}
+\end{array}
+\]
+
+And let our be target = 57.\\
+
+We will define Start = 1 and End = 7 and we will also define Mid = $\frac{\mathrm{Start + End}}{2}=\frac{1 + 7}{2} = 4$. The value at the index Start is denoted by the green colored arrow, End by the red colored arrow, and Mid by the blue colored arrow. \\
+
+We then get the value at mid and check if it is less than target. It is, therefore, we set start = mid + 1 = 5. And we recalculate mid =  $\frac{\mathrm{Start + End}}{2}=\frac{5 + 7}{2} = 6$. Our new list is
+
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{|C|C|C|C|C|C|C|}\hline
+	5 & 16 & 25 & 32 & 38 & 57 & 58 \\\hline
+	\multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{1}{c}{\color{green}\uparrow} & \multicolumn{1}{c}{\color{blue}\uparrow} & \multicolumn{1}{c}{\color{red}\uparrow}
+\end{array}
+\]
+
+Now, we get the value at mid which is 57. We check if it equals our target and it does, therefore, we say that our target is found (and at the index mid). We stop the algorithm there. \\
+
+For this particular setup, it took 2 iterations. This is much faster than the 6 steps that it would have taken to do with sequential search.\\
+
+Does this mean that the binary search is better than sequential search? Well, for finding a target it is. However, there is some time that is taken when initially sorting the list in the first place. If fast storage of data is required, perhaps the binary search is not the best option.\\
+
+We will build now the algorithm.
+
+\begin{algorithm}
+	\caption{\\Binary Search}
+	\begin{algorithmic}[1]
+		\Get $n, L_1, ..., L_n$
+		\Get Target
+		\Set Found = No
+		\Set Start, End = 1, N
+		\While{(Found = No AND Start $\ne$ End)}
+		\Set Mid = $\frac{\mathrm{Start + End}}{2}$
+		\If{($L_{\mathrm{Mid}}$ = Target)}
+		\Set Found = Yes
+		\Else
+		\If{(Target < $L_{\mathrm{Mid}}$)}
+		\Set End = Mid - 1
+		\Else
+		\Set Start = Mid + 1
+		\EndIf
+		\EndIf
+		\EndWhile
+		\If{(Found = Yes)}
+		\Print "Target found"
+		\Else
+		\Print "Target not found"
+		\EndIf
+		\Stop
+	\end{algorithmic}
+\end{algorithm}
+
+We can implement the binary search algorithm in C++ with the following code.
+
+\begin{lstlisting}
+	#include <iostream>
+	using namespace std;
+	
+	int main(){
+		
+		// Declarations
+		const int N = 10;
+		int data[N];		// data is L in the algorithm
+		int target;
+		
+		// Read data
+		cout << "Please enter " << N << " sorted elements: ";
+		for (int i=0; i<N; i++)
+		cin >> data[i];
+		
+		cout << "Please enter a target: ";
+		cin >> target;
+		
+		// Search
+		bool found = false;
+		int start = 0;
+		int last = N - 1;       // last is End in the algorithm
+		int mid;
+		
+		while (!found && start < last){
+			mid = (start + last)/2;
+			if (data[mid] == target)
+				found = true;
+			else
+				if(target < data[mid])
+					last = mid - 1;
+				else
+					start = mid + 1;
+		}
+		
+		if(found)
+			cout << "Target is in the list at index " << mid << endl;
+		else
+			cout << "Target is not in the list" << endl;
+		
+		return 0;
+	}
+
+\end{lstlisting}\bigbreak
 
 
 
