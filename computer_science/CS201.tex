@@ -2131,6 +2131,168 @@ Let's do a larger example: Express the following using the sum of products.
 For the first time $f=1$, we get $\bar{x}y\bar{z}$, then $\bar{x}yz$, and so on. In the end, we get that $f = \bar{x}y\bar{z} + \bar{x}yz + xy\bar{z} + xyz$. This simplifies to just $f=y$. \\
 
 
+\subsection{Combinational Logic Circuits}
+
+A \textbf{logic circuit} is a circuit that 
+
+\begin{itemize}
+	\item Takes $n$ binary inputs
+	\item Transforms inputs using logic gates
+	\item Produce $m$ binary outputs
+\end{itemize}\bigbreak
+
+When we say that a logic circuit is \textbf{combinational}, we mean that the outputs at a given time $t$ depend only on the inputs at time $t$. In other words, there is no notion of what the circuit has done in the past nor what it will do in the future.\\
+
+The opposite of a combinational logic circuit is a \textbf{sequential} logic circuit that \textit{does} depend on time. An example of a sequential logic circuit is an a digital clock.\\
+
+If a logic circuit has $n$ inputs, it has $2^n$ possible combinations of binary input.\\
+
+The steps that one must follow in order to build a combinational logic circuit (CLC) is
+\begin{enumerate}
+	\item From the description, build the truth table
+	\item From the truth table, build the Boolean expression (from the sum of products)
+	\item (optional) Simplify the Boolean expression
+	\item Draw logic diagram and implement on a circuit board
+\end{enumerate}\bigbreak
+
+\subsubsection{Examples}
+\bigbreak
+
+\textbf{Example 1:} Build a CLC that takes as input an integer between 0 and 7, detects if the input is greater or equal to 5. That is, if the input is greater than 5 then $f=1$, otherwise $f=0$. \\
+
+The input is an integer, so it must be converted to binary. We need 3 bits to represent 8 numbers. We will call these bits $a$, $b$ and $c$. Now we can construct the truth table.\\
+
+\begin{center}
+	\begin{tabular}{|c|c|c|c|}
+		$a$ & $b$ & $c$ & $f$ \\\hline
+		0 & 0 & 0 & 0\\
+		0 & 0 & 1 & 0\\
+		0 & 1 & 0 & 0\\
+		0 & 1 & 1 & 0\\
+		1 & 0 & 0 & 0\\
+		1 & 0 & 1 & 1\\
+		1 & 1 & 0 & 1\\
+		1 & 1 & 1 & 1\\
+	\end{tabular}
+	\bigbreak
+\end{center}
+
+Converting to a Boolean expression, we have that $f = a\bar{b}c + ab\bar{c} +abc$. Simplifying, 
+
+\begin{align*}
+	f &= a\bar{b}c + ab\bar{c} +abc\\
+	&= a\bar{b}c + ab(\bar{c} + c) \\
+	&= a\bar{b}c + ab\\
+	&= a(\bar{b}c + b)\\
+	&= a\overline{((b+\bar{c}) + \bar{b})}\\
+	&= a\overline{(b\bar{b} + \bar{c}+\bar{b})}\\
+	&= a\overline{(\bar{c}+\bar{b})}\\
+	&= a(b + c)
+\end{align*}
+
+Thus, $f  a(b+c)$. We can now make the logic diagram:\\
+
+\begin{center}
+	\begin{circuitikz}\draw
+		(0, -0.6cm) node[or port] (myor) {}
+		(3cm, -0.3cm) node[and port] (myand) {}
+		
+		(-2cm, +0.3cm) node[anchor=north]{a} -| ++ (2.5cm, 0) |- (myand.in 1)
+		(-2cm, -0.3cm) node[anchor=north]{b} -- (myor.in 1)
+		(-2cm, -0.9cm) node[anchor=north]{c} -- (myor.in 2)
+		(myor.out) -- (myand.in 2)
+		
+		(myand.out) -- (3.5cm, -0.3cm) node[anchor=north]{$f$};
+	\end{circuitikz}
+\end{center}\bigbreak
+
+
+\textbf{Example 2:} Build a CLC where $f=1$ if the number of 1s in the input is \textit{odd} nad $f$ takes 3 binary inputs. For instance, with 101, $f=0$; but with 010, $f=1$. The truth table is therefore\\
+
+\begin{center}
+	\begin{tabular}{|c|c|c|c|}
+		$a$ & $b$ & $c$ & $f$ \\\hline
+		0 & 0 & 0 & 0\\
+		0 & 0 & 1 & 1\\
+		0 & 1 & 0 & 1\\
+		0 & 1 & 1 & 0\\
+		1 & 0 & 0 & 1\\
+		1 & 0 & 1 & 0\\
+		1 & 1 & 0 & 0\\
+		1 & 1 & 1 & 1\\
+	\end{tabular}
+	\bigbreak
+\end{center}
+
+We can find that $f = \bar{a}\bar{b}c + \bar{a}b\bar{c} + a\bar{b}\bar{c} + abc$.\\
+
+Now we must also make the logic diagram. That's a large circuit... We will leave it as an exercise for the reader.\\
+
+
+\subsubsection{XOR and XNOR Gates}
+\bigbreak
+
+The \textbf{exclusive or} (XOR) is denoted with the $\bigoplus$ symbol. We say that $c = a \bigoplus b = a\bar{b} + \bar{a}b$. \\
+
+The truth table of the XOR is
+
+\begin{center}
+	\begin{tabular}{|c|c|c|}
+		a & b & $a \bigoplus b$ \\\hline
+		0 & 0 & 0 \\
+		0 & 1 & 1 \\
+		1 & 0 & 1 \\
+		1 & 1 & 0 \\
+	\end{tabular}
+	\bigbreak
+\end{center}
+
+The circuit diagram for it is
+
+\begin{center}
+	\begin{circuitikz}\draw
+		(0, 0) node[xor port] (myxor) {}
+		(myxor.in 1) node[anchor=east]{$a$}
+		(myxor.in 2) node[anchor=east]{$b$}
+		(myxor.out) node[anchor=west]{$a \bigoplus b$};
+	\end{circuitikz}
+\end{center}\bigbreak
+
+The complement to the exclusive or is the \textbf{exclusive nor} (XNOR). We say that $c = \overline{a \bigoplus b} = \overline{a\bar{b} + \bar{a}b} = ab + \bar{a}\bar{b}$.\\
+
+The truth table of the XNOR is
+
+\begin{center}
+	\begin{tabular}{|c|c|c|}
+		a & b & $\overline{a \bigoplus b}$ \\\hline
+		0 & 0 & 1 \\
+		0 & 1 & 0 \\
+		1 & 0 & 0 \\
+		1 & 1 & 1 \\
+	\end{tabular}
+	\bigbreak
+\end{center}
+
+The circuit diagram for it is\\
+
+\begin{center}
+	\begin{circuitikz}\draw
+		(0, 0) node[xnor port] (myxnor) {}
+		(myxnor.in 1) node[anchor=east]{$a$}
+		(myxnor.in 2) node[anchor=east]{$b$}
+		(myxnor.out) node[anchor=west]{$a \bigoplus b$};
+	\end{circuitikz}
+\end{center}\bigbreak\bigbreak
+
+The properties of the XOR are\\
+
+\begin{itemize}
+	\item $x \bigoplus 0 = x$
+	\item $x \bigoplus 1 = \bar{x}$
+	\item $x \bigoplus x = 0$
+	\item $x \bigoplus \bar{x} = 1$
+\end{itemize}
+
 
 
 
