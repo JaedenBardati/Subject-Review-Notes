@@ -1824,7 +1824,7 @@ For example, let's express $f_1 = a \cdot b \cdot c$ in three ways. It is alread
 	\bigbreak
 \end{center}
 
-Representing this in a logic diagram, we get: 
+Representing this in a logic diagram, we get
 
 \begin{center}
 	\begin{circuitikz}\draw
@@ -1837,6 +1837,304 @@ Representing this in a logic diagram, we get:
 		(myand2.out) -- (3.5cm, -0.3cm) node[anchor=north]{$f_1$};
 	\end{circuitikz}
 \end{center}\bigbreak
+
+
+A second example is with $f_2 = (a + b) \cdot \bar{c}$. The truth table of $f_2$ is
+
+\begin{center}
+	\begin{tabular}{|c|c|c|c|c|}
+		a & b & c & a+b & $f_2$ \\\hline
+		0 & 0 & 0 & 0 & 0 \\
+		0 & 0 & 1 & 0 & 0 \\
+		0 & 1 & 0 & 1 & 1 \\
+		0 & 1 & 1 & 1 & 0 \\
+		1 & 0 & 0 & 1 & 1 \\
+		1 & 0 & 1 & 1 & 0 \\
+		1 & 1 & 0 & 1 & 1 \\
+		1 & 1 & 1 & 1 & 0 \\
+	\end{tabular}
+	\bigbreak
+\end{center}
+
+The logic diagram is
+
+\begin{center}
+	\begin{circuitikz}\draw
+		(0, 0) node[or port] (myor) {}
+		(-0.5cm, -1.5cm) node[not port] (mynot) {}
+		(3cm, -0.3cm) node[and port] (myand) {}
+		(-2cm, +0.3cm) node[anchor=north]{a} -- (myor.in 1)
+		(-2cm, -0.3cm) node[anchor=north]{b} -- (myor.in 2)
+		(myor.out) -- (myand.in 1)
+		(-2cm, -1.5cm) node[anchor=north]{c} -- (mynot.in) 
+		(mynot.out) -| (0.5cm, -0.9cm) |- (myand.in 2)
+		(myand.out) -- (3.5cm, -0.3cm) node[anchor=north]{$f_2$};
+	\end{circuitikz}
+\end{center}\bigbreak
+
+Question 1: Is the Boolean expression unique for a given function? No! Since $f_2 = (a + b) \cdot \bar{c} = a \cdot \bar{c} + b \cdot \bar{c}$.\\
+
+Question 2: Is the diagram unique? No! As above, you can make the diagram be such that $f_2 = a \cdot \bar{c} + b \cdot \bar{c}$. Namely, 
+
+\begin{center}
+	\begin{circuitikz}\draw
+		(0, 0) node[and port] (myand1) {}
+		(0, -1.5cm) node[and port] (myand2) {}
+		(3cm, -0.3cm) node[or port] (myor) {}
+		(-2.8cm, -0.75cm) node[not port] (mynot) {}
+		
+		(-4cm, +0.3cm) node[anchor=north]{a}-- (myand1.in 1)
+		(-4cm, -0.75cm) node[anchor=north]{c} -- (mynot.in)
+		(-4cm, -1.8cm) node[anchor=north]{a}-- (myand2.in 2)
+		
+		(myand1.out) -- (myor.in 1)
+		(mynot.out) -- (myand1.in 2)
+		(mynot.out) -- (myand2.in 1)
+		(myand2.out) -| (0.5cm, -0.9cm) |- (myor.in 2)
+		(myor.out) -- (3.5cm, -0.3cm) node[anchor=north]{$f_2$};
+	\end{circuitikz}
+\end{center}\bigbreak
+
+Question 3: Is the truth table unique? Yes! Always, since we use the truth table to define when two Boolean functions are equal.\\
+
+A third example could be $f_3 = ab + \bar{a}\bar{b}$. The following is the truth table.
+
+\begin{center}
+	\begin{tabular}{|c|c|c|c|c|}
+		a & b & ab & $\bar{a}\bar{b}$ & $f_2$ \\\hline
+		0 & 0 & 0 & 1 & 1 \\
+		0 & 1 & 0 & 0 & 0 \\
+		1 & 0 & 0 & 0 & 0 \\
+		1 & 1 & 1 & 0 & 1 \\
+	\end{tabular}
+	\bigbreak
+\end{center}
+
+The logic diagram is
+
+\begin{center}
+	\begin{circuitikz}\draw
+		(7cm, 0) node[or port] (myor) {}
+		(5cm, 1.5cm) node[and port] (myand1) {}
+		(5cm, -1.5cm) node[and port] (myand2) {}
+		(1.6cm, 0.75cm) node[not port] (mynot1) {}
+		(1.6cm, -1.8cm) node[not port] (mynot2) {}
+		
+		(0, 1.79cm) node[anchor=north]{a} -- (myand1.in 1)
+		(0, 1.79cm) -| (mynot1.in)
+		(0, -0.44cm) node[anchor=north]{b} -| (myand1.in 2)
+		(0, -0.44cm) -| (mynot2.in)
+		
+		(mynot1.out) -- (myand2.in 1)
+		(mynot2.out) -- (myand2.in 2)
+		
+		(myand1.out) -- (myor.in 1)
+		(myand2.out) -- (myor.in 2)
+		(myor.out) -- (7.5cm, 0cm) node[anchor=north]{$f_3$};
+	\end{circuitikz}
+\end{center}\bigbreak
+
+
+In a fourth example, we will consider $F_1 = x'y'z + x'yz + xy'$ and $F_2 = x'z + xy'$. We will prove that they are identical and show each of their logic diagrams.\\
+
+We can show that $F_1$ and $F_2$ are identical by checking their truth table results, however we will show it using Boolean properties.\\
+
+Since $F_1$ has more terms than $F_2$, we will try to convert $F_1$ to $F_2$.
+
+\begin{align*}
+	F_1 &= x'y'z + x'yz + xy'\\
+	&= x'z(y'+ y) + xy'\\
+	&= x'z(1) + xy'\\
+	&= x'z+xy'\\
+	&= F_2
+\end{align*}\bigbreak
+
+Now we will show the logic diagram of $F_1$.
+
+\begin{center}
+	\begin{circuitikz}\draw
+		% ---- INPUTS -----
+		(0, 2cm) node[anchor=north]{x} node[](x){}
+		(0, 0cm) node[anchor=north]{y} node[](y){}
+		(0, -2cm) node[anchor=north]{z} node[](z){}
+		%nots
+		(x) ++ (1.5cm, -1cm) node[not port, scale=0.75] (notx) {}
+		(y) ++ (1.5cm, -1cm) node[not port, scale=0.75] (noty) {}
+	
+		%not-links
+		(x) ++ (1cm, 0) node[](notxlink){} to[short, *-] (notx.in) 
+		(x) -- ++ (1cm, 0) (notxlink)
+		(y) ++ (1cm, 0) node[](notylink){} to[short, *-] (noty.in) 
+		(y) -- ++ (1cm, 0) (notylink)
+		
+		(x) -- ++ (2.25cm, 0)
+		(y) -- ++ (2.25cm, 0)
+		(z) -- ++ (2.5cm, 0)
+		
+		% ----- GATES -----
+		(4.5cm, 2cm) node[and port] (and1) {}
+		(4.5cm, 0cm) node[and port] (and2) {}
+		(4.5cm, -2cm) node[and port] (and3) {}
+		(7cm, 2cm) node[and port] (and21) {}
+		(7cm, 0cm) node[and port] (and22) {}
+		(9cm, 1cm) node[or port] (or1) {}
+		(11cm, 0cm) node[or port] (or2) {}
+		
+		%connections
+		(notx.out) -- ++(0.5cm, 0) |- (and1.in 1)
+		(noty.out) -- ++(0.25cm, 0) |- (and1.in 2)
+		
+		(notx.out) -- ++(0.5cm, 0) |- (and2.in 1)
+		(y) ++ (2.25cm, 0) -- ++(0.3cm, 0) |- (and2.in 2)
+		
+		(x) ++ (2.25cm, 0) -- ++(0.75cm, 0) |- (and3.in 1)
+		(noty.out) -- ++(0.25cm, 0) |- (and3.in 2)
+		
+		(and1.out) -- ++ (0.2cm, 0) |- (and21.in 1)
+		(z) ++ (2.5cm, 0) -- ++ (0, 1cm) -- ++ (2.35cm, 0) |- (and21.in 2)
+		
+		(and2.out) -- ++ (0.6cm, 0) |- (and22.in 1)
+		(z) ++ (2.5cm, 0) -- ++ (0, 1cm) -- ++ (2.5cm, 0) -- ++ (0.3cm, 0) |- (and22.in 2)
+		
+		(and21.out) -- ++ (0.3cm, 0) |- (or1.in 1)
+		(and22.out) -- ++ (0.3cm, 0) |- (or1.in 2)
+		
+		(or1.out) -- ++ (0.3cm, 0) |- (or2.in 1)
+		(and3.out) -- ++ (3cm, 0) |- (or2.in 2)
+		
+		% ----- OUTPUT -----
+		(11.5cm, 0cm) node[anchor=north]{$F_1$};
+	\end{circuitikz}
+\end{center}\bigbreak\bigbreak
+
+
+
+And the logic diagram of $F_2$ is
+
+\begin{center}
+	\begin{circuitikz}\draw
+		% ---- INPUTS -----
+		(0, 2cm) node[anchor=north]{x} node[](x){}
+		(0, 0cm) node[anchor=north]{y} node[](y){}
+		(0, -2cm) node[anchor=north]{z} node[](z){}
+		%nots
+		(x) ++ (1.5cm, -1cm) node[not port, scale=0.75] (notx) {}
+		(y) ++ (1.5cm, -1cm) node[not port, scale=0.75] (noty) {}
+		
+		%not-links
+		(x) ++ (1cm, 0) node[](notxlink){} to[short, *-] (notx.in) 
+		(x) -- ++ (1cm, 0) (notxlink)
+		(y) ++ (1cm, 0) node[](notylink){} to[short, *-] (noty.in) 
+		(y) -- ++ (1cm, 0) (notylink)
+		
+		(x) -- ++ (2.25cm, 0)
+		(z) -- ++ (2.25cm, 0)
+		
+		% ----- GATES -----
+		(5cm, 1cm) node[and port] (and1) {}
+		(5cm, -1cm) node[and port] (and2) {}
+		(7cm, 0cm) node[or port] (or) {}
+		
+		%connections
+		(x) ++ (2.25cm, 0) -- ++(1cm, 0) |- (and1.in 1)
+		(noty.out) -- ++(1.2cm, 0) |- (and1.in 2)
+		
+		(notx.out) -- ++(0.75cm, 0) |- (and2.in 1)
+		(z) -- ++ (2.75cm, 0) |- (and2.in 2)
+		
+		(and1.out) -- (or.in 1)
+		(and2.out) -- (or.in 2)
+		
+		% ----- OUTPUT -----
+		(7.5cm, 0cm) node[anchor=north]{$F_1$};
+	\end{circuitikz}
+\end{center}\bigbreak\bigbreak
+
+The following are a few examples of simplifying Boolean expressions:
+
+\begin{align*}
+	x(x'+y)&=xx'+xy\\
+	&= 0+ xy\\
+	&= xy
+\end{align*}\bigbreak
+
+\begin{align*}
+	(x+y)(x+y') &= xx + xy' + xy + yy'\\
+	&= x+x(y'+y)+0\\
+	&= x+x(1)\\
+	&= x+x\\
+	&= x
+\end{align*}\bigbreak
+
+\begin{align*}
+	((x+y)(x+y'))' &= (x+y)' + (x+y')'\\
+	&= x'y'+x'y\\
+	&= x'(y'+y)\\
+	&= x'(1)\\
+	&= x'
+\end{align*}\bigbreak
+
+
+\subsubsection{Boolean Expression from Truth Table}
+
+So far, we have been given a Boolean expression and have been told to generate a truth table and implement it in a logic diagram. If instead, we start with the logic diagram, it is not hard to find the Boolean expression and the truth table. However, if we are given a truth table, it is not as straightforward. If we can get the Boolean Expression from the truth table, getting the logic diagram is easy. So the question is: \textit{How do we get a Boolean expression from a truth table?}\\
+
+Let's assume a function $f(x, y)$ that has the truth table
+
+\begin{center}
+	\begin{tabular}{|c|c|c|}
+		a & b & $f$ \\\hline
+		0 & 0 & 0 \\
+		0 & 1 & 0 \\
+		1 & 0 & 1 \\
+		1 & 1 & 1 \\
+	\end{tabular}
+	\bigbreak
+\end{center}
+
+We know that $f=1$ when ($x=1$ AND $y=0$) OR when ($x=1$ AND $y=1$). Simplifying, $f=1$ when $x\bar{y} + xy$. Checking the truth table, this works for all values. Thus, the function is $f = x(\bar{y} + y) = x(1) = x$.\\
+
+Let's now assume a function $f_2(x, y)$ that has the truth table
+
+\begin{center}
+	\begin{tabular}{|c|c|c|}
+		a & b & $f_2$ \\\hline
+		0 & 0 & 0 \\
+		0 & 1 & 1 \\
+		1 & 0 & 1 \\
+		1 & 1 & 0 \\
+	\end{tabular}
+	\bigbreak
+\end{center}
+
+We will look at all values of $f=1$ and find the combination of $x$ and $y$ that make $f=1$. In this case, we know that $f=1$ when ($x=0$ AND $y=1$) OR when ($x=1$ AND $y=0$). Simplifying, $f=1$ when $\bar{x} + x\bar{y}$.\\
+
+We say that $f$ is written as a \textbf{sum of products} (OR of ANDs). This is also called the \textbf{canonical form}.\\
+
+Let's do a larger example: Express the following using the sum of products. 
+
+\begin{center}
+	\begin{tabular}{|c|c|c|c|}
+		x & y & z & $f_3$ \\\hline
+		0 & 0 & 0 & 0\\
+		0 & 0 & 1 & 0\\
+		0 & 1 & 0 & 1\\
+		0 & 1 & 1 & 1\\
+		1 & 0 & 0 & 0\\
+		1 & 0 & 1 & 0\\
+		1 & 1 & 0 & 1\\
+		1 & 1 & 1 & 1\\
+	\end{tabular}
+	\bigbreak
+\end{center}
+
+For the first time $f=1$, we get $\bar{x}y\bar{z}$, then $\bar{x}yz$, and so on. In the end, we get that $f = \bar{x}y\bar{z} + \bar{x}yz + xy\bar{z} + xyz$. This simplifies to just $f=y$. \\
+
+
+
+
+
+
 
 
 
