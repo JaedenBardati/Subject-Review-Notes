@@ -2291,7 +2291,193 @@ The properties of the XOR are\\
 	\item $x \bigoplus 1 = \bar{x}$
 	\item $x \bigoplus x = 0$
 	\item $x \bigoplus \bar{x} = 1$
-\end{itemize}
+\end{itemize}\bigbreak
+
+
+\subsubsection{The Half Adder}
+\bigbreak
+
+The objective of the half adder is to build a logic circuit that adds two bits. For example, 
+
+\begin{center}
+	\begin{tabular}{ccccccccccc}
+		  &   &  &   &   &  &   &   &  & \tiny 1 &   \\
+		  & 0 &  &   & 0 &  &   & 1 &  &   & 1 \\
+		+ & 0 &  & + & 1 &  & + & 0 &  & + & 1 \\\cline{1-2}\cline{4-5}\cline{7-8}\cline{10-11}
+		  & 0 &  &   & 1 &  &   & 1 &  & 1 & 0 \\\smallskip
+	\end{tabular}
+\end{center}\bigbreak
+
+In the last case, there is a carry.\\
+
+The number of \textit{inputs} is 2. The number of \textit{outputs} is 2 (sum ($s$) and the carry ($c$)).\\
+
+Making the truth table, 
+
+\begin{center}
+	\begin{tabular}{|c|c|c|c|}
+		$x$ & $y$ & $s$ & $c$	\\\hline
+		0 & 0 & 0 & 0	\\
+		1 & 0 & 1 & 0	\\
+		0 & 0 & 1 & 0	\\
+		1 & 1 & 0 & 1	\\
+	\end{tabular}
+	\bigbreak
+\end{center}
+
+The Boolean expression for the sum output in this table is $s = \bar{x}y + x\bar{y} = x \bigoplus y$. The Boolean expression for the carry in this table is $c = xy$.\\
+
+Drawing the logic diagram,
+
+\begin{center}
+	\begin{circuitikz}\draw
+		(0, 0) node[xor port] (myxor) {}
+		(0, -1.5cm) node[and port] (myand) {}
+		
+		(myxor.in 1) -- ++ (-1cm, 0) node[anchor=north]{x} -- ++ (0.3cm, 0) -- ++ (0, -0.3cm) -- (myand.in 1)
+		(myand.in 2) -- ++ (-1cm, 0) node[anchor=north]{y} -- ++ (0.3cm, 0) -- ++ (0, 0.3cm) -- (myxor.in 2)
+		
+		(myxor.out) -- ++ (1cm, 0) node[anchor=north]{$s$}
+		(myand.out) -- ++ (1cm, 0) node[anchor=north]{$c$};
+	\end{circuitikz}
+\end{center}\bigbreak
+
+
+\subsubsection{The Full Adder}
+\bigbreak
+
+The full adder is a circuit that adds 2 binary inputs ($x$ and $y$) and a carry in ($c_{in}$) and results in a sum ($s$) and carry out($c_{out}$). \\
+
+The truth table is  
+
+\begin{center}
+	\begin{tabular}{|c|c|c|c|c|}
+		$x$ & $y$ & $c_{in}$ & $s$ & $c_{out}$	\\\hline
+		 0  &  0  &     0    &  0  &    0    	\\
+		 0  &  0  &     1    &  1  &    0    	\\
+		 0  &  1  &     0    &  1  &    0    	\\
+		 0  &  1  &     1    &  0  &    1    	\\
+		 1  &  0  &     0    &  1  &    0    	\\
+		 1  &  0  &     1    &  0  &    1    	\\
+		 1  &  1  &     0    &  0  &    1    	\\
+		 1  &  1  &     1    &  1  &    1    	\\
+	\end{tabular}
+	\bigbreak
+\end{center}
+
+The Boolean expression of the sum is $s = \bar{x}\bar{y}c_{in} + \bar{x}y\overline{c_{in}} + x\bar{y}\overline{c_{in}} + xyc_{in}$. Also, the Boolean expression for the carry out is $c_{out} = \bar{x}yc_{in} + x\bar{y}c_{in} + xy\overline{c_{in}} + xyc_{in}$. We can simply these expressions.
+
+\begin{align*}
+	s &= \bar{x}\bar{y}c_{in} + \bar{x}y\overline{c_{in}} + x\bar{y}\overline{c_{in}} + xyc_{in}\\
+	&= \bar{x}(\bar{y}c_{in} + y\overline{c_{in}}) + x(\bar{y}\overline{c_{in}} + yc_{in})\\
+	&= \bar{x}(y \oplus c_{in}) + x\overline{(y \oplus c_{in})}\\
+	&= x \oplus (y \oplus c_{in})\\
+\end{align*}
+
+
+\begin{align*}
+	c_{out} &= \bar{x}yc_{in} + x\bar{y}c_{in} + xy\overline{c_{in}} + xyc_{in}\\
+	&= (\bar{x}y + x\bar{y})c_{in} + xy(\overline{c_{in}} + c_{in})\\
+	&= c_{in}(x \oplus y) + xy
+\end{align*}
+
+The logic diagram of the full adder is therefore \\
+
+\begin{center}
+	\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt
+	\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]\centering
+		%uncomment if require: \path (0,625); %set diagram left start at 0, and has height of 625
+		
+		%Shape: Xor Gate [id:dp22227458736036843] 
+		\draw   (146,63) -- (166,63) .. controls (179.95,63.54) and (192.42,75.23) .. (198,93) .. controls (192.42,110.77) and (179.95,122.46) .. (166,123) -- (146,123) .. controls (154.57,104.44) and (154.57,81.56) .. (146,63) -- cycle (134,73) -- (150,73) (134,113) -- (150,113) (198,93) -- (214,93) (142,63) .. controls (150.57,81.56) and (150.57,104.44) .. (142,123) ;
+		%Shape: Xor Gate [id:dp9558597305912817] 
+		\draw   (263,83) -- (283,83) .. controls (296.95,83.54) and (309.42,95.23) .. (315,113) .. controls (309.42,130.77) and (296.95,142.46) .. (283,143) -- (263,143) .. controls (271.57,124.44) and (271.57,101.56) .. (263,83) -- cycle (251,93) -- (267,93) (251,133) -- (267,133) (315,113) -- (331,113) (259,83) .. controls (267.57,101.56) and (267.57,124.44) .. (259,143) ;
+		%Straight Lines [id:da3073236030985753] 
+		\draw    (50.5,50.5) -- (50.5,300.5) ;
+		%Straight Lines [id:da3888123726899575] 
+		\draw    (75.5,50.5) -- (75,299.75) ;
+		%Straight Lines [id:da35097176458483736] 
+		\draw    (100,50.25) -- (100.25,299.75) ;
+		%Straight Lines [id:da5953784724922828] 
+		\draw    (214,93) -- (251,93) ;
+		%Straight Lines [id:da3222355089037585] 
+		\draw    (50.5,73) -- (134,73) ;
+		%Shape: Circle [id:dp2883615095456349] 
+		\draw  [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ,fill opacity=1 ] (52.5,73) .. controls (52.5,71.9) and (51.6,71) .. (50.5,71) .. controls (49.4,71) and (48.5,71.9) .. (48.5,73) .. controls (48.5,74.1) and (49.4,75) .. (50.5,75) .. controls (51.6,75) and (52.5,74.1) .. (52.5,73) -- cycle ;
+		%Straight Lines [id:da5899065332833413] 
+		\draw    (75.5,112.75) -- (134,113) ;
+		%Shape: Circle [id:dp6016016248611964] 
+		\draw  [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ,fill opacity=1 ] (77.5,112.75) .. controls (77.5,111.65) and (76.6,110.75) .. (75.5,110.75) .. controls (74.4,110.75) and (73.5,111.65) .. (73.5,112.75) .. controls (73.5,113.85) and (74.4,114.75) .. (75.5,114.75) .. controls (76.6,114.75) and (77.5,113.85) .. (77.5,112.75) -- cycle ;
+		%Straight Lines [id:da24994922912424933] 
+		\draw    (100,133.5) -- (251,133) ;
+		%Shape: Circle [id:dp7950607903721081] 
+		\draw  [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ,fill opacity=1 ] (102,133.5) .. controls (102,132.4) and (101.1,131.5) .. (100,131.5) .. controls (98.9,131.5) and (98,132.4) .. (98,133.5) .. controls (98,134.6) and (98.9,135.5) .. (100,135.5) .. controls (101.1,135.5) and (102,134.6) .. (102,133.5) -- cycle ;
+		%Straight Lines [id:da5076937403756383] 
+		\draw    (331,113) -- (356.75,113) ;
+		%Shape: And Gate [id:dp8071044679947741] 
+		\draw   (235.75,159.5) -- (259.75,159.5) .. controls (273,159.5) and (283.75,172.94) .. (283.75,189.5) .. controls (283.75,206.06) and (273,219.5) .. (259.75,219.5) -- (235.75,219.5) -- (235.75,159.5) -- cycle (219.75,169.5) -- (235.75,169.5) (219.75,209.5) -- (235.75,209.5) (283.75,189.5) -- (299.75,189.5) ;
+		%Straight Lines [id:da3876484716368205] 
+		\draw    (219.75,169.5) -- (220.25,92.5) ;
+		%Shape: Circle [id:dp7628595620557719] 
+		\draw  [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ,fill opacity=1 ] (222.25,93.5) .. controls (222.25,92.4) and (221.35,91.5) .. (220.25,91.5) .. controls (219.15,91.5) and (218.25,92.4) .. (218.25,93.5) .. controls (218.25,94.6) and (219.15,95.5) .. (220.25,95.5) .. controls (221.35,95.5) and (222.25,94.6) .. (222.25,93.5) -- cycle ;
+		%Straight Lines [id:da1914868824551612] 
+		\draw    (219.75,209.5) -- (100.25,209.5) ;
+		%Shape: Circle [id:dp08491219949794826] 
+		\draw  [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ,fill opacity=1 ] (102.25,209.5) .. controls (102.25,208.4) and (101.35,207.5) .. (100.25,207.5) .. controls (99.15,207.5) and (98.25,208.4) .. (98.25,209.5) .. controls (98.25,210.6) and (99.15,211.5) .. (100.25,211.5) .. controls (101.35,211.5) and (102.25,210.6) .. (102.25,209.5) -- cycle ;
+		%Shape: And Gate [id:dp40156934307935765] 
+		\draw   (236,238.75) -- (260,238.75) .. controls (273.25,238.75) and (284,252.19) .. (284,268.75) .. controls (284,285.31) and (273.25,298.75) .. (260,298.75) -- (236,298.75) -- (236,238.75) -- cycle (220,248.75) -- (236,248.75) (220,288.75) -- (236,288.75) (284,268.75) -- (300,268.75) ;
+		%Straight Lines [id:da8360513967661218] 
+		\draw    (220,248.75) -- (50.5,248.75) ;
+		%Straight Lines [id:da35301927256757804] 
+		\draw    (75.25,289) -- (220,288.75) ;
+		%Shape: Circle [id:dp8426807814067807] 
+		\draw  [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ,fill opacity=1 ] (52.5,248.75) .. controls (52.5,247.65) and (51.6,246.75) .. (50.5,246.75) .. controls (49.4,246.75) and (48.5,247.65) .. (48.5,248.75) .. controls (48.5,249.85) and (49.4,250.75) .. (50.5,250.75) .. controls (51.6,250.75) and (52.5,249.85) .. (52.5,248.75) -- cycle ;
+		%Shape: Circle [id:dp918579776520918] 
+		\draw  [fill={rgb, 255:red, 0; green, 0; blue, 0 }  ,fill opacity=1 ] (77.25,289) .. controls (77.25,287.9) and (76.35,287) .. (75.25,287) .. controls (74.15,287) and (73.25,287.9) .. (73.25,289) .. controls (73.25,290.1) and (74.15,291) .. (75.25,291) .. controls (76.35,291) and (77.25,290.1) .. (77.25,289) -- cycle ;
+		%Shape: Or Gate [id:dp015181351581308844] 
+		\draw   (312,199.25) -- (332,199.25) .. controls (345.95,199.79) and (358.42,211.48) .. (364,229.25) .. controls (358.42,247.02) and (345.95,258.71) .. (332,259.25) -- (312,259.25) .. controls (320.57,240.69) and (320.57,217.81) .. (312,199.25) -- cycle (300,209.25) -- (316,209.25) (300,249.25) -- (316,249.25) (364,229.25) -- (380,229.25) ;
+		%Straight Lines [id:da12371997688817848] 
+		\draw    (299.75,189.5) -- (300,209.25) ;
+		%Straight Lines [id:da7226790821082669] 
+		\draw    (300,249.25) -- (300,268.75) ;
+		%Straight Lines [id:da35453108229640606] 
+		\draw    (380,229.25) -- (405.75,229.25) ;
+		
+		% Text Node
+		\draw (47,31) node [anchor=north west][inner sep=0.75pt]   [align=left] {$x$};
+		% Text Node
+		\draw (71,30) node [anchor=north west][inner sep=0.75pt]   [align=left] {$y$};
+		% Text Node
+		\draw (87,30) node [anchor=north west][inner sep=0.75pt]   [align=left] {$c_{in}$};
+		% Text Node
+		\draw (345,94.25) node [anchor=north west][inner sep=0.75pt]   [align=left] {$s$};
+		% Text Node
+		\draw (379.75,210.5) node [anchor=north west][inner sep=0.75pt]   [align=left] {$c_{out}$};
+	\end{tikzpicture}\bigbreak
+\end{center}
+
+From now on, we can write this as a black box as follows
+
+\begin{center}
+	\begin{tikzpicture}[
+		fulladder/.style={draw, minimum size=3cm,
+			label={[anchor=west]left:$c_\text{out}$},
+			label={[anchor=south]below:$s$},
+			label={[anchor=east]right:$c_\text{in}$},
+			label={[anchor=north]65:$y$},
+			label={[anchor=north]115:$x\vphantom{y}$},
+		}]
+		
+		\node[fulladder] (a) {};
+		
+		\draw[<-] (a.115) --++(90:0.5cm) node [above] {};
+		\draw[<-] (a.65) --++(90:0.5cm) node [above] {};
+		\draw[<-] (a.east) --++(0:0.5cm) node [right] {};
+		\draw[->] (a.west) --++(180:0.5cm) node [left] {};
+		\draw[->] (a.south) --++(-90:0.5cm) node [below] {};
+	\end{tikzpicture}
+\end{center}\bigbreak
+
 
 
 
