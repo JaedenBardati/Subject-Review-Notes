@@ -2035,6 +2035,390 @@ We can implement the binary search algorithm in C++ with the following code.
 \end{lstlisting}\bigbreak
 
 
+\subsection{Arrays and Functions\\ {\normalfont November 10th, 2021}}
+\bigbreak
+
+Sometimes it is useful to use arrays in functions.
+
+\begin{itemize}
+	\item An array can be passed as a parameter
+	\item Arrays are passed by reference (their content can be changed by function)
+	\item Formal parameter: no \& (reserved for scalar values), empty [] instead
+	\item Actual parameter: array name without []
+	\item Cannot return an array (only a single value)
+\end{itemize}\bigbreak
+
+An example of using arrays in a function is
+
+\begin{lstlisting}
+	int sum(int values[], int size) {
+		int total = 0;
+		for (int i=0; i<size; i++)
+			total += values[i]
+		return total
+	}
+\end{lstlisting}\bigbreak
+
+A \textbf{bad example} (one that will give an error) is the following, if you try to return an array:
+
+\begin{lstlisting}
+	int[] getinfo(){
+		cout << "How many: ";
+		int size;
+		cin >> size;
+		int data[size];
+		for (int i=0; i< size; i++)
+			cin >> data[i];
+		return data
+	}
+\end{lstlisting}\bigbreak
+
+Instead, you must pass by parameter:
+
+\begin{lstlisting} 
+	void getinfo(int data[], int &size) {
+		cout << "How many: ";
+		cin >> size;
+		for (int i=0; i<size; i++)
+			cin >> data[i];
+	}
+\end{lstlisting}\bigbreak
+
+The following code is an example of various functions that involve arrays in the parameters or return.
+
+\begin{lstlisting}
+	#include <iostream>
+	using namespace std;
+	
+	int readarray(int data[]){
+		int len;
+		cout << "What is the length of the array (less than 100): ";
+		cin >> len;
+		
+		for(int i=0; i< len; i++)
+			cin >> data[i];
+		
+		return len;
+	}
+	
+	void multiplyarray(int data[], int len, int factor){
+		for(int i=0; i< len; i++)
+			data[i] = data[i] * 2;
+	}
+	
+	void printarray(int data[], int len){
+		for(int i=0; i< len; i++)
+			cout << data[i] << endl;
+	}
+	
+	int main(){
+		const int MAXSIZE = 100;
+		
+		int data[MAXSIZE];
+		int len;
+		
+		len = readarray(data);
+		multiplyarray(data, len, 2);
+		printarray(data, len);
+	}
+\end{lstlisting}\bigbreak
+
+\subsubsection{2D Arrays}
+\bigbreak
+
+We often need to use arrays within arrays. These are called \textbf{2D arrays}. An example of a 1D array of size 7 is\bigbreak
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{|C|C|C|C|C|C|C|}\hline
+	5 & 16 & 25 & 32 & 38 & 57 & 58 \\\hline
+\end{array}
+\]
+\bigbreak
+Whereas a 2D array with 3 rows and 7 columns could be
+\bigbreak
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{|C|C|C|C|C|C|C|}\hline
+	70 & 5 & 53 & 62 & 3 & 91 & 13 \\\hline
+	12 & 7 & 82 & 7 & 9 & 19 & 40 \\\hline
+	2 & 98 & 21 & 4 & 84 & 75 & 25 \\\hline
+\end{array}
+\]
+\bigbreak
+
+In C++ code, we can declare a 2D array with 
+
+\begin{lstlisting}
+	const int maxrows = 4;
+	const int maxcols = 3;
+	
+	int counts[maxrows][maxcols];  		// declare but not initialize
+\end{lstlisting}\bigbreak
+
+We can also initialize 2D arrays as follows:
+
+\begin{lstlisting}
+	int grades[3][2] = {{85,69},{77,98},{87,83}}; 	// declare and initialize
+\end{lstlisting}\bigbreak
+
+Similar to the 1D array, when initializing, you can leave out the first size.
+
+\begin{lstlisting}
+	int marks[][2] = {{85,69},{77,98},{87,83}};	
+\end{lstlisting}\bigbreak
+
+We will do an example problem where we need to store and count the number of medals (gold, silver, and bronze) won by 4 countries. For instance, we could have the case where the countries' medal count can be represented in the table
+
+\begin{table}[ht!]\hskip3.9cm
+	\renewcommand\arraystretch{2}
+	\begin{tabular}{r|c|c|c|}
+		\multicolumn{1}{c}{} & \multicolumn{1}{c}{~gold~} & \multicolumn{1}{c}{silver} & \multicolumn{1}{c}{bronze}  \\\cline{2-4}
+		country 1 & 5 & 2 & 6 \\\cline{2-4}
+		country 2 & 3 & 9 & 8 \\\cline{2-4}
+		country 3 & 2 & 3 & 1 \\\cline{2-4}
+		country 4 & 2 & 0 & 7 \\\cline{2-4}
+	\end{tabular}
+	\bigbreak
+\end{table}
+
+The full code is
+
+\begin{lstlisting}
+	#include <iostream>
+	using namespace std;
+	
+	string country(int label) {
+		switch(label) {
+			case 0: return "Canada";
+			case 1: return "USA";
+			case 2: return "China";
+			case 3: return "France";
+			default: return "";
+		}
+	}
+
+	string medal(int label) {
+		switch(label) {
+			case 0: return "Gold";
+			case 1: return "Silver";
+			case 2: return "Bronze";
+			default: return "";
+		}
+	}
+
+	
+	int main() {
+		// declare values and constants
+		const int COUNTRIES = 4;
+		const int MEDALS = 3;
+		int counts[COUNTRIES][MEDALS];
+		
+		// fill array and calculate the sums of rows
+		for(int i=0; i<COUNTRIES; i++) {
+			cout << "Enter the medals counts for " << country(i) << ": ";
+			for(int j=0;j<MEDALS;j++)
+				cin >> counts[i][j];
+		}
+		cout << endl;
+		
+		// calculate the sums of rows
+		for(int i=0; i< COUNTRIES; i++){	
+			int sum = 0;
+			for(int j=0; j<MEDALS; j++)
+				sum += counts[i][j];
+			cout << "The total number of medals won by " << country(i) << " is " << sum << endl;
+		}
+		cout << endl;
+		
+		// calculate the sums of columns
+		for(int j=0; j< MEDALS; j++){
+			int sum = 0;
+			for(int i=0; i<COUNTRIES; i++)
+				sum += counts[i][j];
+			cout << "The total number of " << medal(j) << " medals is " << sum << endl;
+		}
+		cout << endl;
+		
+		/// display array
+		for(int i=0; i<COUNTRIES;i++){
+			for(int j=0;j<MEDALS;j++)
+				cout << counts[i][j] << " ";
+			cout << endl;			
+		}
+		cout << endl;
+	}
+\end{lstlisting}\bigbreak
+
+You could also construct a function fillarray() which fills the array from a function instead of from the main. However, the number of rows and number of columns constants must be made globally so that the fillarray can access it.
+
+\begin{lstlisting}
+	const int COUNTRIES = 4;
+	const int MEDALS = 3;
+	
+	void fillarray(int counts[][MEDALS]){
+		for(int i=0; i<COUNTRIES; i++) {
+			cout << "Enter the medals counts for " << country(i) << ": ";
+			for(int j=0;j<MEDALS;j++)
+				cin >> counts[i][j];
+		}
+		cout << endl;
+	}
+
+	int main() {
+		int counts[COUNTRIES][MEDALS];
+		
+		fillarray(counts);
+		
+		...
+	}
+\end{lstlisting}\bigbreak
+
+
+\subsection{Vectors}
+\bigbreak
+
+Arrays are not the only data structure that can store multiple values, we can also use \textbf{vectors}.
+
+\begin{itemize}
+	\item A vector collects a sequence (1D, 2D, etc.) of same type values just like an array does
+	\item Unlike arrays, the size of a vector can change
+	\item A vector is a higher abstraction of array: Array with a lot of useful built-in functions.
+\end{itemize}\bigbreak
+
+To use vectors in C++, we need to include the package.
+
+\begin{lstlisting}
+	#include <vector>
+\end{lstlisting}\bigbreak
+
+To declare a vector (let's say one that contains doubles), we can write
+
+\begin{lstlisting}
+	vector <double> marks;		// initial size is 0
+\end{lstlisting}\bigbreak
+
+We can declare an initial size with following parentheses
+
+\begin{lstlisting}
+	vector <double Marks(10);		// initial size is 10
+\end{lstlisting}\bigbreak
+
+If we want to get the \textbf{current size} of a vector, we can use
+
+\begin{lstlisting}
+	int size =  Marks.size();
+\end{lstlisting}\bigbreak
+
+To fill a vector with inputted values, we can use
+
+\begin{lstlisting}
+	for(int=0; i < Marks.size(); i++)
+		cin >> Marks[i];
+\end{lstlisting}\bigbreak
+
+The vector has a few more conveniences:
+
+\begin{itemize}
+	\item Vectors can be used in functions like any other variable
+	\item They can be passed by reference (with the \&) or by value
+	\item They can be returned by a function
+\end{itemize}\bigbreak
+
+To see the complete list of builtin functions for the vectors, visit the reference documentation at \url{https://www.cplusplus.com/reference/vector/vector/}.\\
+
+As an example, let us make a vector that contains students marks. First, we can employ the following strategy if the size is known.
+
+\begin{lstlisting}
+	// declare
+	vector <double> marks(10);
+	
+	// fill
+	for(int=0; i < marks.size(); i++)
+		cin >> marks[i];
+	
+	// display
+	for(int=0; i < marks.size(); i++)
+		cout << marks[i] << endl;
+\end{lstlisting}\bigbreak
+
+However, if the size is unknown, we can instead do the following to fill the vector.
+
+\begin{lstlisting}
+	// The user enters values and stops when q is entered
+	double grade;
+	while (cin >> grade) {	// 1. A value is read  2. returns true/false based on type of value
+		marks.push_back(grade);		// increases the size by one and put grade in that location 
+	}
+	cin.clear();
+	cin.ignore();
+\end{lstlisting}\bigbreak
+
+This shows you how to increase the size of a vector, but how do you \textit{decrease} the size of a vector? We can pop the last value off of the vector and decrement the size by one. This is done with
+
+\begin{lstlisting}
+	marks.pop_back();	// removes last cell of the vector
+\end{lstlisting}\bigbreak
+
+To get the first and last elements of a vector, we can use the following methods
+
+\begin{lstlisting}
+	// First grade
+	cout << marks[0] << endl;
+	cout << marks.front() << endl;
+	
+	// Last grade
+	cout << marks[marks.size() - 1] << endl;
+	cout << marks.back() << endl;
+\end{lstlisting}\bigbreak 
+
+
+To calculate the average grade,
+
+\begin{lstlisting}
+	double total = 0;
+	double average;
+	for (int i=0; i < marks.size; i++)
+		total += marks[i];
+	
+	if (marks.size() != 0)
+		average = total / marks.size();
+	else {
+		cout << "No data. Program will stop";
+		return -1;
+	}
+
+	cout << "Average is: " << average << endl;
+\end{lstlisting}\bigbreak
+
+To find and remove the smallest grade,
+
+\begin{lstlisting}
+	// find position of smallest
+	int smallpos = 0;
+	for(int i=0; i < marks.size(); i++) {
+		if (marks[i] < marks[smallpos]) {
+			smallpos = i;
+		}
+	}
+	
+	// copy back of vector to smallpos and remove duplicated back value
+	marks[smallpos] = marks.back();
+	marks.pop_back();
+\end{lstlisting}\bigbreak
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
