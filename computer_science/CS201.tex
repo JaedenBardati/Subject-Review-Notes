@@ -12,6 +12,8 @@
 \usepackage[colorlinks=true, linkcolor=Blue, urlcolor=Blue]{hyperref} % for hyperref command 
 \usepackage{pgfplots} % plots
 \usepackage{circuitikz} % circuit plots
+\usetikzlibrary{positioning} % positioning in circuit plots
+%%\usepackage{outlines} % convienent itemizing
 
 %tables for list representation
 \usepackage{arydshln, collcell}
@@ -2466,6 +2468,7 @@ From now on, we can write this as a black box as follows
 			label={[anchor=east]right:$c_\text{in}$},
 			label={[anchor=north]65:$y$},
 			label={[anchor=north]115:$x\vphantom{y}$},
+			label={[anchor=center]center:F-A}
 		}]
 		
 		\node[fulladder] (a) {};
@@ -2477,6 +2480,316 @@ From now on, we can write this as a black box as follows
 		\draw[->] (a.south) --++(-90:0.5cm) node [below] {};
 	\end{tikzpicture}
 \end{center}\bigbreak
+
+
+\subsubsection{8 bit Binary Adder}
+\bigbreak
+
+We would like to add two numbers expressed each in 8 bits.\\
+
+\begin{center}
+	\begin{tabular}{ccccc}
+		& \tiny & \tiny & \tiny & \tiny \\
+		& $x_{7}$ & ... & $x_{1}$ & $x_{0}$ \\
+		+ & $y_{7}$ & ... & $y_{1}$ & $y_{0}$ \\
+		\hline
+		$c_{out}$ & $s_{7}$ & ... & $s_{1}$ & $s_{0}$ \\\smallskip
+	\end{tabular}
+\end{center}\bigbreak
+
+The number of inputs is 16 and the number of outputs is 9. This program has $2^16 \approx 64000$ combinations... Quite the truth table. We will skip that step.\\
+
+Instead we will construct the logic diagram by chaining full adders.\\
+
+\centerline{
+	\begin{tikzpicture}[
+		fulladder/.style={draw, minimum size=1.1cm,
+			label={[anchor=center]center:F-A}
+		}]
+		
+		\node[fulladder] (faL) {};
+		\node[fulladder, right=0.4cm of faL] (fam2) {};
+		\node[fulladder, right=0.4cm of fam2] (fam3) {};
+		\node[fulladder, right=0.4cm of fam3] (fam4) {};
+		\node[fulladder, right=0.4cm of fam4] (fam5) {};
+		\node[fulladder, right=0.4cm of fam5] (fam6) {};
+		\node[fulladder, right=0.4cm of fam6] (fam7) {};
+		\node[fulladder, right=0.4cm of fam7] (faR) {};
+		
+		\draw[<-] (faL.115) --++(90:0.5cm) node [above] {$x_7$};
+		\draw[<-] (faL.65) --++(90:0.5cm) node [above] {$y_7$};
+		\draw[->] (faL.south) --++(-90:0.5cm) node [below] {$s_7$};
+		\draw[<-] (faL.east) -- (fam2.west);
+		\draw[->] (faL.west) --++(180:0.5cm) node [left] {$c_{out}$};
+		
+		\draw[<-] (fam2.115) --++(90:0.5cm) node [above] {$x_6$};
+		\draw[<-] (fam2.65) --++(90:0.5cm) node [above] {$y_6$};
+		\draw[->] (fam2.south) --++(-90:0.5cm) node [below] {$s_6$};
+		\draw[<-] (fam2.east) -- (fam3.west);
+		
+		\draw[<-] (fam3.115) --++(90:0.5cm) node [above] {$x_5$};
+		\draw[<-] (fam3.65) --++(90:0.5cm) node [above] {$y_5$};
+		\draw[->] (fam3.south) --++(-90:0.5cm) node [below] {$s_5$};
+		\draw[<-] (fam3.east) -- (fam4.west);
+		
+		\draw[<-] (fam4.115) --++(90:0.5cm) node [above] {$x_4$};
+		\draw[<-] (fam4.65) --++(90:0.5cm) node [above] {$y_4$};
+		\draw[->] (fam4.south) --++(-90:0.5cm) node [below] {$s_4$};
+		\draw[<-] (fam4.east) -- (fam5.west);
+		
+		\draw[<-] (fam5.115) --++(90:0.5cm) node [above] {$x_3$};
+		\draw[<-] (fam5.65) --++(90:0.5cm) node [above] {$y_3$};
+		\draw[->] (fam5.south) --++(-90:0.5cm) node [below] {$s_3$};
+		\draw[<-] (fam5.east) -- (fam6.west);
+		
+		\draw[<-] (fam6.115) --++(90:0.5cm) node [above] {$x_2$};
+		\draw[<-] (fam6.65) --++(90:0.5cm) node [above] {$y_2$};
+		\draw[->] (fam6.south) --++(-90:0.5cm) node [below] {$s_2$};
+		\draw[<-] (fam6.east) -- (fam7.west);
+		
+		\draw[<-] (fam7.115) --++(90:0.5cm) node [above] {$x_1$};
+		\draw[<-] (fam7.65) --++(90:0.5cm) node [above] {$y_1$};
+		\draw[->] (fam7.south) --++(-90:0.5cm) node [below] {$s_1$};
+		\draw[<-] (fam7.east) -- (faR.west);
+		
+		\draw[<-] (faR.115) --++(90:0.5cm) node [above] {$x_0$};
+		\draw[<-] (faR.65) --++(90:0.5cm) node [above] {$y_0$};
+		\draw[->] (faR.south) --++(-90:0.5cm) node [below] {$s_0$};
+		\draw[<-] (faR.east) --++(0:0.5cm) node [right] {$0$};
+	\end{tikzpicture}
+}\bigbreak
+
+We can compact the \textbf{8 bit adder} in a black box as follows.\\
+
+\begin{center}
+	\begin{tikzpicture}[
+		adder8bit/.style={draw, minimum width=8cm, minimum height=2cm,
+			label={[anchor=west]left:$c_\text{out}$},
+			label={[anchor=east]right:$c_\text{in}$},
+			label={[anchor=south]344:$s_0$},
+			label={[anchor=south]338:$s_1$},
+			label={[anchor=south]326:$s_2$},
+			label={[anchor=south]297:$s_3$},
+			label={[anchor=south]243:$s_4$},
+			label={[anchor=south]214:$s_5$},
+			label={[anchor=south]202:$s_6$},
+			label={[anchor=south]196:$s_7$},
+			label={[anchor=north]17:$x_0$},
+			label={[anchor=north]23:$x_1$},
+			label={[anchor=north]38:$x_2$},
+			label={[anchor=north]73:$x_3$},
+			label={[anchor=north]125:$x_4$},
+			label={[anchor=north]150:$x_5$},
+			label={[anchor=north]160:$x_6$},
+			label={[anchor=north]165:$x_7$},
+			label={[anchor=north]15:$y_0$},
+			label={[anchor=north]20:$y_1$},
+			label={[anchor=north]30:$y_2$},
+			label={[anchor=north]55:$y_3$},
+			label={[anchor=north]107:$y_4$},
+			label={[anchor=north]142:$y_5$},
+			label={[anchor=north]157:$y_6$},
+			label={[anchor=north]163:$y_7$},
+			label={[anchor=center]center:8-Bit Adder}
+		}]
+		
+		\node[adder8bit] (a8b) {};
+		
+		%outputs
+		\draw[->] (a8b.344) --++(90:-0.5cm) node [below] {};
+		\draw[->] (a8b.338) --++(90:-0.5cm) node [below] {};
+		\draw[->] (a8b.326) --++(90:-0.5cm) node [below] {};
+		\draw[->] (a8b.297) --++(90:-0.5cm) node [below] {};
+		\draw[->] (a8b.243) --++(90:-0.5cm) node [below] {};
+		\draw[->] (a8b.214) --++(90:-0.5cm) node [below] {};
+		\draw[->] (a8b.202) --++(90:-0.5cm) node [below] {};
+		\draw[->] (a8b.196) --++(90:-0.5cm) node [below] {};
+		
+		%inputs
+		%xs
+		\draw[<-] (a8b.17) --++(90:0.5cm) node [above] {};
+		\draw[<-] (a8b.23) --++(90:0.5cm) node [above] {};
+		\draw[<-] (a8b.38) --++(90:0.5cm) node [above] {};
+		\draw[<-] (a8b.73) --++(90:0.5cm) node [above] {};
+		\draw[<-] (a8b.125) --++(90:0.5cm) node [above] {};
+		\draw[<-] (a8b.150) --++(90:0.5cm) node [above] {};
+		\draw[<-] (a8b.160) --++(90:0.5cm) node [above] {};
+		\draw[<-] (a8b.165) --++(90:0.5cm) node [above] {};
+		%ys
+		\draw[<-] (a8b.15) --++(90:0.5cm) node [above] {};
+		\draw[<-] (a8b.20) --++(90:0.5cm) node [above] {};
+		\draw[<-] (a8b.30) --++(90:0.5cm) node [above] {};
+		\draw[<-] (a8b.55) --++(90:0.5cm) node [above] {};
+		\draw[<-] (a8b.107) --++(90:0.5cm) node [above] {};
+		\draw[<-] (a8b.142) --++(90:0.5cm) node [above] {};
+		\draw[<-] (a8b.157) --++(90:0.5cm) node [above] {};
+		\draw[<-] (a8b.163) --++(90:0.5cm) node [above] {};
+		
+		% carry in/out
+		\draw[<-] (a8b.east) --++(0:0.5cm) node [right] {};
+		\draw[->] (a8b.west) --++(180:0.5cm) node [left] {};
+	\end{tikzpicture}
+\end{center}\bigbreak
+
+Let us now see if we can make an \textbf{8-bit subtractor} now. We want to find $x-y = x + \text{2's complement of }y = x + \bar{y} + 1$. Therefore, all we have to do to make a subtractor is to invert $y_i$ and set $c_{in} = 1$. The following is the diagram.\\
+
+\begin{center}
+	\begin{tikzpicture}[
+		adder8bit/.style={draw, minimum width=8cm, minimum height=2cm,
+			label={[anchor=center]center:8-Bit Adder}
+		}]
+		
+		\node[adder8bit] (a8b) {};
+		
+		\node at (a8b.15)[not port, rotate=-90, scale=0.35, xshift=-1.4cm](noty0){};
+		\node at (a8b.20)[not port, rotate=-90, scale=0.35, xshift=-1.4cm](noty1){};
+		\node at (a8b.30)[not port, rotate=-90, scale=0.35, xshift=-1.4cm](noty2){};
+		\node at (a8b.55)[not port, rotate=-90, scale=0.35, xshift=-1.4cm](noty3){};
+		\node at (a8b.107)[not port, rotate=-90, scale=0.35, xshift=-1.4cm](noty4){};
+		\node at (a8b.142)[not port, rotate=-90, scale=0.35, xshift=-1.4cm](noty5){};
+		\node at (a8b.157)[not port, rotate=-90, scale=0.35, xshift=-1.4cm](noty6){};
+		\node at (a8b.163)[not port, rotate=-90, scale=0.35, xshift=-1.4cm](noty7){};
+		
+		%outputs
+		\draw[->] (a8b.344) --++(90:-0.5cm) node [below] {$s_0$};
+		\draw[->] (a8b.338) --++(90:-0.5cm) node [below] {$s_1$};
+		\draw[->] (a8b.326) --++(90:-0.5cm) node [below] {$s_2$};
+		\draw[->] (a8b.297) --++(90:-0.5cm) node [below] {$s_3$};
+		\draw[->] (a8b.243) --++(90:-0.5cm) node [below] {$s_4$};
+		\draw[->] (a8b.214) --++(90:-0.5cm) node [below] {$s_5$};
+		\draw[->] (a8b.202) --++(90:-0.5cm) node [below] {$s_6$};
+		\draw[->] (a8b.196) --++(90:-0.5cm) node [below] {$s_7$};
+		
+		%inputs
+		%xs
+		\draw[<-] (a8b.17) --++(90:1.09cm) node [above] {$x_0$};
+		\draw[<-] (a8b.23) --++(90:1.09cm) node [above] {$x_1$};
+		\draw[<-] (a8b.38) --++(90:1.09cm) node [above] {$x_2$};
+		\draw[<-] (a8b.73) --++(90:1.09cm) node [above] {$x_3$};
+		\draw[<-] (a8b.125) --++(90:1.09cm) node [above] {$x_4$};
+		\draw[<-] (a8b.150) --++(90:1.09cm) node [above] {$x_5$};
+		\draw[<-] (a8b.160) --++(90:1.09cm) node [above] {$x_6$};
+		\draw[<-] (a8b.165) --++(90:1.09cm) node [above] {$x_7$};
+		
+		%ys
+		\draw (noty0.in)--++(90:0.35cm) node[above]{$y_0$};
+		\draw (noty1.in)--++(90:0.35cm) node[above]{$y_1$};
+		\draw (noty2.in)--++(90:0.35cm) node[above]{$y_2$};
+		\draw (noty3.in)--++(90:0.35cm) node[above]{$y_3$};
+		\draw (noty4.in)--++(90:0.35cm) node[above]{$y_4$};
+		\draw (noty5.in)--++(90:0.35cm) node[above]{$y_5$};
+		\draw (noty6.in)--++(90:0.35cm) node[above]{$y_6$};
+		\draw (noty7.in)--++(90:0.35cm) node[above]{$y_7$};
+		
+		\draw[<-] (a8b.15) -- (noty0.out);
+		\draw[<-] (a8b.20) -- (noty1.out);
+		\draw[<-] (a8b.30) -- (noty2.out);
+		\draw[<-] (a8b.55) -- (noty3.out);
+		\draw[<-] (a8b.107) -- (noty4.out);
+		\draw[<-] (a8b.142) -- (noty5.out);
+		\draw[<-] (a8b.157) -- (noty6.out);
+		\draw[<-] (a8b.163) -- (noty7.out);
+		
+		% carry in/out
+		\draw[<-] (a8b.east) --++(0:0.5cm) node [right] {$1$};
+		\draw[->] (a8b.west) --++(180:0.5cm) node [left] {$c_\text{out}$};
+	\end{tikzpicture}
+\end{center}\bigbreak\bigbreak\bigbreak
+
+
+\subsubsection{8-Bit Adder/Subtractor}
+\bigbreak
+
+We now want to make a circuit that take $x$ and $y$ (which are 8 bit integers), and computes $x+y$ or $x-y$ based on a selection made by the user. We can do this using XOR gates. \\
+
+\begin{center}
+	\begin{tikzpicture}[
+		adder8bit/.style={draw, minimum width=8cm, minimum height=2cm,
+			label={[anchor=center]center:8-Bit Adder}
+		}]
+		
+		\node[adder8bit] (a8b) {};
+		
+		\node at (a8b.15)[xor port, rotate=-90, scale=0.35, xshift=-1.4cm](xory0){};
+		\node at (a8b.20)[xor port, rotate=-90, scale=0.35, xshift=-1.4cm](xory1){};
+		\node at (a8b.30)[xor port, rotate=-90, scale=0.35, xshift=-1.4cm](xory2){};
+		\node at (a8b.55)[xor port, rotate=-90, scale=0.35, xshift=-1.4cm](xory3){};
+		\node at (a8b.107)[xor port, rotate=-90, scale=0.35, xshift=-1.4cm](xory4){};
+		\node at (a8b.142)[xor port, rotate=-90, scale=0.35, xshift=-1.4cm](xory5){};
+		\node at (a8b.157)[xor port, rotate=-90, scale=0.35, xshift=-1.4cm](xory6){};
+		\node at (a8b.163)[xor port, rotate=-90, scale=0.35, xshift=-1.4cm](xory7){};
+		
+		%outputs
+		\draw[->] (a8b.344) --++(90:-0.5cm) node [below] {$s_0$};
+		\draw[->] (a8b.338) --++(90:-0.5cm) node [below] {$s_1$};
+		\draw[->] (a8b.326) --++(90:-0.5cm) node [below] {$s_2$};
+		\draw[->] (a8b.297) --++(90:-0.5cm) node [below] {$s_3$};
+		\draw[->] (a8b.243) --++(90:-0.5cm) node [below] {$s_4$};
+		\draw[->] (a8b.214) --++(90:-0.5cm) node [below] {$s_5$};
+		\draw[->] (a8b.202) --++(90:-0.5cm) node [below] {$s_6$};
+		\draw[->] (a8b.196) --++(90:-0.5cm) node [below] {$s_7$};
+		
+		%inputs
+		%xs
+		\draw[<-] (a8b.17) --++(90:1.15cm) node [above] {$x_0$};
+		\draw[<-] (a8b.23) --++(90:1.15cm) node [above] {$x_1$};
+		\draw[<-] (a8b.38) --++(90:1.15cm) node [above] {$x_2$};
+		\draw[<-] (a8b.73) --++(90:1.15cm) node [above] {$x_3$};
+		\draw[<-] (a8b.125) --++(90:1.15cm) node [above] {$x_4$};
+		\draw[<-] (a8b.150) --++(90:1.15cm) node [above] {$x_5$};
+		\draw[<-] (a8b.160) --++(90:1.15cm) node [above] {$x_6$};
+		\draw[<-] (a8b.165) --++(90:1.15cm) node [above] {$x_7$};
+		
+		%ys
+		\draw (xory0.in 2)--++(90:0.35cm) node[above]{$y_0$};
+		\draw (xory1.in 2)--++(90:0.35cm) node[above]{$y_1$};
+		\draw (xory2.in 2)--++(90:0.35cm) node[above]{$y_2$};
+		\draw (xory3.in 2)--++(90:0.35cm) node[above]{$y_3$};
+		\draw (xory4.in 2)--++(90:0.35cm) node[above]{$y_4$};
+		\draw (xory5.in 2)--++(90:0.35cm) node[above]{$y_5$};
+		\draw (xory6.in 2)--++(90:0.35cm) node[above]{$y_6$};
+		\draw (xory7.in 2)--++(90:0.35cm) node[above]{$y_7$};
+		
+		\draw[<-] (a8b.15) -- (xory0.out);
+		\draw[<-] (a8b.20) -- (xory1.out);
+		\draw[<-] (a8b.30) -- (xory2.out);
+		\draw[<-] (a8b.55) -- (xory3.out);
+		\draw[<-] (a8b.107) -- (xory4.out);
+		\draw[<-] (a8b.142) -- (xory5.out);
+		\draw[<-] (a8b.157) -- (xory6.out);
+		\draw[<-] (a8b.163) -- (xory7.out);
+		
+		\draw (xory7.in 1) node [circle,fill,inner sep=0.7pt]{} -- (xory6.in 1) node [circle,fill,inner sep=0.7pt]{} -- (xory5.in 1) node [circle,fill,inner sep=0.7pt]{} -- (xory4.in 1) node [circle,fill,inner sep=0.7pt]{} -- (xory3.in 1) node [circle,fill,inner sep=0.7pt]{} -- (xory2.in 1) node [circle,fill,inner sep=0.7pt]{} -- (xory1.in 1) node [circle,fill,inner sep=0.7pt]{} -- (xory0.in 1) node [circle,fill,inner sep=0.7pt]{} -- ++(1cm, 0) node[above]{sub};
+		
+		% carry in/out
+		\draw[<-] (a8b.east) --++(0:0.5cm) node [right] {$1$};
+		\draw[->] (a8b.west) --++(180:0.5cm) node [left] {$c_\text{out}$};
+	\end{tikzpicture}
+\end{center}\bigbreak
+
+
+\subsubsection{Moving Forward}
+\bigbreak
+
+So far we have used the sum of products method to find
+
+\begin{itemize}
+	\item Arthmetic circuits (Adder \& Subtractor)
+	\item Logic circuits (Equality test)
+\end{itemize}\bigbreak
+
+Both of these types of circuits together are part of the \textbf{Arithmetic Logic Unit} (ALU).\\
+
+The \textit{CPU} is made of the \textit{ALU} and the \textit{Control Unit} (CU). The control unit is responsible for managing the ALU and memory. The control unit is composed of combinational circuits. These circuits perform control operations. What are these?
+
+\begin{itemize}
+	\item Selection: Select data from memory
+	\item Decoding: Decode the operation code
+	\item Encoding
+	\item ...
+\end{itemize}\bigbreak
+
+We will know build control circuits for Selection and Decoding.\\
 
 
 
