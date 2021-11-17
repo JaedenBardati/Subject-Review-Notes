@@ -2408,13 +2408,286 @@ To find and remove the smallest grade,
 \end{lstlisting}\bigbreak
 
 
+We can make the reading of a vector to be a function using the following
+
+\begin{lstlisting}
+	vector<double> vect_read() {
+		vector <double> v;
+		
+		double element;
+		while(cin >> element)
+			v.push_back(element);
+		cin.clear();
+		cin.ignore();
+		
+		return v;
+	}
+\end{lstlisting}\bigbreak
+
+We can also make the finding of the average of the elements of a vector using
+
+\begin{lstlisting}
+	vector<double> vect_avg(vector<double> v) {
+		double total = 0;
+		
+		for(int i=0; i< v.size();i++){
+			total += v[i];
+		}
+	
+		if (v.size()!=0)
+			return total / v.size();
+		
+		return -1;  // Error, no data
+	}
+\end{lstlisting}\bigbreak
 
 
+Finally, we can finding the smallest element of a vector with yet another function if we want:
+
+\begin{lstlisting}
+	int vect_minpos(vector<double> v) {
+		int index = 0;
+		for (int i=0; i<v.size();i++) {
+			if (v[i] < v[index])
+				index = i;
+		}
+		return index;
+	}
+\end{lstlisting}\bigbreak
+
+We can make a remove function if we would like also, to remove the element of a particular position
+
+\begin{lstlisting}
+	void vect_remove(vector<double> &results, int index) {
+		results[index] = results.back();
+		results.pop_back();
+	}
+\end{lstlisting}\bigbreak
 
 
+To append a vector (source) to another one (destination), we can use the function
+
+\begin{lstlisting}
+	void append(vector<int> src, vector<int> &dest) {
+		for (int i=0; i<src.size(); i++) {
+			dest.push_back(src[i]);
+		}
+	}
+\end{lstlisting}\bigbreak
+
+We can print a vector with something like
+
+\begin{lstlisting}
+	void print(vector<int> v) {
+		for (int i=0; i<v; i++) {
+			cout << v[i] << " ";
+		}
+		cout << endl;
+	}
+\end{lstlisting}\bigbreak
+
+Something to note about arrays is that you cannot simply assign one to another, you must assign each element to another. Namely, 
+
+\begin{lstlisting}
+	int A[2] = {1, 6};
+	int B[2];
+	
+	B = A; // Gives Error
+	
+	for (int i=0; i<2; i++)	// Must iterate over all elements instead
+		B[i] = A[i];
+\end{lstlisting}\bigbreak
+
+Whereas for vectors, you can directly assign one to the another without error.
+
+\begin{lstlisting}
+	vector <int> A(2);
+	A[0] = 1;
+	A[1] = 6;
+	vector <int> B;
+	
+	B = A; 	// This works now
+	
+	for (int i=0; i<A.size(); i++)	// This still also works
+		B.push_back(A[i]);
+\end{lstlisting}\bigbreak
 
 
+\subsection{Pointers}
+\bigbreak
 
+\subsubsection{The reference operator: \&}
+\bigbreak
+
+A variable is stored in the memory and a variable is associated with a \textit{memory address} which points to a particular cell in memory.\\
+
+If we have a variable, we can find the address of the number using the ampersand sign (\&). For instance,
+
+\begin{lstlisting}
+	int number = 25;
+	
+	cout << "number = " << number << endl;
+	cout << "Address of number = " << &number << endl; 
+\end{lstlisting}\bigbreak
+
+This will give us a result in hexadecimal such as 0x6dfefc.\\
+
+If we also pass it through a function \textbf{by value} as follows 
+
+\begin{lstlisting}
+	int number = 25;
+	
+	cout << "number = " << number << endl;
+	cout << "Address of number = " << &number << endl << endl; 
+	
+	display(number);
+\end{lstlisting}\bigbreak
+
+where display is defined as
+
+\begin{lstlisting}
+	void display(int number) {
+		cout << "In a function:" << endl;
+		cout << "number = " << number << endl;
+		cout << "Address of number = " << &number << endl; 
+	}
+\end{lstlisting}\bigbreak
+
+we will get a \textit{different memory address}, but the same value for the variable (e.g. 0x6dfefc and 0x6dfee0). We can clearly see the locality of the variables this way.\\
+
+If instead we pass number \textbf{by reference} to display with 
+
+\begin{lstlisting}
+	void display(int &number) {
+		cout << "In a function:" << endl;
+		cout << "number = " << number << endl;
+		cout << "Address of number = " << &number << endl; 
+	}
+\end{lstlisting}\bigbreak
+
+Then we can see that they both have the \textit{same address} (e.g. 0x6dfefc and 0x6dfefc).\\
+
+The ampersand sign (\&) is called the \textbf{reference operator} and it allows access to values' addresses.\\
+
+
+\subsubsection{Definition of Pointers}
+\bigbreak
+
+\begin{itemize}
+	\item A variable contains a value: int number = 25;
+	\item The address of a variable is acessed by \&: Address of number is \&number
+	\item A pointer is a special type of variable that contains an address.
+	\item For example: \begin{lstlisting}
+		int *p;
+	\end{lstlisting}
+	\item p is a pointer to a variable that contains an int
+	\item p will contain the address of a variable of type int.
+	\item * is called the \textbf{dereference operator} (*p: value pointed by p) 
+\end{itemize}\bigbreak
+
+
+We can define a pointer called p using
+
+\begin{lstlisting}
+	int *p;
+\end{lstlisting}\bigbreak
+
+If we want to initialize the pointer, we need to define another variable (say number) and then define it to be the address of that variable.
+
+\begin{lstlisting}
+	int number = 25;	// initialize another variable
+	int *p;				 // declare pointer
+	p = &number;		 // assign pointer the address of another variable
+\end{lstlisting}\bigbreak
+
+
+If we write
+
+\begin{lstlisting}
+	*p = 35;
+\end{lstlisting}\bigbreak
+
+We take the number at the address pointed to by p to be 35. Thus, number becomes equal to 35.\\
+
+If we declare new\_number, if we want to set p to point to new\_number instead of number, we must not use the *
+
+\begin{lstlisting}
+	int new_number;
+	p = &new_number;
+\end{lstlisting}\bigbreak
+
+Now p points to new\_number and not to number anymore. So if we assign the value at p to be 40 with 
+
+\begin{lstlisting}
+	*p = 40;
+\end{lstlisting}\bigbreak
+
+then new\_number becomes 40, but number is still 35.\\
+
+We will now do a few examples of this.\\
+
+\textbf{Example 1:}
+
+\begin{lstlisting}
+	// Declaration and Assignment of Pointers
+	int number = 25;
+	
+	cout << "number = " << number << endl;				// 25
+	cout << "address number = " << &number << endl;		// 0x6dfef8
+	
+	int *p;
+	p = &number
+	
+	cout << "p = " << p << endl; 		// 0x6dfef8
+	cout << "*p = " << *p << endl;		// 25
+	
+	double new_number = 56.0;
+	p = &new_number;		// Error, p must point to an int, new_number must instead be an int
+\end{lstlisting}\bigbreak
+
+\textbf{Example 2:}
+
+\begin{lstlisting}
+	// Manipulation with the pointers
+	
+	int first = 5;
+	int sec = 15;
+	
+	int *p1, *p2;
+	p1 = &first;
+	p2 = &sec;
+	// first = 5, second = 15, *p1 = 5, *p2 = 15
+	
+	*p1 = 10;
+	// first = 10, second = 15, *p1 = 10, *p2 = 15
+	
+	*p2 = *p1;
+	// first = 10, second = 10, *p1 = 10, *p2 = 10
+	
+	p1 = p2;
+	// first = 10, second = 10, *p1 = 10, *p2 = 10
+	// p2 now points to first
+	
+	*p1 = 20;
+	// first = 10, second = 20, *p1 = 20, *p2 = 20
+	
+	cout << first << " " << sec << " " << *p1 << " " << *p2;
+\end{lstlisting}\bigbreak
+
+\textbf{Example 3:}
+
+\begin{lstlisting}
+	// Pointers initialization errors
+	
+	int *p1;
+	*p1 = 25; 		// fatal error
+	// This is because p1 does not point anywhere, and you cannot assign 25 to nowhere
+	
+	// Must do the following instead
+	int number; 
+	int *p1 = &number;
+	int *p1 = 25;
+\end{lstlisting}\bigbreak
 
 
 
