@@ -13,7 +13,30 @@
 \usepackage{pgfplots} % plots
 \usepackage{circuitikz} % circuit plots
 \usetikzlibrary{positioning} % positioning in circuit plots
+\usetikzlibrary{backgrounds, shapes} % shapes for multiplexer+
 %%\usepackage{outlines} % convienent itemizing
+
+%for flowchart:
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{siunitx}
+\usepackage{tikz}
+\usetikzlibrary{patterns}
+\usepackage{caption}
+\usetikzlibrary{arrows}
+\usepackage{color}
+\usepackage{pgfplots}
+\usepackage{listings}
+\usepackage[utf8]{inputenc}
+\usetikzlibrary{shapes.geometric}
+\usepackage{tikz-cd}
+\usetikzlibrary{positioning}
+\tikzset{
+	shift left/.style ={commutative diagrams/shift left={#1}},
+	shift right/.style={commutative diagrams/shift right={#1}}
+}
+
 
 %tables for list representation
 \usepackage{arydshln, collcell}
@@ -2084,7 +2107,7 @@ So far, we have been given a Boolean expression and have been told to generate a
 Let's assume a function $f(x, y)$ that has the truth table
 
 \begin{center}
-	\begin{tabular}{|c|c|c|}
+	\begin{tabular}{|c|c||c|}
 		a & b & $f$ \\\hline
 		0 & 0 & 0 \\
 		0 & 1 & 0 \\
@@ -2099,7 +2122,7 @@ We know that $f=1$ when ($x=1$ AND $y=0$) OR when ($x=1$ AND $y=1$). Simplifying
 Let's now assume a function $f_2(x, y)$ that has the truth table
 
 \begin{center}
-	\begin{tabular}{|c|c|c|}
+	\begin{tabular}{|c|c||c|}
 		a & b & $f_2$ \\\hline
 		0 & 0 & 0 \\
 		0 & 1 & 1 \\
@@ -2116,7 +2139,7 @@ We say that $f$ is written as a \textbf{sum of products} (OR of ANDs). This is a
 Let's do a larger example: Express the following using the sum of products. 
 
 \begin{center}
-	\begin{tabular}{|c|c|c|c|}
+	\begin{tabular}{|c|c|c||c|}
 		x & y & z & $f_3$ \\\hline
 		0 & 0 & 0 & 0\\
 		0 & 0 & 1 & 0\\
@@ -2165,7 +2188,7 @@ The steps that one must follow in order to build a combinational logic circuit (
 The input is an integer, so it must be converted to binary. We need 3 bits to represent 8 numbers. We will call these bits $a$, $b$ and $c$. Now we can construct the truth table.\\
 
 \begin{center}
-	\begin{tabular}{|c|c|c|c|}
+	\begin{tabular}{|c|c|c||c|}
 		$a$ & $b$ & $c$ & $f$ \\\hline
 		0 & 0 & 0 & 0\\
 		0 & 0 & 1 & 0\\
@@ -2212,7 +2235,7 @@ Thus, $f  a(b+c)$. We can now make the logic diagram:\\
 \textbf{Example 2:} Build a CLC where $f=1$ if the number of 1s in the input is \textit{odd} nad $f$ takes 3 binary inputs. For instance, with 101, $f=0$; but with 010, $f=1$. The truth table is therefore\\
 
 \begin{center}
-	\begin{tabular}{|c|c|c|c|}
+	\begin{tabular}{|c|c|c||c|}
 		$a$ & $b$ & $c$ & $f$ \\\hline
 		0 & 0 & 0 & 0\\
 		0 & 0 & 1 & 1\\
@@ -2239,7 +2262,7 @@ The \textbf{exclusive or} (XOR) is denoted with the $\bigoplus$ symbol. We say t
 The truth table of the XOR is
 
 \begin{center}
-	\begin{tabular}{|c|c|c|}
+	\begin{tabular}{|c|c||c|}
 		a & b & $a \bigoplus b$ \\\hline
 		0 & 0 & 0 \\
 		0 & 1 & 1 \\
@@ -2265,7 +2288,7 @@ The complement to the exclusive or is the \textbf{exclusive nor} (XNOR). We say 
 The truth table of the XNOR is
 
 \begin{center}
-	\begin{tabular}{|c|c|c|}
+	\begin{tabular}{|c|c||c|}
 		a & b & $\overline{a \bigoplus b}$ \\\hline
 		0 & 0 & 1 \\
 		0 & 1 & 0 \\
@@ -2317,7 +2340,7 @@ The number of \textit{inputs} is 2. The number of \textit{outputs} is 2 (sum ($s
 Making the truth table, 
 
 \begin{center}
-	\begin{tabular}{|c|c|c|c|}
+	\begin{tabular}{|c|c||c|c|}
 		$x$ & $y$ & $s$ & $c$	\\\hline
 		0 & 0 & 0 & 0	\\
 		1 & 0 & 1 & 0	\\
@@ -2353,7 +2376,7 @@ The full adder is a circuit that adds 2 binary inputs ($x$ and $y$) and a carry 
 The truth table is  
 
 \begin{center}
-	\begin{tabular}{|c|c|c|c|c|}
+	\begin{tabular}{|c|c|c||c|c|}
 		$x$ & $y$ & $c_{in}$ & $s$ & $c_{out}$	\\\hline
 		 0  &  0  &     0    &  0  &    0    	\\
 		 0  &  0  &     1    &  1  &    0    	\\
@@ -2790,6 +2813,445 @@ The \textit{CPU} is made of the \textit{ALU} and the \textit{Control Unit} (CU).
 \end{itemize}\bigbreak
 
 We will know build control circuits for Selection and Decoding.\\
+
+
+\subsubsection{The Multiplexer}
+\bigbreak
+
+The \textbf{multiplexer} is a selection circuit which
+
+\begin{itemize}
+	\item selects one of many inputs
+	\item direct it to the output
+\end{itemize}\bigbreak
+
+A multiplexer is denoted as MUX. A MUX has
+
+\begin{itemize}
+	\item $2^n$ inputs: $I_0$, $I_1$, $I_2$, ..., $I_{2^n-1}$ where $I_i \in \{0, 1\}$
+	\item 1 output
+	\item $n$ selection lines: $s_0$, $s_1$, ..., $s_{n-1}$
+\end{itemize}\bigbreak
+
+The decimal value of $s = s_{n-1} ... s_1s_0$ is the \textit{index of the input that will be directed to the output}. The multiplexer diagram is\\
+
+\begin{center}
+	\begin{tikzpicture}[multiplexer/.style={
+			draw,
+			signal,
+			shape border uses incircle, 
+			shape border rotate=270,
+			minimum width=2.5cm, 
+			minimum height=2cm,
+		}, thick,scale=1.5,every node/.style={transform shape}]
+		\node[multiplexer] (mul) at (0,0) {~~~$2^n$ to 1};
+		\draw (mul.east) --++(0.5cm,0) node[above]{f};
+		
+		\draw (mul.west)++(0, 0.75cm) --++(-0.5cm,0) node[left]{\scriptsize $I_0$};
+		\draw (mul.west)++(0, 0.50cm) --++(-0.5cm,0) node[left]{\scriptsize $I_1$};
+		\draw (mul.west)++(0, 0.25cm) --++(-0.5cm,0) node[left]{\scriptsize $I_2$};
+		\draw (mul.west)++(-0.25cm, -0.1cm) node[circle, fill, inner sep=0.02]{} ++(-0.55cm, 0) node[circle, fill, inner sep=0.02]{};
+		\draw (mul.west)++(-0.25cm, -0.25cm) node[circle, fill, inner sep=0.02]{} ++(-0.55cm, 0) node[circle, fill, inner sep=0.02]{};
+		\draw (mul.west)++(-0.25cm, -0.4cm) node[circle, fill, inner sep=0.02]{} ++(-0.55cm, 0) node[circle, fill, inner sep=0.02]{};
+		\draw (mul.west)++(0, -0.75cm) --++(-0.5cm,0) node[left]{\scriptsize $I_{2^n-1}$};
+		
+		\draw (mul.south)++(-0.6cm, 0) --++(0, -0.5cm) node[below]{\scriptsize $s_{n-1}$};
+		\draw (mul.south)++(0.4cm, 0) --++(0, -0.5cm) node[below]{\scriptsize $s_{1}$};
+		\draw (mul.south)++(0.1cm, -0.25cm) node[circle, fill, inner sep=0.02]{} ++(0, -0.4cm) node[circle, fill, inner sep=0.02]{};
+		\draw (mul.south)++(0.0cm, -0.25cm) node[circle, fill, inner sep=0.02]{} ++(0, -0.4cm) node[circle, fill, inner sep=0.02]{};
+		\draw (mul.south)++(-0.1cm, -0.25cm) node[circle, fill, inner sep=0.02]{} ++(0, -0.4cm) node[circle, fill, inner sep=0.02]{};
+		\draw (mul.south)++(0.65cm, 0) --++(0, -0.5cm) node[below]{\scriptsize $s_{0}$};
+	\end{tikzpicture}
+\end{center}\bigbreak
+
+If $s_{n-1} ... s_1s_0 = (00...0)_2 = (0)_{10} \implies f = I_0$.\\
+If $s_{n-1} ... s_1s_0  = (00...1)_2 = (1)_{10} \implies f = I_1$. And so on...\\
+If $s_{n-1} ... s_1s_0  = (11...1)_2 = (2^n-1)_{10} \implies f = I_{2^n-1}$.\\
+
+An everyday example of a multiplexer is the decimal multiplexer on a remote control for a TV. If you have $100 = 10^2$ channels (0 to 99), in order to select one, you choose two decimal numbers (say 8 and 5) to be your $s_1$ and $s_0$. The multiplexer then connects the input (in this case channel 85) to the output (TV). \\
+\pagebreak
+
+
+\subsubsection{2 to 1 Multiplexer}
+\bigbreak
+
+A 2 to 1 multiplexer will have $n=1$ and therefore $2^n-1 = 2^1-1 = 2$ inputs ($I_0$ and $I_1$) with $n=1$ selection lines ($s_0 \equiv s$) and an output $f$. The corresponding diagram is\\
+
+\begin{center}
+	\begin{tikzpicture}[multiplexer/.style={
+			draw,
+			signal,
+			shape border uses incircle, 
+			shape border rotate=270,
+			minimum width=2.5cm, 
+			minimum height=2cm,
+		}, thick,scale=1.5,every node/.style={transform shape}]
+		\node[multiplexer] (mul) at (0,0) {~~~~2 to 1};
+		\draw (mul.east) --++(0.5cm,0) node[above]{f};
+		
+		\draw (mul.west)++(0, 0.5cm) --++(-0.5cm,0) node[left]{\scriptsize $I_0$};
+		\draw (mul.west)++(0, -0.5cm) --++(-0.5cm,0) node[left]{\scriptsize $I_{2}$};
+		
+		\draw (mul.south) --++(0, -0.5cm) node[below]{\scriptsize $s$};
+	\end{tikzpicture}
+\end{center}\bigbreak
+
+If $s=0$ then $f=I_0$ and if $s=1$ then $f=I_1$. We will now use the \textit{sum of products} technique (as usual). The truth table of the 2 to 1 multiplexer is\bigbreak
+
+\begin{center}
+	\begin{tabular}{|c|c||c|c|}
+		$I_1$ & $I_0$ & $s$ & $f$ 	\\\hline
+		   0  &   0   &  0  &  0  	\\
+		   0  &   0   &  1  &  0  	\\
+		   0  &   1   &  0  &  1  	\\
+		   0  &   1   &  1  &  0  	\\
+		   1  &   0   &  0  &  0  	\\
+		   1  &   0   &  1  &  1  	\\
+		   1  &   1   &  0  &  1  	\\
+		   1  &   1   &  1  &  1  	\\
+	\end{tabular}
+	\bigbreak
+\end{center}
+
+The Boolean expression is therefore $f = \bar{I_1}I_0\bar{s} + I_1\bar{I_0}s + I_1I_0\bar{s} + I_1I_0s$. We can simply this expression.
+
+\begin{align*}
+	f &= \bar{I_1}I_0\bar{s} + I_1\bar{I_0}s + I_1I_0\bar{s} + I_1I_0s\\
+	  &= I_0\bar{s}(\bar{I_1} + I_1) + I_1s(\bar{I_0} + I_0)\\
+	  &= I_0\bar{s} + I_1s
+\end{align*}\bigbreak
+
+Thus, $f=I_0\bar{s} + I_1s$. We can draw this diagram as\bigbreak
+
+
+\begin{center}
+	\begin{tikzpicture}[multiplexer/.style={
+			draw,
+			signal,
+			shape border uses incircle, 
+			shape border rotate=270,
+			minimum width=2.5cm, 
+			minimum height=2cm,
+			dashed
+		}, thick,scale=1.5,every node/.style={transform shape}]
+		\node[multiplexer] (mul) at (0,0) {};
+		\draw (mul.east) --++(0.5cm,0) node[above]{f};
+		
+		\draw (mul.west)++(0, 0.5cm) --++(-0.5cm,0) node[left]{\scriptsize $I_0$};
+		\draw (mul.west)++(0, -0.5cm) --++(-0.5cm,0) node[left]{\scriptsize $I_{2}$};
+		
+		\draw (mul.south)++(-0.25cm, 0) --++(0, -0.5cm) node[below]{\scriptsize $s$};
+		
+		\node at (-0.25cm, 0)[not port, rotate=90, scale=0.2, thin](mynot){};
+		\node at (0.5cm, 0.4cm)[and port, scale=0.4, thin](upperand){};
+		\node at (0.5cm, -0.4cm)[and port, scale=0.4, thin](lowerand){};
+		\node at (1.25cm, 0)[or port, scale=0.4, thin](myor){};
+		
+		\draw (mul.west)++(0, 0.5cm) -- (upperand.in 1);
+		\draw (mul.west)++(0, -0.5cm) -- (lowerand.in 2);
+		\draw (upperand.out) -- (myor.in 1);
+		\draw (lowerand.out) -- (myor.in 2);
+		\draw (myor.out) -- (mul.east);
+		\draw (mynot.out) -- ++ (0, 0.15cm) --(upperand.in 2);
+		\draw (mul.south)++(-0.25cm, 0) -- (mynot.in) ++ (0, -0.15cm) node[circle, fill, inner sep=0.75]{} --(lowerand.in 1);
+		\draw (mynot.in) ++ (0, -0.15cm) -- (mynot.in);
+	\end{tikzpicture}
+\end{center}\bigbreak
+
+In order to scale this up to larger multiplexers, we need a different method because the standard sum of products method is too inefficient.\\
+
+To do this, we will make a compactified truth table by only using s as an input and instead consider them as the values of the output.\\
+
+\begin{center}
+	\begin{tabular}{|c||c|}
+		$s$ & $f$\\\hline
+		0  &   $I_0$\\
+		1  &   $I_1$\\
+	\end{tabular}
+	\bigbreak
+\end{center}
+
+Now we can get a Boolean expression from this truth table now. Using this method, we and each of the outputs of $f$ (in this case $I_0$ and $I_1$) with the inputs (following the same rule as before, where a not in inserted if the value is 0). Namely, here we get that $f = I_0\bar{s} + I_1s$. Note that this is the same as the expression we got using the previous method, but with less steps.\\
+
+
+\subsubsection{4 to 1 Multiplexer}
+\bigbreak
+
+In a 4 to 1 multiplexer, we will have 4 inputs and 2 selection lines. The multiplexer looks like\\
+
+\begin{center}
+	\begin{tikzpicture}[multiplexer/.style={
+			draw,
+			signal,
+			shape border uses incircle, 
+			shape border rotate=270,
+			minimum width=2.5cm, 
+			minimum height=2cm,
+		}, thick,scale=1.5,every node/.style={transform shape}]
+		\node[multiplexer] (mul) at (0,0) {~~~4 to 1};
+		\draw (mul.east) --++(0.5cm,0) node[above]{f};
+		
+		\draw (mul.west)++(0, 0.65cm) --++(-0.5cm,0) node[left]{\scriptsize $I_0$};
+		\draw (mul.west)++(0, 0.225cm) --++(-0.5cm,0) node[left]{\scriptsize $I_1$};
+		\draw (mul.west)++(0, -0.225cm) --++(-0.5cm,0) node[left]{\scriptsize $I_2$};
+		\draw (mul.west)++(0, -0.65cm) --++(-0.5cm,0) node[left]{\scriptsize $I_{3}$};
+		
+		\draw (mul.south)++(-0.4cm, 0) --++(0, -0.5cm) node[below]{\scriptsize $s_{1}$};
+		\draw (mul.south)++(0.4cm, 0) --++(0, -0.5cm) node[below]{\scriptsize $s_{0}$};
+	\end{tikzpicture}
+\end{center}\bigbreak
+
+If $s_1s_0 = (00)_2 \implies f=I_0$.\\
+If $s_1s_0 = (01)_2 \implies f=I_1$.\\
+If $s_1s_0 = (10)_2 \implies f=I_2$.\\
+If $s_1s_0 = (11)_2 \implies f=I_3$.\\
+
+The truth table (compact form) is\bigbreak
+
+\begin{center}
+	\begin{tabular}{|c|c||c|}
+		$s_1$ & $s_1$ & $f$\\\hline
+		  0   &   0   & $I_0$\\
+		  0   &   1   & $I_1$\\
+		  1   &   0   & $I_2$\\
+		  1   &   1   & $I_3$\\
+	\end{tabular}
+	\bigbreak
+\end{center}
+
+Thus, the Boolean expression is $f = I_0\bar{s_1}\bar{s_0} + I_1\bar{s_1}s_0 + I_2s_1\bar{s_0} + I_3s_1s_0$. Now, we can draw the multiplexer circuit.\\
+
+\begin{center}
+	\begin{tikzpicture}[multiplexer/.style={
+			draw,
+			signal,
+			shape border uses incircle, 
+			shape border rotate=270,
+			minimum width=2.5cm, 
+			minimum height=2cm,
+			dashed
+		}, thick,scale=2,every node/.style={transform shape}]
+		\node[multiplexer] (mul) at (0,0) {};
+		\draw (mul.east) --++(0.5cm,0) node[above]{f};
+		
+		\draw (mul.west)++(0, 0.65cm)++(0, 0.15cm) --++(-0.5cm,0) node[left]{\scriptsize $I_0$};
+		\draw (mul.west)++(0, 0.225cm)++(0, 0.15cm) --++(-0.5cm,0) node[left]{\scriptsize $I_1$};
+		\draw (mul.west)++(0, -0.225cm)++(0, 0.15cm) --++(-0.5cm,0) node[left]{\scriptsize $I_2$};
+		\draw (mul.west)++(0, -0.65cm)++(0, 0.15cm) --++(-0.5cm,0) node[left]{\scriptsize $I_{3}$};
+		
+		\draw (mul.south)++(-0.4cm, 0) --++(0, -0.5cm) node[below]{\scriptsize $s_{1}$};
+		\draw (mul.south) --++(0, -0.5cm) node[below]{\scriptsize $s_{0}$};
+		
+		\draw (mul.south)++(-0.4cm, 0) -- (-0.4cm, 0.9cm);
+		\draw (mul.south) -- (0, 0.9cm);
+		
+		\node at (-0.55cm, -0.85cm)[not port, rotate=90, scale=0.12, thin](Lnot){};
+		\node at (-0.15cm, -0.85cm)[not port, rotate=90, scale=0.12, thin](Rnot){};
+		\draw (Lnot.in) -- ++(0.15cm, 0) node[circle, fill, inner sep=0.6]{};
+		\draw (Rnot.in) -- ++(0.15cm, 0) node[circle, fill, inner sep=0.6]{};
+		\draw (Lnot.out) -- (-0.55cm, 0.9cm);
+		\draw (Rnot.out) -- (-0.15cm, 0.9cm);
+		
+		\node at (0.6cm, 0.7cm)[and port, scale=0.3, thin](and0){};
+		\node at (0.6cm, 0.275cm)[and port, scale=0.3, thin](and1){};
+		\node at (0.6cm, -0.175cm)[and port, scale=0.3, thin](and2){};
+		\node at (0.6cm, -0.6cm)[and port, scale=0.3, thin](and3){};
+		\draw (mul.west)++(0, 0.65cm)++(0, 0.15cm) -- (and0.in 1);
+		\draw (mul.west)++(0, 0.225cm)++(0, 0.15cm) -- (and1.in 1);
+		\draw (mul.west)++(0, -0.225cm)++(0, 0.15cm) -- (and2.in 1);
+		\draw (mul.west)++(0, -0.65cm)++(0, 0.15cm) -- (and3.in 1);
+		
+		\node at (1.1cm, 0.275cm)[or port, scale=0.3, thin](or1){};
+		\node at (1.1cm, -0.175cm)[or port, scale=0.3, thin](or2){};
+		\node at (1.6cm, 0)[or port, scale=0.3, thin](or3){};
+		\draw (and0.out) -- (or1.in 1);
+		\draw (and1.out) -- (or1.in 2);
+		\draw (and2.out) -- (or2.in 1);
+		\draw (and3.out) -- (or2.in 2);
+		\draw (or1.out) -- (or3.in 1);
+		\draw (or2.out) -- (or3.in 2);
+		\draw (or3.out) -- (mul.east) --++(0.5cm,0);
+		
+		\draw (and0.in 2)++(0.07cm, 0.085cm)--++(-0.07cm, 0) --++(-0.18cm, 0)--++(-0.55cm, 0) node[circle, fill, inner sep=0.6]{};
+		\draw (and0.in 2)--++(-0.18cm, 0)--++(-0.15cm, 0) node[circle, fill, inner sep=0.6]{};
+		\draw (and1.in 2)++(0.07cm, 0.085cm)--++(-0.07cm, 0) --++(-0.18cm, 0)--++(-0.55cm, 0) node[circle, fill, inner sep=0.6]{};
+		\draw (and1.in 2)--++(-0.18cm, 0) node[circle, fill, inner sep=0.6]{};
+		\draw (and2.in 2)++(0.07cm, 0.085cm)--++(-0.07cm, 0) --++(-0.18cm, 0)--++(-0.4cm, 0) node[circle, fill, inner sep=0.6]{};
+		\draw (and2.in 2)--++(-0.18cm, 0)--++(-0.15cm, 0) node[circle, fill, inner sep=0.6]{};
+		\draw (and3.in 2)++(0.07cm, 0.085cm)--++(-0.07cm, 0) --++(-0.18cm, 0)--++(-0.4cm, 0) node[circle, fill, inner sep=0.6]{};
+		\draw (and3.in 2)--++(-0.18cm, 0) node[circle, fill, inner sep=0.6]{};
+	\end{tikzpicture}
+\end{center}\bigbreak
+
+\pagebreak
+\subsubsection{The Decoder (2 to 4)}
+\bigbreak
+
+The decoder is the opposite of a multiplexer. Instead of encoding a larger input into a smaller output, it decodes a smaller input into a larger output. It is denoted with the following diagram.\\
+
+\begin{center}
+	\begin{tikzpicture}[multiplexer/.style={
+			draw,
+			rectangle,
+			shape border uses incircle, 
+			shape border rotate=270,
+			minimum width=2.5cm, 
+			minimum height=2cm,
+		}, thick,scale=1.5,every node/.style={transform shape}]
+		\node[multiplexer] (mul) at (0,0) {2 to 4};
+		
+		\draw (mul.west)++(0, 0.5cm) --++(-0.5cm,0) node[left]{\scriptsize $I_0$};
+		\draw (mul.west)++(0, -0.5cm) --++(-0.5cm,0) node[left]{\scriptsize $I_1$};
+		
+		\draw (mul.east)++(0, 0.65cm) --++(0.5cm,0) node[right]{\scriptsize $D_0$};
+		\draw (mul.east)++(0, 0.225cm) --++(0.5cm,0) node[right]{\scriptsize $D_1$};
+		\draw (mul.east)++(0, -0.225cm) --++(0.5cm,0) node[right]{\scriptsize $D_2$};
+		\draw (mul.east)++(0, -0.65cm) --++(0.5cm,0) node[right]{\scriptsize $D_3$};
+	\end{tikzpicture}
+\end{center}\bigbreak
+
+The truth table is
+
+\begin{center}
+	\begin{tabular}{|c|c||c|c|c|c|}
+		$I_1$ & $I_0$ & $D_0$ & $D_1$ & $D_2$ & $D_3$ 	\\\hline
+		  0   &   0   &   1   &   0   &   0   &   0  	\\
+		  0   &   1   &   0   &   1   &   0   &   0  	\\
+		  1   &   0   &   0   &   0   &   1   &   0  	\\
+		  1   &   1   &   0   &   0   &   0   &   1  	\\
+	\end{tabular}
+	\bigbreak
+\end{center}
+
+The Boolean expressions are therefore:
+\begin{center}
+	$D_0 = \bar{I_1}\bar{I_0}$\\
+	$D_1 = \bar{I_1}I_0$\\
+	$D_2 = I_1\bar{I_0}$\\
+	$D_3 = I_1I_0$
+\end{center}
+
+We can now draw the circuit diagram of the decoder:
+
+\begin{center}
+	\begin{tikzpicture}[multiplexer/.style={
+			draw,
+			rectangle,
+			shape border uses incircle, 
+			shape border rotate=270,
+			minimum width=2.5cm, 
+			minimum height=2cm,
+			dashed
+		}, thick,scale=2,every node/.style={transform shape}]
+		\node[multiplexer] (mul) at (0,0) {};
+		
+		\draw (mul.west)++(0, 0.9cm) --++(-0.5cm,0) node[left]{\scriptsize $I_0$};
+		\draw (mul.west)++(0, 0.65cm) --++(-0.5cm,0) node[left]{\scriptsize $I_1$};
+		
+		\draw (mul.east)++(0, 0.4cm) --++(0.5cm,0) node[right]{\scriptsize $D_0$};
+		\draw (mul.east)++(0, 0cm) --++(0.5cm,0) node[right]{\scriptsize $D_1$};
+		\draw (mul.east)++(0, -0.4cm) --++(0.5cm,0) node[right]{\scriptsize $D_2$};
+		\draw (mul.east)++(0, -0.8cm) --++(0.5cm,0) node[right]{\scriptsize $D_3$};
+		
+		\node at (0.75cm, 0.4cm)[and port, scale=0.3, thin](and0){};
+		\node at (0.75cm, 0cm)[and port, scale=0.3, thin](and1){};
+		\node at (0.75cm, -0.4cm)[and port, scale=0.3, thin](and2){};
+		\node at (0.75cm, -0.8cm)[and port, scale=0.3, thin](and3){};
+		\draw (mul.east)++(0, 0.4cm) -- (and0.out);
+		\draw (mul.east)++(0, 0.0cm) -- (and1.out);
+		\draw (mul.east)++(0, -0.4cm) -- (and2.out);
+		\draw (mul.east)++(0, -0.8cm) -- (and3.out);
+		
+		\draw (mul.west)++(0, 0.9cm) -- (-0.30cm, 0.9cm) -- (-0.30cm, -0.95cm);	% i0
+		\draw (mul.west)++(0, 0.65cm) -- (-0.80cm, 0.65cm) -- (-0.80cm, -0.95cm);	% i1
+		\node at (-0.5cm, 0.8cm)[not port, rotate=-90, scale=0.12, thin](not0){};
+		\node at (-1cm, 0.55cm)[not port, rotate=-90, scale=0.12, thin](not1){};
+		\draw (not0.in) -- (-0.50cm, 0.9cm) node[circle, fill, inner sep=0.5]{};
+		\draw (not1.in) -- (-1cm, 0.65cm) node[circle, fill, inner sep=0.5]{};
+		\draw (not0.out) -- (-0.50cm, -0.95cm);
+		\draw (not1.out) -- (-1cm, -0.95cm);
+		
+		\draw (and0.in 1)--++(-0.63cm, 0)--++(-0.2cm, 0) node[circle, fill, inner sep=0.6]{};
+		\draw (and0.in 2)--++(-0.63cm, 0)--++(-0.2cm, 0)--++(-0.5cm, 0) node[circle, fill, inner sep=0.6]{};
+		\draw (and1.in 1)--++(-0.63cm, 0) node[circle, fill, inner sep=0.6]{};
+		\draw (and1.in 2)--++(-0.63cm, 0)--++(-0.2cm, 0)--++(-0.5cm, 0) node[circle, fill, inner sep=0.6]{};
+		\draw (and2.in 1)--++(-0.63cm, 0)--++(-0.2cm, 0) node[circle, fill, inner sep=0.6]{};
+		\draw (and2.in 2)--++(-0.63cm, 0)--++(-0.5cm, 0) node[circle, fill, inner sep=0.6]{};
+		\draw (and3.in 1)--++(-0.63cm, 0) node[circle, fill, inner sep=0.6]{};
+		\draw (and3.in 2)--++(-0.63cm, 0)--++(-0.5cm, 0) node[circle, fill, inner sep=0.6]{};
+	\end{tikzpicture}
+\end{center}\bigbreak
+
+Note that we can only make $n$ to $2^n$ decoders: The number of outputs must always be a power of two.\\
+
+For the 3 to 8 decoder, we would obtain the Boolean expressions: $D_0 = \bar{I_2}\bar{I_1}\bar{I_0}$, $D_1 = \bar{I_2}\bar{I_1}I_0$, ... $D_7 = I_2I_1I_0$.\\
+
+\subsection{Computer Organization}
+\bigbreak
+\subsubsection{Components}
+\bigbreak
+
+Modern computers are built using the \textbf{Von Neumann machine}. There are three aspects:
+
+\begin{itemize}
+	\item \textbf{Architecture}: \textbf{I/O} (User interaction) + \textbf{Memory} (Storage) + \textbf{CPU} (\textit{CPU}: Control Unit, \textit{ALU}: Arithmetic and Logic Unit). These are all connected by a shared bus.
+	\item \textbf{Stored Programs}: All programs and data are stored in memory (binary).
+	\item \textbf{Sequential Execution}: Also called the \textbf{fetch-decode-execute} cycle. Instructions are \textbf{fetched} from memory, \textbf{decoded} by the CPU and then \textbf{executed} by the ALU. If there is a result, it is stored back in memory. \smallskip
+\end{itemize}
+
+% Course Video 3
+\subsubsection{Memory}
+\bigbreak
+
+The memory is organized in a \textbf{hierarchy}. At the bottom of the hierarchy is the Hard Drive (in TB). At the top is the CPU. Since the hard drive is slow, when some data from the hard drive is needed, it is first loaded into \textbf{RAM (Random Access Memory)} (in GB). The RAM is still too slow for the RAM, so the data is stored in \textbf{cache} (in KB or MB). Yet still, this is not fast enough for the CPU, so \textbf{registers} (in Bytes) in the CPU itself are used to store variables.
+
+\begin{center}
+	\tikzstyle{top} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=purple!30]
+	\tikzstyle{medtop} = [rectangle, minimum width=5cm, minimum height=1cm, text centered, draw=black, fill=red!30]
+	\tikzstyle{medbot} = [rectangle, minimum width=8cm, minimum height=1cm, text centered, draw=black, fill=orange!30]
+	\tikzstyle{bot} = [rectangle, minimum width=12cm, minimum height=1cm, text centered, draw=black, fill=yellow!30]
+	
+	\begin{tikzpicture}[node distance=2cm, >=latex', auto, thick]
+		\node (ntop) [top] {CPU};
+		\node (nmedtop) [medtop, below of=ntop] {Cache};
+		\node (nmedbot) [medbot, below of=nmedtop] {RAM (Random Access Memory)};
+		\node (nbot) [bot, below of=nmedbot] {Hard Drive};
+		
+		\path[->, shift left=2em]
+		(ntop) edge node {store} (nmedtop)
+		(nmedtop) edge node {load} (ntop);
+		\path[->, shift left=3.5em]
+		(nmedtop) edge node {update} (nmedbot)
+		(nmedbot) edge node {load} (nmedtop);
+		\path[->, shift left=6em]
+		(nmedbot) edge node {save} (nbot)
+		(nbot) edge node {load} (nmedbot);	
+	\end{tikzpicture}
+\end{center}
+\bigbreak
+
+\noindent As you \textbf{go up} the hierarchy, the \textbf{speed increases}, but the \textbf{size decreases} and the \textbf{cost increases}.
+
+\subsubsection{RAM}
+\bigbreak
+
+Random access memory is organized in an array of Bytes ("words"). \\
+
+Words in RAM are addressed with a byte themselves (e.g. 01101101 is an address). These are typically written in hexadecimal (e.g. 6D). \\
+
+Words in RAM can be data or machine code instructions. Instructions contain a binary code for each operation (for example, addition). Instructions codes are dependent on the CPU.\\
+
+For an $n$-bit computer system, there are $2^n$ bytes in memory (addressed in decimal with 0 to $2^n-1$). \\
+
+The size of the RAM is equal to the number of cells in memory times 1 byte. Thus, \textit{the max size of the RAM in a $n$-bit computer is $2^n$ bytes}. For example, in a 32-bit computer, the (max) size of the RAM is $2^{32}$ bytes. This is a large number that is hard to get a grasp of, so we will use prefixes to denote larger numbers of bytes.\\
+
+Namely, a \textbf{kilobyte} (KB) is $2^{10} = 1024 \approx 1000$. A \textbf{megabyte} (MB) is $2^{20}$, a \textbf{gigabyte} (GB) is $2^{30}$, a \textbf{terabyte} (TB) is $2^{40}$, and so on.\\
+
+We can write $2^{32}\text{ bytes} = 2^{2} \times 2^{30}\text{ bytes} =$ 4 GB. Thus, the max memory size of a 32-bit computer is 4 GB.\\
+
+If instead we had a 64-bit computer, the max RAM size is $2^{64}\text{ bytes} = 2^{24} \times 2^{40}\text{ bytes} = 2^{24}$ TB. This is a very large number and totally impractical in real life. Therefore, in a 64-bit computer, we do not need to display memory addresses with the full 64-bits. The data it is necessary to, but not the memory addresses.\\
+
+It is important to always distinguish between the address and content of a cell in memory. For example, the content could store the value 15, but the address is 34. \\
 
 
 
