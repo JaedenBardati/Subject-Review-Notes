@@ -2689,7 +2689,240 @@ We will now do a few examples of this.\\
 	int *p1 = 25;
 \end{lstlisting}\bigbreak
 
+\subsubsection{Functions with Pointer Arguments}
+\bigbreak
 
+Using pointers, we can use a different style for the following passing by reference example
+
+\begin{lstlisting}
+	void deposit(double &bal, double amt) {
+		bal = bal + amt;
+	}
+
+	int main() {
+		double balance = 1000;
+		deposit(balance, 25);
+		cout << "The new balance is " << balance;
+	}
+\end{lstlisting}\bigbreak
+
+We can rewrite this using a pointer as follows.
+
+\begin{lstlisting}
+	void deposit2(double *bal, double amt) {
+		*bal = *bal + amt;
+	}
+	
+	int main() {
+		double balance = 1000;
+		deposit2(&balance, 25);
+		cout << "The new balance is " << balance;
+	}
+\end{lstlisting}\bigbreak
+
+\subsubsection{Arrays with Pointers}
+\bigbreak
+
+Let's say we have an array
+
+\begin{lstlisting}
+	int a[5] = [6, 2, 4, 23, 0];
+\end{lstlisting}\bigbreak
+
+What is a? When we print 
+
+\begin{lstlisting}
+	cout << a << endl;
+\end{lstlisting}\bigbreak
+
+We find that a contains an address (e.g. 0x6dfeec). Therefore, a is a pointer. Specifically, it is a pointer to the first value of the array. We can see this by noticing that 
+
+\begin{lstlisting}
+	cout << &a[0] << endl;
+\end{lstlisting}\bigbreak
+
+gives the same value as when we printed just a. If we want, we can make an explicit pointer that points to the first value ourselves.
+
+\begin{lstlisting}
+	int *p = a;
+\end{lstlisting}\bigbreak
+
+Note that
+
+\begin{lstlisting}
+	cout << *p << endl;
+	cout << *a << endl;
+\end{lstlisting}\bigbreak
+
+both return the same address as before (of the first element of a).\\
+
+We can iterate over the elements of a in a few different ways. We will demonstrate this my printing the array. Firstly,
+
+\begin{lstlisting}
+	for(int i=0;i<5;i++)
+		cout << p[i] << endl;
+\end{lstlisting}\bigbreak
+
+Secondly,
+
+\begin{lstlisting}
+	for(int i=0;i<5;i++)
+		cout << *(p+i) << endl;
+\end{lstlisting}\bigbreak
+
+Thirdly, 
+\begin{lstlisting}
+	for(int i=0;i<5;i++)
+		cout << *p << endl;
+		p++;
+\end{lstlisting}\bigbreak
+
+Note that this third solution will no longer preserve the value of p. \\
+
+We will now see a few examples of using arrays with pointers.For each of the examples we will assume an array a defined as
+
+\begin{lstlisting}
+	int a[] = {2, 3, 5};
+\end{lstlisting}\bigbreak
+
+
+\textbf{Example 1:} 
+\begin{lstlisting}
+	int *p = a+1;			// p --> a[1]
+	*(p+1) = 0;				// p+1 --> a[2]
+	// a is now [2, 3, 0]
+\end{lstlisting}\bigbreak
+
+\textbf{Example 2:} 
+\begin{lstlisting}
+	int *p = a;				// p --> a[0]
+	p++;					// p --> a[1]
+	*p = 0;	
+	// a is now [2, 0, 5]
+\end{lstlisting}\bigbreak
+
+\textbf{Example 3:} 
+\begin{lstlisting}
+	int *p = a;				// p --> a[0]
+	int *q = a+2;			// q --> a[2]
+	p++;					// p --> a[1]
+	q--;					// q --> a[1]
+	*p = *q;
+	// a is still [2, 3, 5]
+\end{lstlisting}\bigbreak
+
+\textbf{Example 4:} 
+\begin{lstlisting}
+	cout << *a + 2 << endl;		// Returns a[0] + 2 = 4
+	cout << *(a+2) << endl;		// Returns a[0+2] = 5
+\end{lstlisting}\bigbreak
+
+\subsubsection{Functions Returning Pointers}
+\bigbreak
+
+We can get around not being able to return an array from a function by instead returning a pointer. For example, 
+
+\begin{lstlisting}
+	int * firstlast(int A[], int n){
+		int result[2];
+		
+		result[0] = A[0];
+		result[1] = A[n-1];
+		
+		return result;
+	}
+
+	int main() {
+		int A[] = {5, 2, 6, 4, 7};
+		int *B;
+		
+		B = firstlast(A, 5);
+		
+		cout << B[0] << " , " << B[1];
+	}
+\end{lstlisting}\bigbreak
+
+Will this work? No. The program compiles, but it does crashes on run. This error occurs because the local pointer variable result is lost when the function is exited. Instead, we must pass B by reference also.
+
+\begin{lstlisting}
+	void firstlast2(int A[], int B[], int n){
+		B[0] = A[0];
+		B[1] = A[n-1];
+	}
+	
+	int main() {
+		int A[] = {5, 2, 6, 4, 7};
+		int B[2];
+		
+		firstlast2(A, B, 5);
+		
+		cout << B[0] << " , " << B[1];
+	}
+\end{lstlisting}\bigbreak
+
+Therefore, it is possible to return pointers, however, we cannot use that to return an array.
+
+
+\subsubsection{Dynamic Memory Allocation}
+\bigbreak
+
+We will consider the following array
+
+\begin{lstlisting}
+	int A[10];
+	
+	for (int=0;i<10;i++)
+		A[i] = 2*i;
+	
+	int *p = A;
+\end{lstlisting}
+
+This is called \textbf{static array allocation}. When we declare the array A, it allocates memory space to the array (size 5) until the end of the program. However, if A is no longer needed, its memory space cannot be deallocated for other programs to use. Memory space for all variables declared statically remains allocated.\\
+
+To make things more memory efficient, we can use dynamic memory allocation. In this case, the memory space of an array is allocated at run-time. The memory space can be deallocated or freed from the program once the array is no longer needed. Deallocation takes place before the program stops. Once deallocated the array can no longer be accessed. For example,
+
+\begin{lstlisting}
+	int n;
+	
+	cout << "What is the size of the array? ";
+	cin >> n;
+	
+	// Allocation
+	int *A = new int[n];	// A is a pointer to a dynamic array A
+	
+	for (int i=0; i<n; i++)
+		A[i] = n-i;
+		
+	// Deallocation
+	delete[] A;
+	
+	// A now contains garbage values
+\end{lstlisting}
+\bigbreak
+
+We can use dynamic memory allocation to return an array from a function.
+
+\begin{lstlisting}
+	int *firstlast3(int A[], int n){
+		int *result = new int[2]; // dynamic allocation
+		
+		result[0] = A[0];
+		result[1] = A[n-1];
+		
+		return result;
+	}
+	
+	int main() {
+		int A[] = {5, 2, 6, 4, 7};
+		int *B;
+		
+		B = firstlast(A, 5);
+		
+		cout << B[0] << " , " << B[1];
+	}
+\end{lstlisting}\bigbreak
+
+This works. Therefore, you can return an array from an array from a function by returning a pointer to a dynamically allocated array. 
 
 
 
