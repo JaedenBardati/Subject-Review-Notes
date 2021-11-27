@@ -3186,9 +3186,9 @@ Note that we can only make $n$ to $2^n$ decoders: The number of outputs must alw
 
 For the 3 to 8 decoder, we would obtain the Boolean expressions: $D_0 = \bar{I_2}\bar{I_1}\bar{I_0}$, $D_1 = \bar{I_2}\bar{I_1}I_0$, ... $D_7 = I_2I_1I_0$.\\
 
-\subsection{Computer Organization}
+\subsection{Memory Organization}
 \bigbreak
-\subsubsection{Components}
+\subsubsection{Computer Components}
 \bigbreak
 
 Modern computers are built using the \textbf{Von Neumann machine}. There are three aspects:
@@ -3254,9 +3254,258 @@ If instead we had a 64-bit computer, the max RAM size is $2^{64}\text{ bytes} = 
 It is important to always distinguish between the address and content of a cell in memory. For example, the content could store the value 15, but the address is 34. \\
 
 
+\subsubsection{Memory Basic Operations}
+\bigbreak
+
+There are 2 basic operations. \\
+
+Firstly, the \textbf{fetch} operation: Reads data from the memory. The idea is that we want to get a value from memory using a fetch operation, but we need to know where to get this value, so we use an \textit{address} (value = fetch(address)). For example, value = fetch(34) returns the value 15 (which is stored in the memory address 34).\\
+
+Secondly, the \textbf{store} operation: Stores data into memory. We need both a value and an address (store(value, address)) For example, stores(22, 34) would store the value of 22 in adress 34.\\
+
+How can we do this in hardware?\\
+
+To do this, we will discuss \textbf{registers}. Registers are storage cells (capacity in bits) and is located outside of the RAM (for example, in the CPU). \\
+
+A system is equipped with 2 registers: \\
+The \textbf{MDR:} Memory Data Register. It contains data read from (or to be stored in) memory. \\
+The \textbf{MAR:} Memory Address Register. It contains the address for fetch \textit{or} store. \\
+
+For example, the MAR allows us to select a location in memory and the MDR allows us to transfer data from or to memory.\\
+
+In a \textit{fetch} operation, the steps are as follows:
+
+\begin{itemize}
+	\item Put address in MAR
+	\item Read
+	\item Data is sent to MDR
+\end{itemize}
+
+In a \textit{store} operation, the steps are as follows:
+
+\begin{itemize}
+	\item Put address in MAR
+	\item Put data in MDR
+	\item Write
+\end{itemize}
 
 
+\subsubsection{Address Decoding}
+\bigbreak
 
+The MAR will have $N$ bits of memory. How to we select a location in RAM given a certain address in the MAR? We need a circuit that takes in $N$ bits and gives $2^N$ outputs (one for each address in memory). Thus, the circuit that does this is a \textbf{$\mathbf{N}$ to $\mathbf{2^N}$ bit decoder}. This is called \textit{address decoding}.\\
+
+
+\subsubsection{Arithmetic and Logic Unit}
+\bigbreak
+
+The CPU is composed of the ALU and the CU.\\
+
+The Arithmetic and Logic Unit (\textbf{ALU}) is responsible for implementing arithmetic and logic operations (A+B, A-B, A==B). \\
+
+The ALU contains
+
+\begin{itemize}
+	\item Registers to store operands and result
+	\item Combinational circuits for operations (+, -, *, ==)
+	\item Selection circuit (for operation)
+\end{itemize}
+
+Let us assume that we have 16 registers: $R_0$, $R_1$, ..., $R_0$.\\
+
+We select a register for the left operand (eg. A), another register for the right operand (B), and a last for the operation (+).\\
+
+In summary, there is a selection circuit to select the left and right operands (this is performed by the CU). The result of this selection is connected to all the operations (+/-, <, ==, etc.), but only one operation is of interest. The desired operation output is selected by a multiplexer which returns the value to a register. The selection lines come from the CU.\\
+
+\subsubsection{Control Unit}
+\bigbreak
+
+The control unit (\textbf{CU}) is responsible for the ALU operations and memory operations, but most importantly is responsible for executing the stored program.\\
+
+The CU will fetch (memory operation), decode (select operation in ALU) and execute (select in ALU and save to memory).\\
+
+The stored program is binary, but written in \textbf{machine language} instructions. \\
+
+Machine language is not C++ or Java or Python. These are high level languages (designed for programmers). Machine language is a low level language (designed for the computer).\\
+
+To go from a high level language to a low level language, we use a \textbf{compiler}. For example, the compiler translates C++ to machine language (binary).\\
+
+Machine language varies across CPU architecture (or brand, such as Intel or AMD) uses its own set of machine instructions. For example, 64-bit AMD CPUs uses the AMD64 instruction set and Intel uses the X86 or X64 instruction set.\\
+
+We can divide machine instructions into 
+
+\begin{itemize}
+	\item Data transfer
+	\item Arithmetic
+	\item Compare
+	\item Branch
+\end{itemize}\bigbreak
+
+
+\subsection{Machine Language Instructions}
+\bigbreak
+
+We will define a simple machine language for pedagogical reasons. 
+
+\subsubsection{Data Transfer}
+\bigbreak
+
+Data transfer instruction moves data between the CPU and memory. We will define the following 3 instructions:\\
+
+\textbf{LOAD X}: Loads a register R in the CPU with the content of memory at address X. We write: Con(R) = Con(X). Con stands for content.\\
+
+\textbf{STORE X}: Stores the content of R in memory at the address X.\\
+
+\textbf{MOVE X, Y}: Copies the content at memory address X into the memory address Y. We write: Con(Y) = Con(X).\\
+
+
+\subsubsection{Arithmetic}
+\bigbreak
+
+There are many possible arithmetic operations, but we will define the following instructions as an example:\\
+
+\textbf{ADD X, Y}: Con(X) = Con(X) + Con(Y).\\
+\textbf{ADD X}: Con(R) = Con(X) + Con(R). R is a predetermined register (which you must load a value into prior, and store a value from after).\\
+
+There are many more.\\
+
+\subsubsection{Compare}
+\bigbreak
+
+To implement the compare operation, the CPU performs a subtraction and based on the sign (+ or -) and magnitude of the result (0 or not) returns a value.\\
+
+The CPU sets the values of the \textbf{Condition Code Register} (CCR). There are three bits in the CCR. The less than (LT), the equal (EQ), and the greater than (GT):
+
+\[
+\renewcommand\arraystretch{1.5}
+\begin{array}{C|C|C|C|}\cline{2-4}
+	CCR: & LT & EQ & GT \\\cline{2-4}
+\end{array}
+\]\bigbreak
+
+We define the following instruction:
+
+\begin{equation*}
+	\text{\textbf{COMPARE X, Y}: }\begin{cases}
+		\text{GT=1, EQ=0, LT=0} \quad &\text{if} \, \text{Con(X) > Con(Y)} \\
+		\text{GT=0, EQ=1, LT=0} \quad &\text{if} \, \text{Con(X) = Con(Y)} \\
+		\text{GT=0, EQ=0, LT=1} \quad &\text{if} \, \text{Con(X) < Con(Y)} \\
+	\end{cases}
+\end{equation*}\bigbreak
+
+
+\subsubsection{Branch}
+\bigbreak
+
+In the memory, we have the program memory which are the set of instructions that the computer uses to run. \\
+
+To go to a different part in the program (jump across instruction lines in memory), we need to use a branch instruction. This allows to jump to an instruction stored at a specified address in memory. \\
+
+\textbf{JUMP X}: The next instruction to execute is stored at the memory address X.\\
+
+\textbf{JUMPGT X}: Jump to X only if GT = 1 (otherwise, no effect). \\
+\textbf{JUMPEQ X}: Jump to X only if EQ = 1.\\
+\textbf{JUMPLT X}: Jump to X only if LT = 1.\\
+These instruction must be proceeded by a compare operation.\\
+
+\textbf{HALT}: Stops the program.\\
+
+\subsubsection{Example: Arithmetic Operation}
+\bigbreak
+
+If we want to perform the psudeocode:\\
+
+Set a = b + c + d\\
+
+then we would have the following in program memory: \\
+
+\begin{center}
+	\begin{tabular}{c|l|}\cline{2-2}
+		50 & LOAD 101 \\\cline{2-2}
+		51 & ADD 102 \\\cline{2-2}
+		52 & ADD 103 \\\cline{2-2}
+		53 & HALT \\\cline{2-2}
+		... & ... \\\cline{2-2}
+		100 & a \\\cline{2-2}
+		101 & b \\\cline{2-2}
+		102 & c \\\cline{2-2}
+		103 & d \\\cline{2-2}
+		... & ... \\\cline{2-2}
+	\end{tabular}
+	\bigbreak
+\end{center}
+
+What occurs is that first a is loaded into R, then b is added to the content of R, then d is added to the content of R. Finally the program is halted.\\
+
+\subsubsection{Example: Conditional}
+\bigbreak
+
+If we want to perform the psudeocode:\\
+
+\setlength{\parindent}{0.5cm}\noindent
+If (a == b) then\\
+\indent Set c = d\\
+Else\\
+\indent Set c = b\\
+Stop
+\setlength{\parindent}{0pt}
+
+then we would have the following in program memory: \\
+
+\begin{center}
+	\begin{tabular}{c|l|}\cline{2-2}
+		50 & COMPARE 100, 101 \\\cline{2-2}
+		51 & JUMPEQ 54 \\\cline{2-2}
+		52 & MOVE 101, 102 \\\cline{2-2}
+		53 & JUMP 55 \\\cline{2-2}
+		54 & MOVE 102, 103 \\\cline{2-2}
+		55 & HALT \\\cline{2-2}
+		... & ... \\\cline{2-2}
+		100 & a \\\cline{2-2}
+		101 & b \\\cline{2-2}
+		102 & c \\\cline{2-2}
+		103 & d \\\cline{2-2}
+		... & ... \\\cline{2-2}
+	\end{tabular}
+	\bigbreak
+\end{center}
+
+First, we compare the content at address 100 (a) to the content at address 101 (b). Then, we conditionally jump if EQ = 1, set c = d and then halt. Otherwise, we continue on and set c = b before jumping to the halt.\\
+
+\subsubsection{Example: Loop}
+\bigbreak
+
+If we want to perform the psudeocode:\\
+
+\setlength{\parindent}{0.5cm}\noindent
+While (a < b) then\\
+\indent Set a = a+c\\
+EndWhile\\
+Stop
+\setlength{\parindent}{0pt}
+
+then we would have the following in program memory: \\
+
+\begin{center}
+	\begin{tabular}{c|l|}\cline{2-2}
+		50 & COMPARE 100, 101 \\\cline{2-2}
+		51 & JUMPEQ 57 \\\cline{2-2}
+		52 & JUMPGT 57  \\\cline{2-2}
+		53 & LOAD 100 \\\cline{2-2}
+		54 & ADD 102 \\\cline{2-2}
+		55 & STORE 100 \\\cline{2-2}
+		56 & JUMP 50 \\\cline{2-2}
+		57 & HALT \\\cline{2-2}
+		... & ... \\\cline{2-2}
+		100 & a \\\cline{2-2}
+		101 & b \\\cline{2-2}
+		102 & c \\\cline{2-2}
+		... & ... \\\cline{2-2}
+	\end{tabular}
+	\bigbreak
+\end{center}
+
+First, we compare a to b. Then, we conditionally jump to the halt if EQ = 1 or if GT = 1. If not, we load a in R, add c, store the content of R back into a, and then jump back up to the compare. \\
 
 
 
