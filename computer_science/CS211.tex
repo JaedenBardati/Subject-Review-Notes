@@ -9,7 +9,7 @@
 \usepackage{amssymb}
 \usepackage{graphicx}
 \usepackage{siunitx}
-\usepackage[a4paper,left=3cm,right=2cm,top=2.5cm,bottom=2.5cm]{geometry}
+\usepackage[a4paper,left=3cm,right=3cm,top=2.5cm,bottom=2.5cm]{geometry}
 \usepackage{tikz}
 \usetikzlibrary{patterns}
 \usepackage{caption}
@@ -2922,7 +2922,264 @@ We can use dynamic memory allocation to return an array from a function.
 	}
 \end{lstlisting}\bigbreak
 
-This works. Therefore, you can return an array from an array from a function by returning a pointer to a dynamically allocated array. 
+This works. Therefore, you can return an array from an array from a function by returning a pointer to a dynamically allocated array. \\
+
+
+\subsection{Structures}
+\bigbreak
+
+\subsubsection{Definition}
+
+When we have variables that require more than one variable type, it is useful to use a structure. A structure is used to group items of arbiturary types in a single construct.\\
+
+The syntax for a structure is
+
+\begin{lstlisting}
+	struct Address (
+		int number;
+		string StName;
+	);
+\end{lstlisting}\bigbreak
+
+We can now declare a variable using Address as a variable type.
+
+\begin{lstlisting}
+	Address my_addr;
+\end{lstlisting}\bigbreak
+
+To initialize values in it we can do
+
+\begin{lstlisting}
+	my_addr.number = 2600;
+	my_addr.StName = "College";
+\end{lstlisting}\bigbreak
+
+We can use the structure as normal
+
+\begin{lstlisting}
+	cout << my_addr.number << " " << my_addr.StName << endl;
+\end{lstlisting}\bigbreak
+
+
+\subsubsection{Nested Structures}
+\bigbreak
+
+We can define a structure within a structure. This is called a nested structure.\\
+
+\begin{lstlisting}
+	struct Exams (
+		double mid;
+		double fin;
+	);
+	
+	struct Student (
+		string name;
+		Address StAddress;
+		Exams grades;
+	);
+\end{lstlisting}\bigbreak
+
+Student is a nested structure. We can declare it
+
+\begin{lstlisting}
+	Student aStudent;
+\end{lstlisting}\bigbreak
+
+And initialize
+
+\begin{lstlisting}
+	aStudent.name = "Jaeden Bardati";
+	aStudent.StAddress.number = 2600;
+	aStudent.StAddress.StName = "College";
+	aStudent.grades.mid = 87.5;
+	aStudent.grades.fin = 92.1;
+\end{lstlisting}\bigbreak
+
+Once again, we can print them as usual
+
+\begin{lstlisting}
+	cout << "Final grade of " << aStudent.name << " is " << aStudent.grades.fin << endl;
+\end{lstlisting}\bigbreak
+
+
+\subsubsection{Arrays of Structures}
+\bigbreak
+
+We can also declare arrays of structures. We treat this new Student structure as a variable type.
+
+\begin{lstlisting}
+	Student class211[32];
+	
+	for (int i=0; i<32; i++) {
+		cout << "Please enter info for student " << i << endl;
+		cin >> class211[i].name;
+		cin >> class211[i].StAddress.number;
+		cin >> class211[i].StAddress.StName;
+		cin >> class211[i].grades.mid;
+		cin >> class211[i].grades.fin;
+	}
+\end{lstlisting}\bigbreak
+
+\subsubsection{Vectors of Structures}
+\bigbreak
+
+Furthermore, we can create vectors of structures. This is particularly useful if there are varying numbers of this structure. In our example, this could mean that a student drops the class. We declare as usual:
+
+\begin{lstlisting}
+	vector<Student> class211;
+\end{lstlisting}\bigbreak
+
+However, in order to push to the vector of Students, we need to first construct a student structure for all desired students and then push to the vector.
+
+\begin{lstlisting}
+	Student aStudent;
+	bool more = true;
+	while(more) {
+		cin >> aStudent.name;
+		cin >> aStudent.StAddress.number;
+		cin >> aStudent.StAddress.StName;
+		cin >> aStudent.grades.mid;
+		cin >> aStudent.grades.fin;
+		
+		class211.push_back(aStudent);
+		
+		cout << "Would you like to continue? (0/1) ";
+		cin >> more;
+	}
+\end{lstlisting}\bigbreak
+
+
+\subsubsection{Pointers of Structures}
+\bigbreak
+
+We can use pointers for structures also. We saw an example of this with the array earlier. However, we can declare a pointer explicitly. 
+
+\begin{lstlisting}
+	Student *StudentPtr;
+	StudentPtr = &aStudent;
+	
+	cout << "Final grade of " << (*StudentPtr).name << " is " << (*StudentPtr).grades.fin;
+\end{lstlisting}\bigbreak
+
+We can also use an arrow notation to achieve the same effect as above.
+
+\begin{lstlisting}
+	cout << "Final grade of " << StudentPtr->.name << " is " << StudentPtr->.grades.fin;
+\end{lstlisting}\bigbreak
+
+
+\subsubsection{Structures with Pointer Members}
+\bigbreak
+
+Some members of the structures could also be pointers. Perhaps even pointers to other structures. This is useful when information is shared among structure values. 
+
+Let us create a new structure for the department that the student is part of.
+
+\begin{lstlisting}
+	struct Dept (
+		string id;  // CS, MATH, PHYS, etc.
+		string chair;  // chairperson of the department
+	);
+\end{lstlisting}\bigbreak
+
+And we will adjust the student structure to account for this
+
+\begin{lstlisting}
+	struct Student (
+		string name;
+		Address StAddress;
+		Exams grades;
+		Dept StdDep;
+	);
+\end{lstlisting}\bigbreak
+
+Use can now initialize two students
+
+\begin{lstlisting}
+	Student S1, S2;
+	
+	S1.name = "Bob";
+	S1.StAddress.number = 2600;
+	S1.StAddress.StName = "College";
+	S1.grades.mid = 87.5;
+	S1.grades.fin = 92.1;
+	S1.StdDep.id = "CS";
+	S1.StdDep.chair = "Jane Doe";
+	
+	S2.name = "Alice";						// Not shared
+	S2.StAddress.number = 245;				// Not shared
+	S2.StAddress.StName = "Queen";		// Not shared
+	S2.grades.mid = 80.7;					// Not shared
+	S2.grades.fin = 95.3;					// Not shared
+	S2.StdDep.id = "CS";						// Shared
+	S2.StdDep.chair = "Jane Doe";			// Shared
+\end{lstlisting}\bigbreak
+
+We have a couple values that will be shared for all our students. Is there a way of making this more efficient? Yes, we can use pointers. We can declare the following structures for the math and computer science departments.
+
+\begin{lstlisting}
+	Dept CSDept, MathDept;
+	
+	CSDept.id = "CS"
+	CSDept.chair = "Jane Doe";
+	
+	MathDept.id = "Math";
+	MathDept.chair = "John Doe";
+\end{lstlisting}\bigbreak
+
+Now, instead of the StdDep member of the Student structure being a value, we can declare it as a pointer.
+
+\begin{lstlisting}
+	struct Student (
+		string name;
+		Address StAddress;
+		Exams grades;
+		Dept* StdDep;
+	);
+\end{lstlisting}\bigbreak
+
+Now, we can use point to the particular department that each student is part of instead of re-declaring the department properties every time.
+
+\begin{lstlisting}
+	Student S1, S2;
+	
+	S1.name = "Bob";
+	S1.StAddress.number = 2600;
+	S1.StAddress.StName = "College";
+	S1.grades.mid = 87.5;
+	S1.grades.fin = 92.1;
+	S1.StdDep = &CSDept;
+	
+	S2.name = "Alice";						// Not shared
+	S2.StAddress.number = 245;				// Not shared
+	S2.StAddress.StName = "Queen";		// Not shared
+	S2.grades.mid = 80.7;					// Not shared
+	S2.grades.fin = 95.3;					// Not shared
+	S2.StdDep = &CSDept;						// Shared
+\end{lstlisting}\bigbreak
+
+If the chair of the department changes, we simply need to change one value total, not one value for every student. It is similarly useful is a student changes program.
+
+
+\subsubsection{Dynamic Arrays of Structures}
+\bigbreak
+
+Earlier, we showed that is was possible to declare static arrays of structures. We can similarly declare dynamic arrays of structures also.
+
+\begin{lstlisting}
+	Student *class211 = new Student[32];
+	
+	for (int i=0; i<32; i++) {
+		cout << "Please enter info for student " << i << endl;
+		cin >> class211[i].name;
+		cin >> class211[i].StAddress.number;
+		cin >> class211[i].StAddress.StName;
+		cin >> class211[i].grades.mid;
+		cin >> class211[i].grades.fin;
+	}
+\end{lstlisting}\bigbreak
+
+
 
 
 
