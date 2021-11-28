@@ -15,6 +15,7 @@
 \usetikzlibrary{positioning} % positioning in circuit plots
 \usetikzlibrary{backgrounds, shapes} % shapes for multiplexer+
 %%\usepackage{outlines} % convienent itemizing
+%%\usepackage{multirow} % multiple rows for tables
 
 %for flowchart:
 \usepackage{amsmath}
@@ -41,6 +42,25 @@
 %tables for list representation
 \usepackage{arydshln, collcell}
 \newcolumntype{C}{>{\collectcell\mathsf}c<{\endcollectcell}}
+
+% Assembly code
+\lstdefinestyle{customasm}{
+	belowcaptionskip=1\baselineskip,
+	frame=single, 
+	frameround=tttt,
+	xleftmargin=\parindent,
+	language=[x86masm]Assembler,
+	basicstyle=\footnotesize\ttfamily,
+	commentstyle=\itshape\color{green!60!black},
+	keywordstyle=\color{blue!80!black},
+	identifierstyle=\color{red!80!black},
+	tabsize=4,
+	numbers=left,
+	numbersep=8pt,
+	stepnumber=1,
+	numberstyle=\tiny\color{gray}, 
+	columns = fullflexible,
+}
 
 
 %Repeat command
@@ -3506,6 +3526,363 @@ then we would have the following in program memory: \\
 \end{center}
 
 First, we compare a to b. Then, we conditionally jump to the halt if EQ = 1 or if GT = 1. If not, we load a in R, add c, store the content of R back into a, and then jump back up to the compare. \\
+
+
+\subsubsection{Machine Language Encoding}
+\bigbreak
+
+Instructions are written in binary. How do we encode them into a $N$-bit system?
+
+\begin{center}
+	\begin{tabular}{|c|c|c|}\hline
+		op code & address 1 & address 2 \\\hline
+	\end{tabular}
+	\bigbreak
+\end{center}
+
+The first field is for the binary code of the operation, and the other two ar for the address of the 1st and/or 2nd operand(s).\\
+
+For example, if we want to do the instruction \\
+
+ADD 99, 100\\
+
+Using an op code table we can find the op code of the ADD operation. If there are 8 bits for the code and $(0)_{10}$ is the op code for the ADD operation, then 0000 0000 is the binary op code of the instruction. Further, we can convert address 99 and 100 into binary to get that the instruction is the following in binary.
+
+\begin{center}
+	\begin{tabular}{|c|c|c|}\hline
+		0000 0000 & 0110 0011 & 0110 0100 \\\hline
+	\end{tabular}
+	\bigbreak
+\end{center}
+
+What occurs in the hardware is that the instruction is fetched from memory (written in binary as above), then the instruction is decoded, then executed, and finally it proceeds to the next instruction.\\
+
+\subsubsection{Instruction Register \& Instruction Decoder}
+\bigbreak
+
+The \textbf{instruction register} (IR) is used to hold the instruction to execute. It holds the opcode and operand addresses.\\
+
+The \textbf{instruction decoder} selects the circuit responsible for the execution based on the opcode value. \\
+
+\textbf{Example: } Assume the following 3 bit opcode table.
+
+\begin{center}
+	\begin{tabular}{|c|c|}\hline
+		op code & instruction \\\hline
+		000 & add \\\hline
+		001 & load \\\hline
+		010 & jump \\\hline
+		011 & store \\\hline
+		... & ... \\\hline
+		111 & halt \\\hline
+	\end{tabular}
+	\bigbreak
+\end{center}
+
+Physically, the memory is attached (via the fetching selection circuit discussed earlier) to the IR. The op code part of the instruction is connected to the instruction decoder. In this case, the instruction decoder has 3 inputs and 8 outputs (a 3 to 8 decoder). Each output pd the instruction decoder is connect to the enabling of its own operation as according to the op code table above.\\
+
+
+\subsubsection{Program Counter}
+\bigbreak
+
+The \textbf{program counter} (PC) is a register that stores the address of the \textit{next} instruction to execute. \\
+
+How do we update the program counter? \\
+
+If the program is in \textbf{sequential} execution, we that the content of pc (an address) and increment it. We write Con(PC) = Con(PC) + 1. This depends on the size of the instructions in memory, of course, but for an 8bit instruction, the PC is incremented by 1 byte. \\
+
+If program is in \textbf{not sequential} execution (Jump, halt, etc.), Con(PC) is extracted from the branching of the instruction.\\
+
+For example, if we do the following program, loaded at address 0.\\
+
+LOAD 10\\
+ADD 11\\
+STORE 12\\
+JUMP 5\\
+ADD 13\\
+HALT\\
+
+The program is written in memory as
+
+\begin{center}
+	\begin{tabular}{c|c|c|}
+		\multicolumn{1}{c}{Address} & \multicolumn{2}{c}{Instruction}\\\cline{2-3}
+		0 & 000 & 01010 \\\cline{2-3}
+		1 & 001 & 01011 \\\cline{2-3}
+		2 & 011 & 01100 \\\cline{2-3}
+		3 & 010 & 00101 \\\cline{2-3}
+		4 & 001 & 01101 \\\cline{2-3}
+		5 & 000 & 00000 \\\cline{2-3}
+		...&\multicolumn{2}{|c|}{...} \\\cline{2-3}
+		10 & \multicolumn{2}{|c|}{a} \\\cline{2-3}
+		11 & \multicolumn{2}{|c|}{b} \\\cline{2-3}
+		12 & \multicolumn{2}{|c|}{c} \\\cline{2-3}
+		13 & \multicolumn{2}{|c|}{d} \\\cline{2-3}
+	\end{tabular}
+	\bigbreak
+\end{center}
+
+The address of the PC and the instruction held by the IR in each step of the program is shown by going down the following table. Note that the PC register contains 5 bits because there are 5 bits in the instruction allocated to the memory address and the IR will contain the full 8 bits in an instruction, of course.
+
+\begin{center}
+	\begin{tabular}{|c|c|}\hline
+		PC & IR \\\hline
+		00001 & 000 01010 \\\hline
+		00010 & 001 01011 \\\hline
+		00011 & 011 01100 \\\hline
+		00101 & 010 00101 \\\hline
+		00110 & 111 00000 \\\hline
+	\end{tabular}
+	\bigbreak
+\end{center}
+
+
+\subsubsection{The Von Neumann Machine}
+\bigbreak
+
+A diagram of the Von Neuman Machine is found in the textbook on page 259.\\
+
+The following operations are made using the indicated steps.\\\bigbreak
+
+\textbf{Fetch:}
+\begin{itemize}
+	\item PC --> MAR
+	\item FETCH
+	\item MDR --> IR
+	\item PC + 1 --> PC
+\end{itemize}\bigbreak\bigbreak
+
+\textbf{Decode:}
+\begin{itemize}
+	\item IR(opcode) --> Instruction Decoder
+\end{itemize}\bigbreak\bigbreak
+
+\textbf{LOAD X:}
+\begin{itemize}
+	\item IR(addr) --> MAR
+	\item FETCH
+	\item MDR --> R
+\end{itemize}\bigbreak\bigbreak
+
+\textbf{STORE X:}
+\begin{itemize}
+	\item IR(addr) --> MAR
+	\item R --> MDR
+	\item STORE
+\end{itemize}\bigbreak\bigbreak
+
+\textbf{ADD X:}
+\begin{itemize}
+	\item IR(addr) --> MAR
+	\item FETCH
+	\item MDR --> ALU
+	\item R --> ALU
+	\item ADD
+	\item ALU --> R
+\end{itemize}\bigbreak\bigbreak
+
+\textbf{JUMP X:}
+\begin{itemize}
+	\item IR(addr) --> PC
+\end{itemize}\bigbreak\bigbreak
+
+\textbf{COMPARE X:}
+\begin{itemize}
+	\item IR(addr) --> MAR
+	\item FETCH
+	\item MDR --> ALU
+	\item R --> ALU
+	\item SUBTRACT (this will set CCR)
+\end{itemize}\bigbreak\bigbreak
+
+
+\subsection{The Assembly Programming Language}
+\bigbreak
+
+The assembly programming language is higher level than machine code, but lower than C++ or Python.\\
+
+A \textbf{high-level programming language} (eg. C++, C, Java, C\#, Python, etc.) is written in a text file. In order for the program to run by the program, the text must be converted to binary machine code. This is done with the \textbf{compiler}.\\
+
+A \textbf{low-level programming language} (eg. Assembly) is higher than machine code, but lower than high-level languages. The assembly code must still be converted from as text file to a binary file executable by the computer. This is done with the \textbf{assembler}.\\
+
+\subsubsection{Structure of an Assembly Program}
+\bigbreak
+
+We start the assembly program with a .BEGIN. The basic structure of an Assembly program is as follows  \\
+
+\begin{lstlisting}[style=customasm]
+.BEGIN
+
+label: opcode reference -- comments
+	...
+	...
+	HALT
+\end{lstlisting}\bigbreak
+
+The program ends when it reaches a HALT instruction.\\
+
+The code segment is where we put the code. It is everything in between the .BEGIN and the HALT. THe data segment comes after.\\
+
+A label is used if it is needed to jump to the instruction which has that label. This is where you loop to. It is optional.\\
+The opcode is the operation desired (such as LOAD).\\
+There are then reference variables (variable name instead of addresses).\\
+Comments are explanations. This is optional.
+
+A typical Assembly loop looks like
+
+\begin{lstlisting}[style=customasm]
+loopstart: load x -- loop starts here
+	...
+	...
+	jump loopstart
+\end{lstlisting}\bigbreak
+
+We can declare variables in the data segment of the Assembly code.
+
+\begin{lstlisting}[style=customasm]
+.BEGIN
+		...
+		... 					-- This is the code segment
+		...
+		HALT
+	
+x:   				.Data 0
+five: 	.Data +5 	-- This is the data segment
+...
+.END
+\end{lstlisting}\bigbreak
+
+The end of the data segment is marked with a .END.\\
+
+\subsubsection{Converting an Algorithm to Assembly}
+\bigbreak
+
+Assume we have the following algorithm.
+
+\begin{algorithm}
+	\caption{Algorithm to convert to Assembly}
+	\begin{algorithmic}[1]
+		\Set SUM = 0
+		\Get $N$ 
+		\While{($N \geq 0$)} step 4 to step 5
+		\Set SUM = SUM + $N$
+		\Get $N$
+		\EndWhile
+		\Print SUM
+		\Stop
+	\end{algorithmic}
+\end{algorithm}
+
+To convert to assembly, we must first identify all the variables and constants required.\\
+
+Variables: SUM, N\\
+Constants: 0\\
+
+This goes in the data section. The following is the data section.
+
+\begin{lstlisting}[style=customasm]
+SUM:		.Data 0
+N:   			.Data 0
+ZERO:	.Data 0
+\end{lstlisting}\bigbreak
+
+Now we can translate the instructions. Refer to the Assembly op code table to do this. The following is the completed translation of the algorithm to Assembly language.\\
+
+\begin{lstlisting}[style=customasm]
+.BEGIN
+
+			clear SUM  													-- Sets SUM to 0
+			in N																			-- Gets N from user
+start: 				load ZERO														-- register R now contains a 0
+			compare N														-- compares N with 0 (in register R)
+			jumplt printsum								-- jump out of loop if N>=0
+			load SUM															-- R now contains SUM
+			add N																		-- now R contains sum + N
+			store SUM														-- stores SUM in memory
+			in N																			-- get N
+			jump start
+printsum:		out SUM
+			HALT
+	
+SUM:					.Data 0
+N:   						.Data 0
+ZERO:				.Data 0
+
+.END
+\end{lstlisting}\bigbreak
+
+
+\subsubsection{The Assembler}
+\bigbreak
+
+The assembler is a piece of software that is responsible for translating the Assembly code to the machine instruction code.\\
+
+The assembler works in two full \textit{passes}. It will do a first pass and a second pass. The objective of the first pass is to assign addresses to all labels (variables and/or loops) and create a \textbf{symbol table} which defines a correspondence between the labels and addresses. In the second pass, the assembler will use both the symbol table (which tells the assembler the address that it should use for each label) and the op code table (which tells the assembler the binary code that it should use for each instruction). The second pass creates the machine instruction code.\\
+
+We will now translate the following assembly code into machine instruction code.
+
+\begin{lstlisting}[style=customasm]
+.BEGIN
+	
+loop:		in x
+		in y
+		load x
+		compare y
+		jumpgt Done
+		out x
+		jump loop
+Done: 	out y
+		halt
+	
+x:					.Data 0
+y:   				.Data 0
+	
+.END
+\end{lstlisting}\bigbreak
+
+In the \textbf{first pass}, we will find what address we will use to replace each label. To do so, the assembler assumes that the program will be loaded started at address 0. To keep track of each address, we associate an address to each instruction starting with the first, including the data segment. Then, the assembler goes through the program and whenever it sees a new label, it records its address in the symbol table. For this example, we would get the following symbol table:
+
+\begin{center}
+	\begin{tabular}{|c|c|}\hline
+		Symbol & Address \\\hline
+		loop & 0 \\\hline
+		Done & 7 \\\hline
+		x & 9 \\\hline
+		y & 10 \\\hline
+	\end{tabular}
+	\bigbreak
+\end{center}
+
+For the next step, we will also use the following opcode table:
+
+\begin{center}
+	\begin{tabular}{|c|c|}\hline
+		Op code & Binary \\\hline
+		in & 1101 \\\hline
+		load & 0000 \\\hline
+		compare & 0111 \\\hline
+	\end{tabular}
+	\bigbreak
+\end{center}
+
+In the \textbf{second pass},  we go through each instruction line and directly translate this into machine instruction code. Note that the addresses are 4 bits long here. We will get the following result.
+
+\begin{center}
+	\begin{tabular}{c|c|c|}
+		\multicolumn{1}{c}{Address} & \multicolumn{2}{c}{Instruction}\\\cline{2-3}
+		0 & 1101 & 1001 \\\cline{2-3}
+		1 & 1101 & 1010 \\\cline{2-3}
+		2 & 0000 & 1001 \\\cline{2-3}
+		3 & 0111 & 1010 \\\cline{2-3}
+		... & \multicolumn{2}{|c|}{...} \\\cline{2-3}
+		9 & \multicolumn{2}{|c|}{x} \\\cline{2-3}
+		10 & \multicolumn{2}{|c|}{y} \\\cline{2-3}
+	\end{tabular}
+	\bigbreak
+\end{center}
+
+
+
 
 
 
