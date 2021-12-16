@@ -3180,6 +3180,290 @@ Earlier, we showed that is was possible to declare static arrays of structures. 
 \end{lstlisting}\bigbreak
 
 
+\subsection{Object-Oriented Programming}
+
+Object-Oriented Programming (\textbf{OOP}) is a programming style in which tasks are solved by collaborating \textbf{objects}.\\
+
+Each object has
+
+\begin{itemize}
+	\item Its own set of data
+	\item A set of functions that act upon the data
+\end{itemize}\bigbreak
+
+For example, a \textbf{string} is an object that has data as an array of characters that can be manipulated by functions such as substr(), length(), etc.\\
+
+Another example is a \textbf{vector}, which is an object that contains a list of elements that can be manipulated by functions such as pop\_back(), push\_back(), etc. \\
+
+A \textbf{programmer} implements a class from which objects can be defined. An \textbf{object} is an instantiation of a class. For example, with the following code
+
+\begin{lstlisting}
+	string myname;
+	vector<int> data(10);
+\end{lstlisting}\bigbreak
+
+The \textbf{classes} are \textit{string} and \textit{vector}, whereas the \textbf{objects} are \textit{myname} and \textit{data}.\\
+
+The \textbf{user} defines objects from a class implemented by a programmer. The user does not need to know how the class is implemented. Such an implementation is called \textbf{private}. The user only needs a \textbf{public interface} that explains how the class functions can be used. This concept is called \textbf{Encapsulation}.\\
+
+We will demonstrate OOP through an example: We want to design a class that simulates a \textit{cash register}. A cash register should be able to carry out te following operations:
+
+\begin{itemize}
+	\item Clear cash register for new sale
+	\item Add price of an item
+	\item Get total of items
+	\item Get total price
+\end{itemize}\bigbreak
+
+The interface is defined in the \textbf{class definition}. The following is the code to do so.\\
+
+\begin{lstlisting}
+	class CashRegister {
+		public:
+			void clear();  						// mutator
+			void add_item(double price);  	// mutator
+			double get_total() const; 			// accessor
+			double get_count() const; 			// accessor
+		private:
+			int item_count;
+			double total_price;
+	}
+\end{lstlisting}\bigbreak
+
+In the \textbf{public} interface, we have \textbf{member functions}: functions that can access and manipulate the object's data. Of these, we have \textbf{mutators}, which can change an object's data, and we have \textbf{accessors}, which can only read an object's data (denoted with \textit{const} keyword). Member functions are invoked using the \textbf{dot operator}:
+
+\begin{lstlisting}
+	CashRegister register1, register2;
+	register1.clear();
+	register2.clear();
+\end{lstlisting}\bigbreak
+
+In the \textbf{private} section, we have \textbf{data members}: variables declared in the class. The variables declared under the private keyword can only be accessed via class functions.
+
+\begin{lstlisting}
+	register1.item_count; 	// error (it is private)
+	register2.get_count(); 	// this returns item_count (it is public)
+\end{lstlisting}\bigbreak 
+
+
+\subsubsection{Example: Cash Register}
+\bigbreak
+
+We will now implement the cash register class outside of the main function. \\
+
+\begin{lstlisting}
+	// Class definition of Cash Register
+	
+	class CashRegister {
+		public:
+			void clear();  						// mutator
+			void add_item(double price);  	// mutator
+			double get_total() const; 			// accessor
+			double get_count() const; 			// accessor
+		private:
+			int item_count;
+			double total_price;
+	}
+
+	// Class function members implementation
+	
+	void CashRegister::clear() {
+		item_count = 0;
+		total_price = 0;	
+	}
+
+	void CashRegister::add_item(double price) {
+		item_count++;
+		total_price += price;
+	}
+
+	double CashRegister::get_total() const {
+		return total_price;
+	}
+
+	double CashRegister::get_count() const {
+		return item_count;
+	}
+
+\end{lstlisting}\bigbreak
+
+Now we can use the following code inside the main function to use these methods.\\
+
+\begin{lstlisting}
+	CashRegister reg;
+	
+	reg.clear();
+	reg.add_item(10.23);
+	reg.add_item(5.26);
+	
+	cout << "You purchased " << reg.get_count() << " items" << endl; 
+	cout << "The total price is " << reg.get_total() << "$" << endl; 
+\end{lstlisting}\bigbreak
+
+Let us say that we want to make a function to display information about the Cash Register class. We can pass classes as a parameter by value or reference. Here, we will pass by value.
+
+\begin{lstlisting}
+	void display_cash(CashRegister reg) {
+		cout << "You purchased " << reg.get_count() << " items" << endl; 
+		cout << "The total price is " << reg.get_total() << "$" << endl; 	
+	}
+\end{lstlisting}\bigbreak
+
+Let us say now that we want to add multiple items (of the same price) in one function call. We can update the public interface as follows
+
+\begin{lstlisting}
+	class CashRegister {
+		public:
+			void clear();
+			void add_item(double price);
+			void add_items(int quantity, double price);
+			double get_total() const;
+			double get_count() const;
+		private:
+			int item_count;
+			double total_price;
+	}
+\end{lstlisting}\bigbreak
+
+And the function implementation is
+
+\begin{lstlisting}
+	void CashRegister::add_items(int quantity, double price){
+		for(int i=0;i<quantity; i++)
+			add_item(price);
+	}
+\end{lstlisting}\bigbreak
+
+Note that we can call class functions within another class function, and when we do, we do not use the dot operator notation to do so. We simply call the function as normal.
+
+
+\subsubsection{The Class Constructor}
+\bigbreak
+
+We will now introduce a new class function type. We can already seen the \textit{mutator}, the \textit{accessor}, and now we will see the \textbf{constructor}.\\
+
+Notice that in the cash register example, we always needed to clear the data after instantiating the class. Often, we need to initialize class data after instantiating it. Can we do this in one step? Yes, by using constructors.\\
+
+What is a constructor? A \textbf{constructor} is a method or a function that will initialize your internal data upon declaration. In other words, it is not a function to be called, and is instead called automatically when declaring the class.\\
+
+There is \textit{no return type} for constructors and the name of the constructor must be the same as the name of the class. We declare it in the public section of the public interface. The \textbf{default constructor} is one where no parameters are passed. For example we can alter the public interface of the public interface for the cash register class as follows.
+
+\begin{lstlisting}
+	class CashRegister {
+		public:
+			CashRegister() 	// Default constructor
+			void clear();
+			void add_item(double price);
+			void add_items(int quantity, double price);
+			double get_total() const;
+			double get_count() const;
+		private:
+			int item_count;
+			double total_price;
+	}
+\end{lstlisting}\bigbreak
+
+And the implementation of the default constructor is 
+
+\begin{lstlisting}
+	CashRegister::CashRegister() {
+		item_count = 0;
+		total_price = 0;
+	}
+\end{lstlisting}\bigbreak
+
+We do not need to change anything to call the constructor, since it is called automatically when the object is declared.\\
+
+\begin{lstlisting}
+	CashRegister reg;	// not need to clear anymore, constructor does so automatically
+	
+	reg.add_item(10.23);
+	reg.add_item(5.26);
+	
+	display(reg); 
+\end{lstlisting}\bigbreak
+
+
+Let us say that we want to initialize the cash register with a balance (e.g. a coupon). We can make another constructor containing a parameter. \\
+
+\begin{lstlisting}
+	class CashRegister {
+		public:
+			CashRegister() 	// Default constructor
+			CashRegister(double coupon_value)
+			void clear();
+			void add_item(double price);
+			void add_items(int quantity, double price);
+			double get_total() const;
+			double get_count() const;
+		private:
+			int item_count;
+			double total_price;
+	}
+\end{lstlisting}\bigbreak
+
+And the implementation is
+
+\begin{lstlisting}
+	CashRegister::CashRegister(double coupon_value) {
+		item_count = 0;
+		total_price = coupon_value;
+	}
+\end{lstlisting}\bigbreak
+
+We can create another register to demonstrate a constructor with a parameter.
+
+\begin{lstlisting}
+	CashRegister reg;		// default contructor
+	CashRegister reg2(-10);		// constructor with a parameter
+	
+	reg.add_item(10.23);
+	reg.add_item(5.26);
+	
+	reg2.add_items(5, 1.0);
+	
+	cout << "Register 1:" << endl;
+	display(reg);
+	
+	cout << endl << "Register 2:" << endl;
+	display(reg2); 
+\end{lstlisting}\bigbreak
+
+
+\subsubsection{Dynamic Allocation of Objects}
+\bigbreak
+
+We can also create objects dynamically using the new keyword.
+
+\begin{lstlisting}
+	CashRegister *reg3 = new CashRegister;	// dynamic allocation of a cash register object
+\end{lstlisting}\bigbreak
+
+Note that reg3 is a pointer. We can then use the object's methods using
+
+\begin{lstlisting}
+	(*reg3).add_items(2, 1.5);
+	display(*reg3);
+\end{lstlisting}\bigbreak
+
+We can also declare using the second constructor
+
+\begin{lstlisting}
+	CashRegister *reg4 = new CashRegister(-5);	// dynamic allocation of a cash register object
+\end{lstlisting}\bigbreak
+
+If we want to delete the object, we can delete the pointer.
+
+\begin{lstlisting}
+	delete reg3;
+\end{lstlisting}\bigbreak
+
+We can also use the arrow notation as with structures:
+
+\begin{lstlisting}
+	reg4->additems(2, 1.5);
+\end{lstlisting}\bigbreak
+
 
 
 
