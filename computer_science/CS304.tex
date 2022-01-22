@@ -1,0 +1,315 @@
+\documentclass[]{article}
+
+% Packages
+\usepackage{amsmath} % math stuff
+%\usepackage[dvipsnames]{xcolor}  % for coloring
+\usepackage{tensor}  % tensors, but also for stuff like superscript on the left
+\usepackage{enumitem} % for enumerating alphabetically
+\usepackage{tabto}		% for tabbing to a certain length
+\usepackage{scrextend} % for local margins
+\usepackage{titling}	% for subtitle custom command
+\usepackage[svgnames, table]{xcolor} % avoid the option clash for hyperref command  + TABLE REP
+\usepackage[colorlinks=true, linkcolor=Blue, urlcolor=Blue]{hyperref} % for hyperref command 
+\usepackage{pgfplots} % plots
+\usepackage{circuitikz} % circuit plots
+\usetikzlibrary{positioning} % positioning in circuit plots
+\usetikzlibrary{backgrounds, shapes} % shapes for multiplexer+
+%%\usepackage{outlines} % convienent itemizing
+%%\usepackage{multirow} % multiple rows for tables
+
+%for flowchart:
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{siunitx}
+\usepackage{tikz}
+\usetikzlibrary{patterns}
+\usepackage{caption}
+\usetikzlibrary{arrows}
+\usepackage{color}
+\usepackage{pgfplots}
+\usepackage{listings}
+\usepackage[utf8]{inputenc}
+\usetikzlibrary{shapes.geometric}
+\usepackage{tikz-cd}
+\usetikzlibrary{positioning}
+\tikzset{
+	shift left/.style ={commutative diagrams/shift left={#1}},
+	shift right/.style={commutative diagrams/shift right={#1}}
+}
+
+
+%tables for list representation
+\usepackage{arydshln, collcell}
+\newcolumntype{C}{>{\collectcell\mathsf}c<{\endcollectcell}}
+
+% Python code
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{codeblue}{rgb}{0.08,0.1,0.87}
+\lstdefinestyle{pystyle}{
+	language=Python,   
+	commentstyle=\color{codegreen},
+	keywordstyle=\color{codeblue},
+	numberstyle=\tiny\color{codegray},
+	stringstyle=\color{codepurple},
+	basicstyle=\ttfamily\footnotesize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2
+}
+\lstset{style=pystyle}
+
+%Repeat command
+\usepackage{expl3}
+\ExplSyntaxOn
+\cs_new_eq:NN \Repeat \prg_replicate:nn
+\ExplSyntaxOff
+
+% Algorithms
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage[noend]{algpseudocode}
+\newcommand{\Get}{\State \textbf{get}~}
+\newcommand{\Set}{\State \textbf{set}~}
+\newcommand{\Print}{\State \textbf{print}~}
+\newcommand{\Getx}[1]{\Statex \algindent{#1} \textbf{get}~}		% x denotes non-numbered lines
+\newcommand{\Setx}[1]{\Statex \algindent{#1} \textbf{set}~}	% enter the number of lines to indent
+\newcommand{\Printx}[1]{\Statex \algindent{#1} \textbf{print}~}
+\newcommand{\Stop}{\State \textbf{stop}~}
+\newcommand{\algindent}[1]{\Repeat{#1}{\hskip\algorithmicindent}}
+\algdef{SE}[DOWHILE]{Do}{doWhile}{\algorithmicdo}[1]{\algorithmicwhile\ (#1)}
+
+
+% stop indentation
+\setlength{\parindent}{0pt}
+
+% custom subtitle command
+\newcommand{\subtitle}[1]{
+	\posttitle{
+		\par\end{center}
+	\begin{center}\large#1\end{center}
+	\vskip0.5em}
+}
+
+
+% Fixes weird backwards quote thing
+\usepackage [english]{babel}
+\usepackage [autostyle, english = american]{csquotes}
+\MakeOuterQuote{"}
+
+% fix upside down exclaimation points for less thans or greater thans
+\usepackage[T1]{fontenc}
+
+
+% Title
+\title{CS 304 Notes}
+\subtitle{Data Structures \& Algorithms}
+\author{Jaeden Bardati}
+\date{\textit{Last modified \today}}
+
+%\setcounter{section}{-1}	% 0-indexes the section
+
+\begin{document}
+
+\maketitle
+\bigbreak
+
+\section{Python and Object-Oriented Programming}
+\bigbreak
+
+Python is a \textit{high-level programming language} which makes it useful when studying data structures and algorithms.\\
+
+Python is an \textit{interpreted} language, where \textit{source code} (also referred to as \textit{scripts}), in the form of files with the \textit{.py} suffix, are run by an \textit{interpreter}. It is common to use an integrated development environment (IDE) to aid in displaying and editing Python code. IDEs for Python include the built-in IDLE, PyCharm, Spyder, and others.\\
+
+\subsection{Objects in Python}
+
+Python is an \textit{object oriented} language where \textbf{classes} are the basis of all data types. Examples of data types in Python include int, float, str.\\
+
+An \textbf{assignment statement} assigns an \textbf{identifier} (or name) to an object. Identifiers are associated with a \textit{memory address} and are similar to a pointer in languages such as C++ or Java. For example, the statement 
+
+\begin{lstlisting}[language=Python]
+	temp = 98.6
+\end{lstlisting}
+associates the identifier "temp" to the float value 98.6.\\
+
+Identifiers are \textbf{case-sensitive}. Namely, a variable named "temp" is different than one named "Temp". \\
+
+Python is a \textbf{dynamically typed} language, unlike C++ or Java. That is to say, when making the association of an identifier in Python, the data type is not explicitly declared. In the code above, the data type is determined automatically by the interpreter to be a float.\\
+
+It is possible to establish an \textbf{alias} by assigning a second identifier to an object as follows
+
+\begin{lstlisting}[language=Python]
+	temperature = temp
+\end{lstlisting}
+
+After an alias is made, either name can be used to refer to the object.\\
+
+The process of creating a class is called \textbf{instantiation}. To do this, we call the \textbf{constructor} of a class. If we have defined the class called Animal then we would do this by
+
+\begin{lstlisting}[language=Python]
+	a = Animal()
+\end{lstlisting}
+
+Note that we can also pass parameters to the Animal constructor.\\
+
+TO BE CONTINUED . . .
+
+
+\section{Design and Analysis of Algorithms}
+\bigbreak
+
+\subsection{Data structures vs. Abstract Data Types}
+
+There are many \textbf{abstract data types}: list, set, queue, stacks, dictionary, etc.\\
+
+\textbf{Data structures} are the implementation of abstract data types. Examples include: arrays, trees, hash tables, etc.\\
+
+Our goal is to find the best data structure to use. The best data structure is one that minimizes the \textbf{time complexity}. \\
+
+For example, if we have a list $L = [1, 2, 3]$ and we want to insert an element. If we use an array abstract type, then it is easy to write to insert an element at the end of the list, but it is more complicated to insert it at the beginning of the list (must shift all other elements over 1).\\
+
+Another example is the binary search algorithm (e.g. looking for a number in a phone book) has the time complexity of $\theta(log_2n)$.\\
+
+\subsection{Insertion Sort}
+
+The insertion sort algorithm written in pseudocode in Algorithm \ref{alg:insertion-sort-cost}.
+
+\begin{algorithm}
+	\caption{InsertionSort($A$)}
+	\label{alg:insertion-sort-cost}
+	\begin{algorithmic}[1]
+		\For{($j=2$ to length($A$))}
+			\Set key = $A[j]$
+			\State // insert $A[j]$ into the
+			\State // sorted sequence $A[1..j-1]$
+			\Set $i = j - 1$
+			\While{($i>0$ and $A[i]>$key)}
+				\Set $A[i+1] = A[i]$
+				\Set $i = i-1$
+				\Set $A[i+1]$ = key
+			\EndWhile
+		\EndFor
+		\Stop
+	\end{algorithmic}
+\end{algorithm}\bigbreak
+
+We can check the code using a trace for A = [3, 2, 1]. The variables as they change are:\\
+\begin{enumerate}
+	\itemsep0em
+	\item $j = 2$
+	\item key = 2
+	\item $i = 1$
+	\item $A = [3, 3, 1]$
+	\item $i = 0$
+	\item $A = [2, 3, 1]$
+	\item $j = 3$
+	\item key = 1
+	\item $i = 2$
+	\item $A = [2, 3, 3]$
+	\item $i = 1$
+	\item $A = [2, 2, 3]$
+	\item $i = 0$
+	\item $A = [1, 2, 3]$
+	\item $j = 4$
+\end{enumerate}
+
+\subsubsection{Algorithm efficiency}
+
+WE can go line by line through the program and associate an arbitrary time cost as well as a number of times that the line will run. We can represent this in Table \ref{tbl:insertion-sort-cost}. 
+
+\begin{center}
+	\begin{table}[h]\centering
+		\caption{Insertion Sort Algorithm Cost}\label{tbl:insertion-sort-cost}
+		\begin{tabular}{|c|c|c|}
+			\hline
+			Line   &Cost   &Times\\\hline
+			 1     & $c_1$     & $n$\\
+			 2     & $c_2$     & $n-1$\\
+			 3     & $0$      & $0$\\
+			 4     & $0$      & $0$\\
+			 5     & $c_3$     & $n-1$\\
+			 6     & $c_4$     & $\sum_{j=2}^n t_j$\\
+			 7     & $c_5$     & $\sum_{j=2}^n (t_j-1)$\\
+			 8     & $c_6$     & $\sum_{j=2}^n (t_j-1)$\\
+			 9     & $c_7$     &$n-1$\\\hline
+		\end{tabular}
+		\caption*{where we let $t_j$ be the number of times that the while loop is executed for a given $j$.}
+	\end{table}
+\end{center}
+
+The time that the algorithm takes is
+\begin{equation*}
+	T(n) = c_1n+c_2(n-1)+c_3(n-1) + c_4\sum_{j=2}^n t_j + c_5\sum_{j=2}^n (t_j-1) + c_6\sum_{j=2}^n (t_j-1) + c_7(n-1)
+\end{equation*}
+
+\underline{\textbf{Best case}}: $t_j$ = 0
+$$
+T(n) = c_1n + c_2(n-1) + c_3(n-1) + c_4(n-1) + c_8(n-1)
+= (c_1+c_2+c_3+c_4+c_8)n - (c_2+c_3+c_4+c_8)
+$$
+
+This can be written in the form $an+b$. Namely, the best case is a linear function with $n$.\\
+
+\underline{\textbf{Worse case}}: $t_j = j$ for $j = 2, 3, ... n$, therefore,
+
+\[ \sum_{j=2}^n t_j = \sum_{j=2}^n j = \frac{n(n+1)}{2} - 1 \]
+
+And,
+
+\[\sum_{j=2}^n t_j = \sum_{j=2}^n (j-1) = \frac{n(n-1)}{2}\]
+
+Thus, 
+
+\begin{align*}
+	T(n) &= c_1n+c_2(n-1)+c_3(n-1) + c_4\left(\frac{n(n+1)}{2} - 1\right) + c_5\left(\frac{n(n-1)}{2}\right) + c_6\left(\frac{n(n-1)}{2}\right) + c_7(n-1)\\
+	&= (\frac{c_4}{2} + \frac{c_5}{2} + \frac{c_6}{2})n^2 + (c_1 + c_2 + c_3 + \frac{c_4}{2} - \frac{c_5}{2} - \frac{c_6}{2} + c_7)n - (c_2 + c_3 + c_4 + c_7)
+\end{align*}
+
+This can be written in the form $an^2 + bn + c$. Namely, the worst case is a quadratic function with $n$.\\
+
+\subsection{Notation for Algorithm efficiency}
+
+We say insertion sort has a worst-case running time of $\Theta(n^2)$. All we care about is the order of $n$ as n asymptotically increases without bound. For example, \\
+
+$\frac{n^3}{1000} - 100n^2 - 100n + 3$ has a time complexity of $\Theta(n^2)$.\\
+
+For a given function $g(n)$ we denote by $\Theta(g(n))$ the set of functions
+ 
+\begin{equation*}
+	\Theta(g(n)) \equiv \{f(n): \exists \text{ positive constants } c_1, c_2, n_0 \text{ s.t. } 0 \leq c_1 g(n) \leq f(n) \leq c_2 g(n)~\forall~n \geq n_0\}
+\end{equation*}\bigbreak
+
+INSERT GRAPH 1\\
+
+For all $n \geq n_0$ f(n)  is equal to g(n) within a constant factor. \\
+
+Note that we often abuse the notation and write that $f(n) = \Theta(g(n))$ rather than $f(n) \in \Theta(g(n))$ as one might expect.\\
+
+\textbf{For example}, let us justify that $\frac{n^2}{2} - 3n = \Theta(n^2)$. We must determine positive constants $c_1, c_2, n_0$ s.t. $c_1n^2 \leq \frac{n^2}{2} - 3n \leq c_2 n^2~\forall~n\geq n_0$.\\
+
+Diving by $n^2$, $c_1 \leq \frac{1}{2} - \frac{3}{n} \leq c_2$, where we choose $c_2 = \frac{1}{2}$, $c_1 = \frac{1}{14}$ for $n_0 \geq 7$. \\
+
+For a given function $g(n)$, we denote $O(g(n))$ as the set of functions 
+
+\begin{equation*}
+	O(g(b)) \equiv \{ f(n): \exists \text{ positive constants } c \text{ and } n_0 \text{ s.t. } 0 \leq f(n) \leq c g(n)~\forall~n \geq n_0 \}
+\end{equation*}\bigbreak
+
+INSERT GRAPH 2 HERE\\
+
+It is important to note that if $f(n) = \Theta(g(n))$, then necessarily $f(n) = O(g(n))$.\\
+
+
+
+
+
+\end{document}
