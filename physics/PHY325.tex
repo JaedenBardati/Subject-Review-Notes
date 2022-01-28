@@ -11,8 +11,8 @@
 \usepackage[svgnames, table]{xcolor} % avoid the option clash for hyperref command  + TABLE REP
 \usepackage[colorlinks=true, linkcolor=Blue, urlcolor=Blue]{hyperref} % for hyperref command 
 \usepackage{pgfplots} % plots
-\usepackage[thinc]{esdiff} % derivative
-%%\usepackage{outlines} % convienent itemizing
+\usepackage{physics}	%derivative (\dv)+ and more
+\usepackage{outlines} % convienent itemizing
 %%\usepackage{multirow} % multiple rows for tables
 
 %for flowchart:
@@ -131,13 +131,13 @@
 Let $y = f(x)$, then the \textbf{derivative} is defined as
 
 \begin{equation}\label{eq:limit-definition-of-derivative}
-	\diff{f}{x} \equiv \mathop {\lim }\limits_{h \to 0} \frac{{f\left( {x + h } \right) - f\left( x \right)}}{h }
+	\dv{f}{x} \equiv \mathop {\lim }\limits_{h \to 0} \frac{{f\left( {x + h } \right) - f\left( x \right)}}{h }
 \end{equation}\bigbreak
 
 Now consider $y = f(x_1, ..., x_n)$, then the \textbf{partial derivative} is defined as
 
 \begin{equation}\label{eq:limit-definition-of-partial-derivative}
-	\diffp{f}{{x_i}} \equiv \mathop {\lim }\limits_{h \to 0} \frac{{f\left( {x_1, ..., x_{i}+h, ..., x_n} \right) - f\left(x_1, ..., x_n \right)}}{h }
+	\pdv{f}{{x_i}} \equiv \mathop {\lim }\limits_{h \to 0} \frac{{f\left( {x_1, ..., x_{i}+h, ..., x_n} \right) - f\left(x_1, ..., x_n \right)}}{h }
 \end{equation}\bigbreak
 
 We can numerically compute derivatives in three main ways: forwards, backwards and with an average of the two.\\
@@ -145,19 +145,19 @@ We can numerically compute derivatives in three main ways: forwards, backwards a
 The \textbf{forward} derivative is defined as
 
 \begin{equation}\label{eq:forward-derivative}
-	\diff{f}{x} \approx \frac{{f\left( {x + h } \right) - f\left( x \right)}}{h}
+	\dv{f}{x} \approx \frac{{f\left( {x + h } \right) - f\left( x \right)}}{h}
 \end{equation}\bigbreak
 
 The \textbf{backward} derivative is defined as
 
 \begin{equation}\label{eq:backward-derivative}
-	\diff{f}{x} \approx \frac{{f\left( {x - h } \right) + f\left( x \right)}}{h}
+	\dv{f}{x} \approx \frac{{f\left( {x - h } \right) + f\left( x \right)}}{h}
 \end{equation}\bigbreak
 
 The \textbf{central} derivative is defined as
 
 \begin{equation}\label{eq:central-derivative}
-	\diff{f}{x} \approx \frac{{f\left( {x + h } \right) - f\left( x - h \right)}}{2h}
+	\dv{f}{x} \approx \frac{{f\left( {x + h } \right) - f\left( x - h \right)}}{2h}
 \end{equation}\bigbreak
 
 The smaller $n$ is, the more accurate this approximation is.\\
@@ -234,6 +234,383 @@ Since the mantissa is only a certain size, once a decimal value becomes lower th
 It is important when analyzing numerical systems to pick normalized units (close to unity). That is to say, choose units such that the numbers that are being used do not have this round-off error effect. \\
 
 \subsection{Truncation Error}\bigbreak
+
+Truncation error has to do with the sort of "rate of error decreasing with respect to h." Namely, if we Taylor expand $f(x+h)$, we obtain
+
+\[f(x+h) = f(x) + hf'(x) + \frac{1}{2}h^2f''(x) + \frac{1}{6}h^3f'''(x) + ...\] 
+
+So, the calculation we use for the forward derivative (equation \ref{eq:forward-derivative}) is
+
+\begin{align*}
+	\frac{f(x+h) - f(x)}{h} &= f'(x) + \frac{1}{2}hf''(x) + \frac{1}{6}h^2f'''(x) + ...\\
+	\implies \frac{f(x+h) - f(x)}{h} &\approx f'(x) + O(h)
+\end{align*}
+
+We can see that the forward derivative is only accurate to the first order of $h$. This is why there is an increase in error when $h$ is large. It is called \textbf{truncation error} since we truncate the infinite series when approximating.
+
+\section{Example: Projectile Motion}\bigbreak\bigbreak
+
+Consider a baseball thrown with air resistance. The equations of motion are
+
+\begin{align}
+	\dv{\vec{v}}{t} &= \frac{1}{m}\vec{F}_{\text{air}}(v) - g\hat{y}\\
+	\dv{\vec{r}}{t} &= \vec{v}
+\end{align}
+
+where $\vec{v}$ is the velocity, $t$ is the time elapsed, $m$ is the mass of the baseball, $g$ is the gravitational acceleration, $\hat{y}$ is the upward direction, and $\vec{r}$ is the position vector. Note that the force of air friction here is 
+
+\begin{equation}
+	\vec{F}_{\text{air}}(v) = -\frac{1}{2} C_d \rho A |\vec{v}|\vec{v}
+\end{equation}
+
+where $C_d$ is the coefficient of air friction, $\rho$ is the density of air, and $A$ the area of the baseball (perpendicular to its direction of travel).
+
+\subsection{Euler Method}\bigbreak
+
+The Euler method is a numerical procedure for solve initial value problems of ordinary differential equations. Namely, if we have the form
+
+\begin{align*}
+	\dv{\vec{v}}{t} &= \vec{a}(\vec{r}, \vec{v})\\
+	\dv{\vec{r}}{t} &= \vec{v}
+\end{align*}
+
+where $\vec{a}(\vec{r}, \vec{v})$ is the acceleration vector as a function of the position and velocity vectors.\\
+
+Using the forward derivative where $\tau = h$ represents an increment in the time, then
+
+\begin{align*}
+	\frac{\vec{v}(t + \tau)-\vec{v}(t)}{\tau} &= \vec{a}(\vec{r}, \vec{v})\\
+	\frac{\vec{r}(t + \tau)-\vec{r}(t)}{\tau} &= \vec{v}(t)
+\end{align*}
+
+So, 
+
+\begin{align*}
+	\vec{v}(t + \tau) &= \tau\vec{a}(\vec{r}, \vec{v}) + \vec{v}(t)\\
+	\vec{r}(t + \tau) &= \tau\vec{v}(t) + \vec{r}(t)
+\end{align*}
+
+We can write this as an iterative process
+
+\begin{align*}
+	\vec{v}_{n+1} &= \tau\vec{a}(\vec{r}_{n}, \vec{v}_{n}) + \vec{v}_{n}\\
+	\vec{r}_{n+1} &= \tau\vec{v}_{n} + \vec{r}_{n}
+\end{align*}
+
+This is what we use for the Euler method. Concretely, the steps for this method are
+
+\begin{enumerate}
+	\item Specify the initial values $\vec{r}_1, \vec{v}_1$ at $t=0$
+	\item Choose a time step $\tau$
+	\item Calculate $\vec{a}$, given the current $\vec{r}$ and $\vec{v}$
+	\item Compute the new $\vec{v}_{i+1}$ and $\vec{r}_{i+1}$
+	\item Go to step 3
+\end{enumerate}
+
+
+\section{Example: Simple Pendulum}\bigbreak\bigbreak
+
+The equations of motion for the simple pendulum is
+
+\begin{equation}
+	\dv[2]{\theta}{t} = -\frac{g}{L}\sin\theta
+\end{equation}
+
+For small angles $\theta \ll 1$, we have
+
+\begin{equation*}
+	\dv[2]{\theta}{t} = -\frac{g}{L}\theta
+\end{equation*}
+
+The solutions of this approximation are
+
+\begin{equation*}
+	\theta(t) = C_1 \cos(\frac{2\pi t}{T_s} + C_2)
+\end{equation*}
+
+For arbitrary constants $C_1$ and $C_2$ determined by the initial conditions and where $T_s = \sqrt{\frac{L}{g}}$.\\
+
+However, if we are interested in the behaviour of the pendulum in regions where the angle is not small, we must result to numerical approximation. If we wanted to use the Euler method here, we would split the second-order ODE into two first-order ODEs:
+
+\begin{align*}
+	\dv{\omega}{t} &= \alpha(\theta)\\
+	\dv{\theta}{t} &= \omega
+\end{align*} 
+
+where $\alpha(\theta) = -\frac{g}{L} sin\Theta$. The Euler method would therefore be done using
+
+\begin{align*}
+	\theta_{n+1} &= \Theta_n + \tau\omega_n\\
+	\omega_{n+1} &= \omega_n + \tau\alpha(\Theta_{n})
+\end{align*}
+
+However, because the Euler method is only accurate to the first-order, this implementation diverges to infinity in error very quickly. Instead, we must look to a new method.
+
+\subsection{Central Derivative Truncation Error}\bigbreak
+
+For the new scheme, we must understand the truncation error of the central derivative. We will start by Taylor expanding $f(t+\tau)$ and $f(t - \tau)$
+
+\begin{align*}
+	f(t+\tau) &= f(t) + \tau f'(t) + \frac{1}{2}\tau^2f''(t) + \frac{1}{6}\tau^3f'''(t) + ...\\
+	f(t-\tau) &= f(t) - \tau f'(t) + \frac{1}{2}\tau^2f''(t) - \frac{1}{6}\tau^3f'''(t) + ...
+\end{align*}
+
+So, using the formula for the central derivative (equation \ref{eq:central-derivative}),
+
+\begin{align*}
+	\frac{f(t+\tau) - f(t-\tau)}{2\tau} &= f'(t) - \frac{1}{6}\tau^2f'''(t) + ...\\
+	\implies \frac{f(t+\tau) - f(t-\tau)}{2\tau} &\approx f'(t) + O(\tau^2)
+\end{align*}
+
+The central derivative is therefore accurate to the second order of $\tau$. Note that we can also find the second derivative by adding the Taylor expanded series instead of subtracting them.\\
+
+\subsection{Leap Frog Method}\bigbreak
+
+We will start with the general equations of motion where \textbf{the acceleration does not depend on velocity}. This is different from the Euler method, which allowed accelerations as a function of velocity.
+
+\begin{align*}
+	\dv{\vec{v}}{t} &= \vec{a}(\vec{r}(t))\\
+	\dv{\vec{r}}{t} &= \vec{v}
+\end{align*}
+
+where $\vec{a}(\vec{r}, \vec{v})$ is the acceleration vector as a function of the position and velocity vectors.\\
+
+This time, we will evaluate using the central derivative instead of the forward one. We will evaluate the velocity at $t+\tau$ and $t-\tau$, and the position at $t+\tau$ and $t+2\tau$,
+
+\begin{align*}
+	\frac{\vec{v}(t + \tau)-\vec{v}(t - \tau)}{2\tau} + O(\tau^2) &= \vec{a}(\vec{r}(t))\\
+	\frac{\vec{r}(t + 2\tau)-\vec{r}(t)}{2\tau} + O(\tau^2) &= \vec{v}(t + \tau)
+\end{align*}
+
+We can rewrite this as 
+
+\begin{align*}
+	\frac{\vec{v}_{n+1}-\vec{v}_{n-1}}{2\tau} + O(\tau^2) &= \vec{a}(\vec{r}_n)\\
+	\frac{\vec{r}_{n+2}-\vec{r}_n}{2\tau} + O(\tau^2) &= \vec{v}_{n+1}
+\end{align*}
+
+Therefore,
+
+\begin{align*}
+	\vec{v}_{n+1} &= \vec{v}_{n -1} + 2\tau\vec{a}(\vec{r}_{n}) + O(\tau^3)\\
+	\vec{r}_{n+1} &= \vec{r}_{n} + 2\tau\vec{v}_{n+1} + O(\tau^3)
+\end{align*}
+
+This is the \textbf{leap-frog method}. The solution is advanced in $n$ steps of 2$\tau$. Moreover, the position is evaluated at $\vec{r}_1$, $\vec{r}_3$, $\vec{r}_5$, etc., and the velocity is evaluated at $\vec{v}_2$, $\vec{v}_4$, $\vec{v}_6$, etc., hence the leap-frog.\\
+
+\subsection{Verlet Method}\bigbreak
+
+Now taking the 1st and 2nd derivatives, consider
+
+\[\dv{\vec{r}}{t} = \vec{v}(t) \quad \dv[2]{\vec{r}}{t} = \vec{a}(t) \]
+
+Then, 
+
+\begin{align*}
+	\frac{\vec{r}_{n+1}-\vec{r}_{n-1}}{2\tau} + O(\tau^2) &= \vec{v}_n\\
+	\frac{\vec{r}_{n+1}+\vec{r}_{n-1} - 2\vec{r}_n}{\tau^2} + O(\tau^2) &= \vec{a}_{n}
+\end{align*}
+
+Therefore,
+
+\begin{align*}
+	\vec{v}_n &= \frac{\vec{r}_{n+1}-\vec{r}_{n-1}}{2\tau} + O(\tau^2)\\
+	\vec{r}_{n+1} &= 2\vec{r}_n - \vec{r}_{n-1} + \tau^2\vec{a}_n + O(\tau^4)
+\end{align*}
+
+Therefore, if we do not need the velocity, we can have accuracy to the 4-th order.\\
+
+Note that both the leap-frog and the verlet methods are not self-starting. In other words, you need to use another method to get the first step or two to work.\\
+
+\subsection{Euler-Cromer Method}\bigbreak
+
+We can make an improvement to the regular Euler method without doing too much. Namely, we first compute the velocity of the current iteration and then use the current velocity to find the current position. Namely, instead of 
+
+\begin{align*}
+	\vec{r}_{n+1} &= \vec{r}_{n} + \tau\vec{v}_{n}\\
+	\vec{v}_{n+1} &= \vec{v}_{n} + \tau\vec{a}(\vec{r}_{n}, \vec{v}_{n})
+\end{align*}
+
+which is the Euler method, we do
+
+\begin{align*}
+	\vec{v}_{n+1} &= \vec{v}_{n} + \tau\vec{a}(\vec{r}_{n}, \vec{v}_{n})\\
+	\vec{r}_{n+1} &= \vec{r}_{n} + \tau\vec{v}_{n + 1}
+\end{align*}
+
+This is the Euler-Cromer method.
+
+\section{Integration of Ordinary Differential Equations}\bigbreak\bigbreak
+
+
+Consider the general equation
+
+\begin{equation*}
+	\dv[2]{y}{x} + q(x)\dv{y}{x} = r(x)
+\end{equation*}
+
+ODEs can always be written as sets of first order differential equations. Here, we can do this by substitution,
+
+\begin{align*}
+	\dv{y}{x} &= z(x)\\
+	\dv{z}{x} &= r(x) - q(x)z(x)
+\end{align*}
+
+The general problem in ODEs is thus reduced to the study of $N$ coupled first-order differential equations.
+
+\[\dv{y_i}{x} = f_i(x, y_1, ..., y_N)\]
+
+where $i = 1, ..., N$.\\
+
+We always need boundary conditions. These can be in the form of
+
+\begin{outline}
+	\1 Initial boundary conditions
+		\2 All $y_i$ are given at some starting rate of $x$s (start)
+		\2 Need to find $y_i$ at $x_f$ (finish)
+	\1 Two point boundary value problem
+		\2 Conditions are specified at more than one $x$
+		\2 Typically at $x_f$, $x_s$
+\end{outline}
+
+For example, when modeling the Sun, we set the boundary conditions of the temperature, luminosity, mass and pressure at the edge. Then, we integrate inwards to find those properties in the center.\\
+
+\subsection{General Strategy}\bigbreak
+
+The general stategy for attacking these types of problems is to rewrite the $dy$'s and $dx$'s as $\Delta x$'s and $\Delta y$'s, and then multiply by $\Delta x$. The literal interpretation is the Euler method. Though, in general one should not use the Euler method.\\
+
+There are two very common general methods that one can try:
+
+\begin{itemize}
+	\item Runge-Kutta
+	\item Bulinsch-Stoer (extrapolation method)
+\end{itemize}
+
+\subsection{Example: Kepler Orbit}\bigbreak
+
+Ou running example will be a Kepler problem of a small object in orbit around the Run (e.g. a comet). The gravitational force is\\
+
+\[\vec{F} = \frac{-GmM}{|\vec{r}|}\vec{r}\]
+
+where $\vec{r}$ is the position of the comet, $m$ is the mass of the comet, $M$ is the mass of the Sun, $G$ is the gravitational constant.\\
+
+The natural units for this problem are in AU, years and $M_\odot$. So, 
+
+\[ GM = \frac{4\pi^2 \text{AU}^3}{\text{years}^2}\]
+
+We want to trace something to make sure the behaviour is correct. We will track the total energy:
+
+\[ E = \frac{1}{2}mv^2 - \frac{GMm}{r}\]
+
+We could now implement the Euler or Euler-Cromer methods if we want, however they will not be very accurate. Instead, we will look at a new, more accurate method.\\
+
+\subsection{Runge-Kutta Method}\bigbreak
+
+The formula for the Euler method is 
+
+\[y_{n+1} = y_n + hf(x_n, y_n)\]
+
+which advances the solution from $x_n$ to $x_{n+1}$.
+
+\begin{itemize}
+	\item The Euler method is O($n^2$)
+	\item Only uses derivative information at the beginning of the interval
+	\item Euler is not accurate and not stable
+\end{itemize}
+
+Consider instead the use of Euler to make a trial step to the mid-point and use the midpoint to advance the next step.
+
+\begin{align*}
+	k_1 &= hf(x_n, y_n)\\
+	k_2 &= hf(x_n+\frac{1}{2}h, y_n+\frac{1}{2}k_1)\\
+	y_{n+1} &= y_n + k_2 + O(h^3)
+\end{align*}
+
+This is called \textbf{2nd order Runge-Kutta} or the \textbf{"midpoint" method}.\\
+
+\subsection{RK4 Method}\bigbreak
+
+The 4th order Runge-Kutta Method (RK4) is very commonly used. It goes as the following.
+
+\begin{align*}
+	k_1 &= hf(x_n, y_n)\\
+	k_2 &= hf(x_n+\frac{1}{2}h, y_n+\frac{1}{2}k_1)\\
+	k_3 &= hf(x_n+\frac{1}{2}h, y_n+\frac{1}{2}k_2)\\
+	k_4 &= hf(x_n + h, y_n + k_3)\\
+	y_{n+1} &= y_n + \frac{1}{6}k_1 + \frac{1}{3}k_2 + \frac{1}{3}k_3 + \frac{1}{6}k_4 + O(h^5)
+\end{align*}
+
+The idea is to take a few intermediate steps to determine the next y to return.\\
+
+Now that we have a general method to solve this problems, we need to find a way of setting the size of $h$.\\
+
+\subsection{Adaptive RK4 Method}\bigbreak
+
+Let us use the example of an elliptical orbit. In the perihelion (closest to the center body), we would like $h$ to be small so that it is more accurate, since the orbiting body moves fast there. However, we could allow $h$ to be larger in aphelion (furthest to the center body), where the orbiting body moves slower. \\
+
+The way we will do this is with adapting $h$ on the fly. We will do this by comparing the relative error of a big step $y_b(t+h)$ to a couple small steps $y_s(t+h)$ (result from two steps of $t+\frac{1}{2}h$).\\
+
+We will compare $y_b$ with $y_s$ to understand the \textit{local truncation error}.If the error is tolerable, then the step is accepted, and a larger value of $h$ is used for the next step.\\
+
+How can we code this Adaptive RK4 method?
+
+\subsubsection{Code Outline}
+
+\begin{outline}
+	\1 Loop over maximum number of attempts to satisfy error bound (user set)
+		\2 Take two small steps
+		\2 Take one large step
+		\2 Compute truncation error
+		\2 Estimate $h$
+		\2 If acceptable, return updated solution
+	\1 Calculate $\Delta_1 = y_s - y_b$
+	\1 Calculate $Delta_0 = \text{err} \times \frac{1}{2}(|y_s| + |y_b|)$
+	\1 Calculate $\Delta_{\text{ratio}} = \abs{\frac{\Delta_1}{\Delta_0 + \text{eps}}}$
+	\1 Estimate new $h$ value: $h_{\text{new}} = h(\Delta_{\text{ratio}})^{-\frac{1}{5}}$
+\end{outline}
+
+We need to be careful with $h_{\text{new}}$ since this is a linear interpolation. So, we will correct it
+
+\[h_{\text{new}} = S_1 \times h_{\text{new}}\]
+
+where $S_1<1$, and typically, $S_1 \approx 0.9$. Also,
+
+\[h_{\text{new}} = \max(h_{\text{new}}, \frac{h}{S_2})\]
+\[h_{\text{new}} = \max(h_{\text{new}}, S_2h)\]
+
+where $S_2>1$, and typically, $S_2 \approx 4$.\\
+
+We then check if this actually worked. If $\Delta_{\text{ratio}} < 1$, then we are done. Otherwise, we use $h_{\text{new}}$ as our $h$ and try again.\\
+
+\subsection{Current Method}\bigbreak
+
+The currently accepted method is the \textbf{"embedded" solution}. The 5th order Runge Kutta (RK5) is
+
+\begin{align*}
+	k_1 &= hf(x_n, y_n)\\
+	k_2 &= hf(x_n+a_2h, y_n+b_{21}k_1)\\
+	&...\\
+	k_6 &= hf(x_n+a_6h, y_n+b_{61}k_1 + ... + b_{65}k_5))\\
+	y_{n+1} &= y_n + c_1k_1 + c_2k_2 + ... + c_6k_6
+\end{align*}
+
+This is typically known as the \textbf{Runge-Kutta-Fehlberg methods}. The $a_2, a_3, ..., a_6$, $b_{21}, ..., b_{61}, ..., b_{65}$, and $c_1, ..., c_6$ are constants. There are tabular values of the coefficients, such as "cash-karp".\\
+
+\subsection{The Lorentz Model}\bigbreak
+
+The Lorentz model is
+
+\begin{align*}
+	\dv{x}{t} &= \sigma (y-x)\\
+	\dv{y}{t} &= rx-y-xz\\
+	\dv{z}{t} &= xy - bz
+\end{align*}
+
+where $r$, $\sigma$, and $b$ are constants.\\
+
+This model demonstrates an example of chaos. That is to say, it is highly sensitive to a small change in the initial conditions if you iterate far enough in the future.\\
+
+
 
 
 
