@@ -16,6 +16,7 @@
 \usetikzlibrary{backgrounds, shapes} % shapes for multiplexer+
 %%\usepackage{outlines} % convienent itemizing
 %%\usepackage{multirow} % multiple rows for tables
+\usepackage[at]{easylist}% easy lists with @ starting each item
 
 %for flowchart:
 \usepackage{amsmath}
@@ -109,6 +110,11 @@
 % fix upside down exclaimation points for less thans or greater thans
 \usepackage[T1]{fontenc}
 
+% plots
+\usepackage{pgfplots}
+\usepgfplotslibrary{fillbetween}
+\pgfplotsset{compat=1.15} 
+
 
 % Title
 \title{CS 304 Notes}
@@ -161,7 +167,7 @@ The process of creating a class is called \textbf{instantiation}. To do this, we
 
 Note that we can also pass parameters to the Animal constructor.\\
 
-TO BE CONTINUED . . .
+See Chapters 1 and 2 in the textbook for more.\\
 
 
 \section{Design and Analysis of Algorithms}
@@ -183,7 +189,7 @@ Another example is the binary search algorithm (e.g. looking for a number in a p
 
 The insertion sort algorithm written in pseudocode in Algorithm \ref{alg:insertion-sort-cost}.
 
-\begin{algorithm}
+\begin{algorithm}[bh!]
 	\caption{InsertionSort($A$)}
 	\label{alg:insertion-sort-cost}
 	\begin{algorithmic}[1]
@@ -227,7 +233,7 @@ We can check the code using a trace for A = [3, 2, 1]. The variables as they cha
 WE can go line by line through the program and associate an arbitrary time cost as well as a number of times that the line will run. We can represent this in Table \ref{tbl:insertion-sort-cost}. 
 
 \begin{center}
-	\begin{table}[h]\centering
+	\begin{table}[h!]\centering
 		\caption{Insertion Sort Algorithm Cost}\label{tbl:insertion-sort-cost}
 		\begin{tabular}{|c|c|c|}
 			\hline
@@ -242,7 +248,11 @@ WE can go line by line through the program and associate an arbitrary time cost 
 			 8     & $c_6$     & $\sum_{j=2}^n (t_j-1)$\\
 			 9     & $c_7$     &$n-1$\\\hline
 		\end{tabular}
-		\caption*{where we let $t_j$ be the number of times that the while loop is executed for a given $j$.}
+		\caption*{
+			\leftskip2.5cm\relax
+			\rightskip2.5cm\relax
+			where we let $t_j$ be the number of times that the while loop is executed for a given $j$.
+		}
 	\end{table}
 \end{center}
 
@@ -276,37 +286,302 @@ Thus,
 
 This can be written in the form $an^2 + bn + c$. Namely, the worst case is a quadratic function with $n$.\\
 
-\subsection{Notation for Algorithm efficiency}
+\subsection{Asymptotic Analysis}\bigbreak
 
 We say insertion sort has a worst-case running time of $\Theta(n^2)$. All we care about is the order of $n$ as n asymptotically increases without bound. For example, \\
 
 $\frac{n^3}{1000} - 100n^2 - 100n + 3$ has a time complexity of $\Theta(n^2)$.\\
 
-For a given function $g(n)$ we denote by $\Theta(g(n))$ the set of functions
+\textbf{Definition:} For a given function $g(n)$ we denote by $\Theta(g(n))$ the set of functions
  
 \begin{equation*}
 	\Theta(g(n)) \equiv \{f(n): \exists \text{ positive constants } c_1, c_2, n_0 \text{ s.t. } 0 \leq c_1 g(n) \leq f(n) \leq c_2 g(n)~\forall~n \geq n_0\}
-\end{equation*}\bigbreak
+\end{equation*}\bigbreak\bigbreak
 
-INSERT GRAPH 1\\
+%\begin{figure}[th!]
+%	\centering
+%	\begin{tikzpicture}
+%		\begin{axis}[
+%			axis on top,
+%			legend pos=outer north east,
+%			axis lines = center,
+%			xticklabel style = {font=\tiny},
+%			yticklabel style = {font=\tiny},
+%			xlabel = Input Size,
+%			ylabel = Running Time,
+%			legend style={cells={align=left}},
+%			legend cell align={left},
+%			]
+%			\addplot[thin,green,samples=161,domain=0:3.7,name path=f] {2+(x-2)*x*(x-2)};
+%			\addplot[very thick,red,samples=161,domain=0:3.7,name path=f] {2+x*(x)/3};
+%			\addplot[thin,blue,samples=161,domain=0:3.7,name path=f] {2+x};
+%		\end{axis}
+%	\end{tikzpicture}
+%	\caption{The red line is $g(n)$} \label{fig:theta-efficiency-graph}
+%	\bigbreak
+%\end{figure}
 
-For all $n \geq n_0$ f(n)  is equal to g(n) within a constant factor. \\
-
-Note that we often abuse the notation and write that $f(n) = \Theta(g(n))$ rather than $f(n) \in \Theta(g(n))$ as one might expect.\\
+For all $n \geq n_0$ f(n)  is equal to g(n) within a constant factor. Note that we often abuse the notation and write that $f(n) = \Theta(g(n))$ rather than $f(n) \in \Theta(g(n))$ as one might expect.\\
 
 \textbf{For example}, let us justify that $\frac{n^2}{2} - 3n = \Theta(n^2)$. We must determine positive constants $c_1, c_2, n_0$ s.t. $c_1n^2 \leq \frac{n^2}{2} - 3n \leq c_2 n^2~\forall~n\geq n_0$.\\
 
-Diving by $n^2$, $c_1 \leq \frac{1}{2} - \frac{3}{n} \leq c_2$, where we choose $c_2 = \frac{1}{2}$, $c_1 = \frac{1}{14}$ for $n_0 \geq 7$. \\
+Dividing by $n^2$, $c_1 \leq \frac{1}{2} - \frac{3}{n} \leq c_2$, where we choose $c_2 = \frac{1}{2}$, $c_1 = \frac{1}{14}$ for $n_0 \geq 7$. \\
 
-For a given function $g(n)$, we denote $O(g(n))$ as the set of functions 
+\textbf{Definition:} For a given function $g(n)$, we denote $O(g(n))$ as the set of functions 
 
 \begin{equation*}
 	O(g(b)) \equiv \{ f(n): \exists \text{ positive constants } c \text{ and } n_0 \text{ s.t. } 0 \leq f(n) \leq c g(n)~\forall~n \geq n_0 \}
-\end{equation*}\bigbreak
+\end{equation*}\bigbreak\bigbreak
 
-INSERT GRAPH 2 HERE\\
+We call this "big O" notation. See Figure 3.5 in the textbook for a visualization. It is important to note that if $f(n) = \Theta(g(n))$, then necessarily $f(n) = O(g(n))$. Also note that the $\Omega(g(n))$ notation indicates a minimum asymptotic trend.
 
-It is important to note that if $f(n) = \Theta(g(n))$, then necessarily $f(n) = O(g(n))$.\\
+
+\section{Array-Based Sequences}\bigbreak
+
+\subsection{Sequence Types in Python}
+
+The main sequence types in Python are the \textbf{list}, \textbf{tuple} and \textbf{string}. These sequence types can be \textbf{referential} or \textbf{compact}, and \textbf{mutable} or \textbf{immutable}. Referential are distinguished from compact arrays later on in these notes. Mutable arrays are array that can be changes in some way (appended to, values changed, values inserted, etc.), whereas immutable arrays cannot be changed. The following are the properties of the sequence types.
+
+\begin{itemize}
+	\item lists are \textit{referential} and \textit{mutable}
+	\item tuples are \textit{referential} and \textit{immutable}
+	\item strings are \textit{compact} and \textit{immutable}
+\end{itemize}
+
+We can do a variety of operations on these sequence types. Some of them include "len(data)", which finds the length of the array data, or "data1 == data2", which checks if the arrays data1 and data2 are equal. See Tables 5.3 and 5.4 from the textbook for a comprehensive list. \\
+
+The non-mutating behaviors are 
+
+\begin{itemize}
+	\item len(data): Finds length of array
+	\item data[j]: Returns the jth index
+	\item data.cout(value): Number of times value is in data
+	\item data.index(value): The index of the value in data
+	\item Value in data: Same as above
+	\item data1 == data2: Checks if the arrays are equal
+	\item d2 = data[j:k]: Creates a new array which is a slice from index j (inclusively) to k (exclusively)
+	\item d2 = data1 + data2: Creates a new array which is the concatenation of the arrays
+	\item d2 = c*data: Creates a new array which is c copies of data
+\end{itemize}
+
+and the mutating behaviors are
+
+\begin{itemize}
+	\item data[j] = val: Change the value at index j to val
+	\item data.append(val): Append to the end of the array
+	\item data.insert(k, val): Insert val in an element at index k (increases size)
+	\item data.pop(): Removes (and returns) the last element of the array
+	\item data.pop(k): Removes (and returns) the kth element of the array
+	\item del data[k]: Removes the kth element of the array
+	\item data.remove(val): Searches the array for val and removes it
+	\item data1.extend(data2): Appends the array data2 to the array data1
+	\item data.reverse(): Reverses the order of the array
+	\item data.sort(): Sorts the array in increasing order
+\end{itemize}
+
+An implementation of data.insert in our previous array class in Python is
+
+\begin{lstlisting}
+	def insert (self, k, value):
+		if self._n == self._capacity:
+			self._resize(2*self._capacity)
+		for j in range(self._n, k, -1):
+			self._A[j] = self._A[j-1]
+		self._A[k] = val
+		self._n += 1
+\end{lstlisting}
+
+\subsection{Low-Level Arrays}\bigbreak
+
+\subsubsection {What is an Array?}\bigbreak
+
+First, we must define RAM. Random-access memory (RAM) is memory that can be randomly-accessed. Randomly-accessed means that any random element can be accessed just as easily as any other. We can visualize this in a table as follows\\
+
+\begin{table}[H]\centering
+	\begin{tabular}{|c|c|c|c|c|c|}\hline
+		S & A & M & P & L & E \\\hline
+	\end{tabular}\bigbreak
+\end{table}
+
+An array is a group of related values sorted one after another in a contiguous portion of RAM. To access an array, we refer to the memory address that the array begins at and add the index. Namely, \\
+
+\begin{lstlisting}
+	A[i] = start + index
+\end{lstlisting}\bigbreak
+
+\subsubsection{Note for Python Arrays}\bigbreak
+
+Python arrays use pointers to refer to an array in memory. Therefore, we need to explicitly copy an array to make sure it is copied. In the following example, an alias is made and so the sorted array [1, 2, 3] would be outputted.
+
+\begin{lstlisting}
+	x = [3, 2, 1]
+	y = x
+	y.sort()
+	print(x)
+\end{lstlisting}\bigbreak
+
+\subsubsection{Referential Arrays}\bigbreak
+\textbf{Referential Arrays} are arrays that store memory addresses (object references). For example, an array of strings is a referential array because strings are stored as pointers to another location in memory (to a compact array).\\
+
+Let us say that we have an array of primes: 
+
+\begin{lstlisting}
+	primes = [2, 3, 5, 7, 11, 13, 17, 19]
+\end{lstlisting}\bigbreak
+
+Then, we can create a sub-array with
+
+\begin{lstlisting}
+	temp = primes[3:6]
+\end{lstlisting}\bigbreak
+
+The array temp is a referential array to a part of the array primes (or rather, to the objects to which the elements reference). See Figure 5.5 in the textbook. If then we set
+
+\begin{lstlisting}
+	temp[2] = 15
+\end{lstlisting}\bigbreak
+
+Then the temp array at index 15 is now pointing to another location in memory with a new entry 15, but the rest of the array will still point to their original addresses. See Figure 5.6 in the textbook.  \\
+
+If we have an array, 
+
+\begin{lstlisting}
+	counters = [0]*8
+\end{lstlisting}\bigbreak
+
+This will create an array of \textit{pointers} to the same 0 object. See Figure 5.7 in the textbook. Adding 1 to one of the elements will create a new 1 object and make that element point to it (see Figure 5.8).\\
+
+\subsubsection{Compact Arrays}\bigbreak
+
+\textbf{Compact arrays} are when the elements are stored directly in the array (not an array of pointers). An example of this is a string, with is an array of characters (not pointers of characters). Compact arrays have advantages over referential arrays. Namely, they are good because they\\
+
+\begin{easylist}
+	\ListProperties(Style1*=\bfseries,Numbers2=l,Mark1={},Mark2={)},Indent2=1em)
+	@ Have less memory usage: No overhead devoted to storage of memory references
+	@ Have higher performance:
+	@@ direct access
+	@@ principle of locality (if we access a certain location in memory, we are likely to access the array again nearby)
+\end{easylist}\bigbreak
+
+To use a compact array, we can use the array module. To create one, we must pass a list of a certain type, along with the type code for that type. For a list of signed integers, we use the type code 'i'. For example, we could write
+
+\begin{lstlisting}
+	primes = array('i', [2, 3, 5, 7, 11, 13, 17, 19])
+\end{lstlisting}\bigbreak
+
+\subsection{Dynamic Arrays and Amortization}\bigbreak
+
+\textbf{Dynamic Arrays} are arrays that can dynamically increase in time. To do this, dynamic arrays reserve a certain amount of space in memory for future appends until it runs out of reserved space, in which case it rewrites the new array along with more reserved space. Python's list class is a dynamic array. We can explore the relation with the code
+
+\begin{lstlisting}
+	for k in range(10):
+		a = len(data)
+		b = sys.getsizeof(data)
+		print('Length: {0:3d}; Size in bytes: {1:4d}'.format(a, b))
+		data.append(None)
+\end{lstlisting}\bigbreak
+
+We can see that the size in memory increases exponentially. This is because the number of spots added is proportional to the size of the array at a time in Python lists. The amount of space that is dynamically added to the array at a time increases as the list grows (it will not always be 4).\\
+
+Let us now implement a dynamic array ourselves
+
+\begin{lstlisting}
+	import ctypes
+	
+	class DynamicArray:
+		"""A Dynamic array class akin to a simplified python list"""
+		
+		def __init__(self):
+			"""Create an empty array"""
+			self._n = 0
+			self._capacity = 1
+			self._A = self._make_array(self._capacity)
+			
+		def __len__(self):
+			"""Return number of elements stored in array"""	
+			return self._n
+			
+		def __getitem__(self, k):
+			"""Return item at index k"""
+			if not 0 <= k < self._n:
+				raise IndexError("Invalid index")
+			return self._A[k]
+		
+		def _resize(self, c)
+			"""Resize internal array to capacity c"""
+			B = self._make_array(c)
+			for k in range(self._n):
+				B[k] = self._A[k]
+			self._A = B
+			self._capacity = c
+		
+		def _make_array(self, c):
+			"""Return a new array with capacity c"""
+			return (C * ctypes.py_object)()
+		
+		def append(self, obj):
+			"""adds object to end of the array"""
+			if self._n == self._capacity:
+				self._resize(2*self._capacity)
+				self._A[self._n] = obj
+				self._n += 1
+		
+\end{lstlisting}\bigbreak
+ 
+We can test it out using:
+
+\begin{lstlisting}
+	arr = DynamicArray()
+	arr.append(1)
+\end{lstlisting}\bigbreak
+
+We now would like to analyze the efficiency.\\
+
+Reminder: $O(n)$ means \textit{at most} n efficent and $\Omega(n)$ means \textit{at least} n. Here we have $\Omega(n)$ efficiency.\\
+
+Using amortization, we can show that an append is $O(1)$, and n appends are $O(n)$. Namely, a single append does not depend on the size of the array. \\
+
+\textbf{Proposition 5.1:} Let $S$ be a sequence implemented using a dynamic array with initial capacity 1. Using the strategy of doubling the array size when full, the total time to perform $n$ operations is $O(n)$. \\
+
+\textbf{Justification:} Assume 1 cyber-dollar pays for each append where we do not expand array. Assume growing array from size $k$ to $2k$ requires $k$ cyber-dollars. We charge each append 3 cyber-dollars. An overflow occurs when array $S$ has $2^i$ elements for some integer $i \geq 0$ and the size of the array representing $S$ is $2^i$. Namely, doubling the size of the array will cost $2^i$ cyber-dollars. These cyber-dollars can be found in cells $2^{i - 1}$ through $2^i - 1$.\\
+
+
+\textbf{Proposition 5.2:} Performing a series of $n$ append operations using a fixed increment with each resize takes $\Omega(n^2)$. \\
+
+\textbf{Justification:} Let $c \geq 0$ represent a fixed increment in capacity used for each resize event. During the series of append operations, time will be spent initializing arrays of size $c$, $2c$, $3c$, ..., $mc$ for $m = \frac{n}{2}$. So the overall time is proportional to $c + 2c + 3c + ... + mc = \sum_{i=1}^m ci = c\sum_{i=1}^m i = c\frac{m(m+1)}{2} \geq \frac{\frac{n}{2}\left(\frac{n}{2}-1\right)}{2}$. This is $\Omega(n^2)$.\\
+
+
+\subsection{Multidimensional Arrays}\bigbreak
+
+If we do
+
+\begin{lstlisting}
+	l = [[9]*10]*5
+	l[0][3] = 5
+\end{lstlisting}
+
+It will change the values of throughout the array. Instead, the correct method to instantiate a multidimensional array is
+
+\begin{lstlisting}
+	l = [[9]* 10 for j in range(5)]
+	l[0][3] = 5
+\end{lstlisting}
+
+This will work by ensuring that they do not all point to the same value.\\
+
+
+\subsection{Numpy Arrays}\bigbreak
+
+For big data, we can use the NumPy module. We can make an nd-array with 
+
+\begin{lstlisting}
+	z = np.zeros((10, 10)) # will create a 10x10 array of 0s
+\end{lstlisting}
+
+There are many different methods that NumPy has which are highly optimized in precomplied C-libraries.
+
+
+
 
 
 
