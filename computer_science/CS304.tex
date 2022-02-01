@@ -581,6 +581,194 @@ For big data, we can use the NumPy module. We can make an nd-array with
 There are many different methods that NumPy has which are highly optimized in precomplied C-libraries.
 
 
+\section{Stacks}\bigbreak\bigbreak
+
+The stack is one of the most important and most widely used data structures. Stacks are inserted and removed using the \textbf{last in - first out (LIFO)} principle. \\
+
+Formally, a stack is an ADT (abstract data type) that supports two main methods:
+
+\begin{itemize}
+	\item S.push(e): Add e to top of stack
+	\item S.pop(): Remove and return top element
+\end{itemize}
+
+We can also make it support the following methods:
+
+\begin{itemize}
+	\item S.top(): Returns a reference to the top element of the stack
+	\item S.is\_empty(): Returns true if empty, otherwise false
+	\item len(S): Returns the length of the stack
+\end{itemize}
+
+The following table shows an example of these methods in use.
+
+\begin{center}
+	\begin{table}[h!]\centering
+		\begin{tabular}{|c|c|c|}
+			\hline
+			Operation   &Return Value   &Stack contents\\\hline
+			S.push(5) & None & [5]\\
+			S.push(3) & None & [5, 3]\\
+			len(S) & 2 & [5, 3]\\
+			S.pop() & 3 & [5]\\
+			S.is\_empty() & False & [5]\\
+			S.pop() & 5 & [~]\\\hline
+		\end{tabular}
+	\end{table}
+\end{center}
+
+
+We will use the \textbf{adaptor pattern} to construct a stack from the list class using Python.\\
+
+\subsection{Stack Implementation in Python}\bigbreak
+
+ \begin{lstlisting}
+ 	class ArrayStack:
+ 		"""LIFO Stack implementation using Python list as underlying shape."""
+ 		def __init__(self):
+ 			"""Create an empty Stack """
+ 			self._data = []
+ 		
+ 		def __len__(self):
+ 			"""Returns length of stack"""
+ 			return len(self._data)
+ 			
+ 		def is_empty(self):
+ 			"""Return True if stack is empty"""
+ 			return len(self._data) == 0
+ 			
+ 		def push(self, e):
+ 			"""Adds e to the top of the stack"""
+ 			self._data.append(e)
+ 			
+ 		def top(self):
+ 			"""Returns the top element"""
+ 			if self.is_empty():
+ 				raise EmptyException("Stack is empty")
+ 			return self._data[-1]
+ 		
+ 		def pop(self):
+ 			"""Removes and returns the top element."""
+ 			if self.is_empty():
+ 				raise EmptyException("Stack is empty")
+ 			return self._data.pop()
+ \end{lstlisting}\bigbreak
+
+\subsection{Complexity Analysis}\bigbreak
+
+The following table shows the time complexity of each of these methods.
+
+\begin{center}
+	\begin{table}[h!]\centering
+		\begin{tabular}{|c|c|}
+			\hline
+			Operation   & Running Time\\\hline
+			S.push(e) & $O(1)$*\\
+			S.pop() & $O(1)$*\\
+			S.top() & $O(1)$\\
+			S.is\_empty() & $O(1)$\\
+			len(S) & $O(1)$\\\hline
+		\end{tabular}
+		\caption*{* means it is amortized.}
+	\end{table}
+\end{center}\bigbreak
+
+An example of using a stack in Python is the following.
+
+\begin{lstlisting}
+	a = [1, 2, 3], S = ArrayStack()
+	
+	for i in range(len(a)):
+		S.push(a[i])
+	# S = [1, 2, 3]
+	
+	while not S.is_empty():
+		a[i] = S.pop()
+	# a = [1, 2, 3]
+\end{lstlisting}\bigbreak
+
+\subsection{Matching Parentheses using a Stack}\bigbreak
+
+In pseudocode, 
+
+\begin{enumerate}
+	\item Initialize empty stack
+	\item Read characters until end (call current character char)
+	\item If char == opening parentheses, push the char to stack
+	\item Else If char == closing parentheses and stack is empty, produce error
+	\item Otherwise, pop stack and if popped symbol does not match char, produce error
+	\item If at EOF (end of file) and stack is not empty, produce error
+\end{enumerate}\bigbreak
+
+For example, '(())' would produce no errors. but '(()' would.\\
+
+The Python code for this is
+
+\begin{lstlisting}
+	def is_match(expr):
+		"""Returns true if all delimiters match"""
+		lefty = '([{'
+		righty = ')]}'
+		S = ArrayStack()
+		for c in expr:
+			if c in lefty:
+				S.push(c)
+			elif c in righty:
+				if S.is_empty():
+					return False
+				if righty.index(c) != lefty.index(S.pop()):
+					return False
+		return S.is_empty()
+\end{lstlisting}\bigbreak
+
+
+\subsection{Polish Notation}\bigbreak
+
+In polish notation, the expression 
+
+\[1 + 2 = 3\]
+
+is written as 
+
+\[1~2~+=3\]
+
+The infix expression 
+
+\[6*(5+(2+3) * 8 + 3) = 288\]
+
+changes its value with a change in the placement of the brackets. However, its polish notation (postfix) equivalent
+
+\[6~5~2~3+8*+~3+*=288\]
+
+does not need that delineation.\\
+
+To evaluate polish notation we
+\begin{itemize}
+	\item Read expression from left to right
+	\item If operand, push to stack
+	\item If operator, pop two values off stack, perform operation and push back on stack
+\end{itemize}\bigbreak
+
+That is how to evaluate it, but how do we convert between the forms.
+
+\subsubsection{Algorithm for converting infix to postfix}\bigbreak
+
+The steps of the algorithm are
+\begin{enumerate}
+	\item If operand, place in output
+	\item When we encounter an operator, place on stack, also stack left parentheses
+	\item If we encounter a right parentheses, pop the stack and write symbols until we encounter a left parentheses
+	\item If we see any other symbol (such as +, *, or '('), we pop entries from stack until we find an entry of lower priority
+	\item When popping is done, push operator to stack 
+	\item If at end, pop entire stack and write it to the output
+\end{enumerate}\bigbreak
+
+We can check this with the example\\
+
+Infix: $a + b * c + (d*e + f) * g$\\
+Postfix: $abc*+de*f+g*+$\\
+
+
 
 
 
