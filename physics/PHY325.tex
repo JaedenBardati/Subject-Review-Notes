@@ -822,10 +822,167 @@ solving for $\bm{y}$ through forward substitution. And then
 
 solving through back substitution.\\
 
-Note that this can also be used to find the determinant of a matrix faster also.\\
+This is useful for cases where the matrix is constant and only solving x for b is needed. Note that this can also be used to find the determinant of a matrix faster.\\
+
+Actually getting the L and U matrices is the part that takes the most time. The decomposition is done by noting\\
+
+If $i<j$,
+\begin{equation}\label{eq:lu-decomp1}
+	a_{ij} = \alpha_{i1} \beta_{1j} + \alpha_{i2}\beta_{2j} + ... + \alpha_{ii}\beta_{ij}
+\end{equation}\bigbreak
+
+If $i=j$,
+\begin{equation}\label{eq:lu-decomp2}
+	a_{ii} = \alpha_{i1} \beta_{1i} + \alpha_{i2}\beta_{2i} + ... + \alpha_{ii}\beta_{ii}
+\end{equation}\bigbreak
+
+If $i>j$,
+\begin{equation}\label{eq:lu-decomp3}
+	a_{ij} = \alpha_{i1} \beta_{1j} + \alpha_{i2}\beta_{2j} + ... + \alpha_{ii}\beta_{ij}
+\end{equation}\bigbreak
 
 
+To solve for $i = 1, 2, .. j$, use \ref{eq:lu-decomp1} and \ref{eq:lu-decomp2}.\\
 
+To solve for $\beta_{ij}$, use
+
+\[\beta_{ij} = a_{ij}\sum_{k=1}^{i-1} \alpha_{ik}\beta_{kj}\]
+
+And use \ref{eq:lu-decomp3} to solve 
+
+\[\alpha_{ij} = \frac{1}{\beta_{jj}}\left(a_{ij} - \sum_{k=1}^{j-1}\alpha_{ik}\beta_{kj}\right)\]
+
+The determinant of the matrix is 
+
+\[\det(A) = \prod_{j=1}^N\beta_{jj}\]
+
+\subsection{Iterative Improvements}\bigbreak
+
+\[A\cdot\bm{a} = \bm{b}\]
+
+We want to find $\bm{x}$ given $\bm{b}$ and $A$. We can find a slightly wrong solution $x + \delta x$.\\
+
+If $\delta b$ is the unknown error on $\bm{b}$,
+
+\begin{equation}\label{eq:iterative-improve}
+	A \cdot (x+ \delta x) = b + \delta b
+\end{equation}
+
+\[\implies A \cdot\delta x = \delta b\]
+
+Using \ref{eq:iterative-improve}, to sub for $\delta b$. This gives 
+
+\[A \cdot \delta x = A \cdot (x + \delta x) \cdot b\]
+
+Then solve for $\delta x$ to get your new solution for $x$.\\
+
+\subsection{Single Value Decomposition}\bigbreak
+
+If $A$ is a $m$ by $n$ matrix, $U$ is $m$ by $n$, $\omega$ is $n$ by $n$, and $V^T$ is $n$ by $n$ then
+
+\[A = U \cdot \omega \cdot V^T\]
+
+with $m>n$. Where
+
+\begin{itemize}
+	\item $U$ and $V$ are orthogonal matrices
+	\item $\omega$ is a diagonal
+\end{itemize}
+
+This is the ideal choice for an over-determined problems (such as least squares or curve fitting). The solution is
+
+\[x = V \cdot \left[\text{diag}\left(\frac{1}{\omega_j}\right)\right]\cdot \left(U^T \cdot \bm{b}\right)\]
+
+for $A\cdot \bm{x}=\bm{b}$.\\
+
+\section{Interpolation and Extrapolation}\bigbreak\bigbreak
+
+We may know the value of a function $f(x)$ at $x_1, x_2$, but we do not have an analytic function for $f(x)$. An example of this is data measurements or numerical calculations.\\
+
+Given and ordered set of {$x_1$, $x_2$, $x_3$, ..., $x_n$}, we would like to know if $f(x)$ at arbitrary $x$.\\
+
+If $x_1 \leq x$ and $x \leq x_n$, then we have \textbf{interpolation}.\\
+If $x_1 > x$ or $x > x_n$, then we have \textbf{extrapolation}. This method requires caution.\\
+
+We can use the functional forms:
+
+\begin{itemize}
+	\item Polynomials
+	\item Rational functions
+	\item Trigonometric functions
+\end{itemize}\bigbreak
+
+The process of interpolation/extrapolation has two steps:
+
+\begin{itemize}
+	\item Fit an interpolating function to the data
+	\item Evaluate the function at arbitrary $x$
+\end{itemize}\bigbreak
+
+\subsection{Polynomial Interpolation}\bigbreak
+
+For any two points there is a unique line. For any three points there is a unique quadratic, etc. In general, the solution of a polynomial can be written as
+
+\begin{align*}
+	P(x) = &\frac{(x-x_2)(x-x_3)...(x-x_n)}{(x_1-x_2)(x_1-x_3)...(x_1-x_n)}y_1 \\
+	&+ \frac{(x-x_1)(x-x_3)...(x-x_n)}{(x_1-x_1)(x_1-x_3)...(x_2-x_n)}y_2 + ... \\
+	&+ \frac{(x-x_1)(x-x_2)...(x-x_{n-1})}{(x_n-x_1)(x_n-x_2)...(x_n-x_{n-1})}y_n
+\end{align*}\bigbreak
+
+For example, this can be used to approximate the functions
+
+\[f(x)\ = 2\sin(2x+3) + 2\sin(0.7x+1)\]
+
+\[f(x) = \abs{x}\]
+
+\[f(x) = 3x^2 + \frac{1}{\pi^4}\log\left((\pi - x)^2\right) + 1\]
+
+\subsection{Cubic Spline Interpolation}\bigbreak
+
+Given $y_i=y(x_i)$, $i=1, ..., N$.\\
+
+For one interval between $x_j$ and $x_{j+1}$ we can linearly interpolate
+
+\[y = Ay_i + By_{j}+1\]
+
+where
+
+\[A = \frac{x_{j+1}-x}{x_{j+1} - x_j} \qquad\qquad B =1-A\]\\
+
+The piece-wise description has zero second derivative inside each boundary and is undefined at intervals' boundaries.\\
+
+If we know $y_i$ at each $x_i$, we can add cubic polynomial such that $y''$ varies linearly from $x_j$ to $x_{j+1}$. The provides a continuous second derivative. We can do this with 
+
+\[y = Ay_j + By_{j+1} + Cy_j'' + Dy_{j+1}''\]
+
+such that
+
+\[C = \frac{1}{6} (A^3 - A)(x_{j+1} - x_j)^2 \qquad\qquad D = \frac{1}{6} (B^3 - B)(x_{j+1} - x_j)^2\]\\
+
+Taking the derivative of $y$, 
+
+\[\dv{y}{x} = \frac{y_{j+1} - y_j}{x_{j+1} - x_j} - \frac{3A^2 - 1}{6}(x_{j+1} - x_j)y_{j}'' + \frac{3B^2-1}{6}(x_{j+1} - x_j)y_{j+1}''\]\bigbreak
+
+Taking another derivative gives
+
+\[\dv[2]{y}{x} = Ay_j'' + By_j''\]\bigbreak
+
+In reality, we do not know $y_j''$. Instead, we can require that $y'$ is continuous across the boundary.\\
+
+This gives $N-2$ equations and $N$ unknowns. This leaves us with two choices:
+
+\begin{itemize}
+	\item Set $y_1''$ and $y_2''$ at the boundary. This is called the "Natural spline"
+	\item Or define $y_1''$ and $y_2''$ yourself.
+\end{itemize}\bigbreak
+
+\subsection{Bulirsch-Stoer Integration}\bigbreak
+
+This is a modified midpoint method. 
+
+\[H = Nh\]
+
+where $N$ is an even integer and $H$ is constant. We try different values of $N$ until we have some confidence of what the next value should be and then extrapolate to $n \to \infty$.
 
 
 
