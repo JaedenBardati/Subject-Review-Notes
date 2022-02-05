@@ -769,8 +769,239 @@ Infix: $a + b * c + (d*e + f) * g$\\
 Postfix: $abc*+de*f+g*+$\\
 
 
+\section{Queues}\bigbreak\bigbreak
+
+Queues are \textbf{first-in first-out} (FIFO). For example, waiting in a grocery line is a queue. \\
+
+The basic methods of the queue abstract data class are
+
+\begin{itemize}
+	\item Q.enqueue(e): Adds e to the back of the queue.
+	\item Q.dequeue(): Removes and returns the first element of queue.
+	\item Q.first(): Returns the first element
+	\item Q.is\_empty()
+	\item len(Q)
+\end{itemize}\bigbreak
+
+The following table shows an example of these methods in use.
+
+\begin{center}
+	\begin{table}[h!]\centering
+		\begin{tabular}{|c|c|c|}
+			\hline
+			Operation   &Return Value   &Q\\\hline
+			Q.enqueue(5) & None & [5]\\
+			Q.dequeue(3) & None & [5, 3]\\
+			len(Q) & 2 & [5, 3]\\
+			Q.dequeue() & 5 & [3]\\
+			Q.is\_empty() & False & [5]\\
+			Q.dequeue() & 3 & [~]\\\hline
+		\end{tabular}
+	\end{table}
+\end{center}
+
+We can write the queue in terms of the built-in Python list. However doing this as it stands give a dequeue time of $O(n)$, because we would need to swap all the elements down to fill the space.\\
+
+To improve this, we could try setting the first element to None and then have a pointer that moves forward at each dequeue. But this would waste space with a lot of Nones at the beginning of the list. So, we must use circular arrays to avoid this increase in size each dequeue.
+
+A \textbf{circular array} uses the modular arithmetic. In python, this is done using the modulus symbol \%.\\
+
+\begin{lstlisting}
+	n = a // b 		# integer division
+	m = a % b 		# modulus
+	# m = a - b*n is the equivalent expression for m
+\end{lstlisting}\bigbreak
+
+We can get the location to insert the next enqueue using
+
+\begin{lstlisting}
+	index = (f + size(Q)) % len(Q)
+\end{lstlisting}\bigbreak
+
+where $f$ is the pointer location, size(Q) is an arbituary size and len(Q) is the length of the Q.\\
+
+We can then update the pointer with
+
+\begin{lstlisting}
+	f = (f + 1) % len(Q)
+\end{lstlisting}\bigbreak
+
+An implementation of a queue in Python is
+
+\begin{lstlisting}
+	class ArrayQueue:
+		"""FIFO Queue using Python List"""
+		def __init__(self):
+			self._data = [None] * ArrayQueue.DEFAULT_CAPACITY
+			self._size = 0
+			self._front = 0
+			
+		DEFAULT_CAPACITY = 10
+		
+		def __len__(self):
+			return self._size
+			
+		def is_empty(self):
+			return self._size == 0
+			
+		def first(self):
+			if self.is_empty():
+				raise Exception("List is empty")
+			return self._data[self._front]
+		
+		def dequeue(self):
+			if self.is_empty():
+				raise Exception("List is empty")
+			answer = self._data[self._front]
+			
+			# circular array implementation
+			self._data[self._front] = None 		# to help garbage collect
+			self.front = (self._front + 1)% len(self._data)
+			
+			self._size -= 1
+			
+			if 0 < self._size < len(self._data)//4:
+				# if 25 % of capacity is used, resize to make smaller
+				self._resize(len(self._data) // 2)
+			return answer
+		
+		def enqueue(self, e):
+			if self._size == len(self._data):
+				self._resize(2*len(self._data))
+			avail = (self._front + self._size) % len(self._data)
+			self._data[avail] = e
+			self._size += 1
+		
+		def _resize(self, cap):
+			old = self._data
+			self._data = [None] * cap
+			walk = self._front
+			for k in range(self._size):
+				self._data[k] = old[walk]
+				walk = (walk + 1) % len(old)
+			self._front = 0
+\end{lstlisting}\bigbreak 
+
+\subsection{Complexity Analysis}\bigbreak
+
+\begin{center}
+	\begin{table}[h!]\centering
+		\begin{tabular}{|c|c|}
+			\hline
+			Operation   & Running Time\\\hline
+			Q.enqueue(e) & $O(1)$*\\
+			Q.dequeue() & $O(1)$*\\
+			Q.first() & $O(1)$\\
+			Q.is\_empty() & $O(1)$\\
+			len(Q) & $O(1)$\\\hline
+		\end{tabular}
+		\caption*{* means it is amortized.}
+	\end{table}
+\end{center}\bigbreak
 
 
+\section{Linked List}\bigbreak\bigbreak
+
+A linked list is an alternative to an array. There are singly and doubly linked lists.\\
+
+\subsection{Singly Linked List}\bigbreak
+
+A singly linked list is a collection of nodes that form a linear sequence. \\
+
+Each node stores
+
+\begin{itemize}
+	\item A reference to an object
+	\item A reference to the next node
+\end{itemize}\bigbreak
+
+For example, a singly linked list of airports could have a node that points to a flight in Montreal and also points to another flight in Toronto, which also points to Vancouver. \\
+
+The first node of a linked list is called the \textbf{head} and the last node of a linked list is called the \textbf{tail}.\\
+
+Random access in a linked list is quite slow, however, increasing the size is easier, since it is not needed to shuffle all the elements over as you do in an array.\\
+
+To add to the front of the list, we could use the psudeocode:
+
+\begin{lstlisting}
+	def add_first(L, e):
+		newest = Node(e)
+		newest.next = L.head
+		L.head = newest
+		L.size = L.size + 1
+\end{lstlisting}\bigbreak
+
+We can also add to the tail of the list in a similar way.
+
+\begin{lstlisting}
+	def add_last(L, e):
+		newest = Node(e)
+		newest.next = None
+		L.tail.next = newest
+		L.tail = newest
+		L.size = L.size + 1
+\end{lstlisting}\bigbreak
+
+To remove the first node, we simply need to set the head to the next one and decrement the size. To remove the tail, we need to set the node before it to None, but that requires iterating through the linked list which is $O(n)$. \\
+
+We can implement a stack using a linked list as the underlying structure.
+
+\begin{lstlisting}
+	class LinkedStack:
+		"""LIFO Stack implementation using a Linked List"""
+		
+		class _Node:
+			__slots__ = '_element', '_next' 	# optimization for the store of these two fields of the class node
+			
+			def __init__(self, element, next):
+				self._element = element
+				self._next = next
+			
+		def __init__(self):
+			self._head = None
+			self._size = 0
+			
+		def __len__(self):
+			return self._size
+		
+		def is_empty(self):
+			return self._size == 0
+			
+		def push(self, e):
+			self._head = self._Node(e, self._head)
+			self._size += 1
+			
+		def top(self):
+			if self.is_empty():
+				raise Exception("Stack is empty")
+			self._head._element
+		
+		def pop(self):
+			if self.is_empty():
+				raise Exception("Stack is empty")
+			answer = self._head._element
+			self._head = self._head._next
+			self._size -=1
+			return answer
+\end{lstlisting}\bigbreak
+
+\subsubsection{Complexity Analysis}\bigbreak
+
+\begin{center}
+	\begin{table}[h!]\centering
+		\begin{tabular}{|c|c|}
+			\hline
+			Operation   & Running Time\\\hline
+			S.push() & $O(1)$\\
+			S.pop() & $O(1)$\\
+			S.top() & $O(1)$\\
+			S.is\_empty() & $O(1)$\\
+			len(S) & $O(1)$\\\hline
+		\end{tabular}
+	\end{table}
+\end{center}\bigbreak
+
+Linked stacks are good in real-time applications since no amortization occurs (could happen at a critical time).
 
 
 
