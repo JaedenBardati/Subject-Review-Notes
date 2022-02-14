@@ -944,6 +944,8 @@ We can also add to the tail of the list in a similar way.
 
 To remove the first node, we simply need to set the head to the next one and decrement the size. To remove the tail, we need to set the node before it to None, but that requires iterating through the linked list which is $O(n)$. \\
 
+\subsection{Stack Implementation using a Singly-Linked List}\bigbreak
+
 We can implement a stack using a linked list as the underlying structure.
 
 \begin{lstlisting}
@@ -1002,6 +1004,294 @@ We can implement a stack using a linked list as the underlying structure.
 \end{center}\bigbreak
 
 Linked stacks are good in real-time applications since no amortization occurs (could happen at a critical time).
+
+
+\subsubsection{Queue Implementation using a Singly-Linked List}\bigbreak
+
+We can implement a queue using a linked list as the underlying structure if we add a reference to the tail. An enqueue should be done to the end of the list so that the dequeue is easily done in the front of the list. The other way around would result in a dequeue time of $O(n)$ instead of the much better $O(1)$.\\
+
+This would be much better done using a doubly linked list.
+
+Note: Technically a queue is an abstract data type which is implemented using a data structure (such as an array or a linked list).\\
+
+
+\subsection{Doubly Linked list}\bigbreak
+
+The idea of a doubly linked list is that each node carries two pointers: One for the node in front of it, and another for the node in behind it. \\
+
+In a doubly-linked list, we always have a header node in the very front and a trailer in the very back. These are called sentinels, that allow us to avoid having special cases on the head and tail nodes. \\
+
+An empty doubly linked list has the header set to point to the trailer and the trailer point to the header. This is updated if a new node is added. \\
+
+
+\begin{lstlisting}
+	class _DoublyLinkedBase:
+		class _Node:
+			# A lightweight, non-public class for storing doubly linked node
+			def __init__(self, element, prev, next):
+				self._element = element
+				self._prev = prev
+				self._next = next
+			
+		def __init__(self):
+			self._header = self._Node(None, None, None)
+			self._trailer = self._Node(None, None, None)
+			self._header._next = self._trailer
+			self._trailer._prev = self._header
+			self._size = 0
+			
+		def ___len__(self):
+			return self._size
+			
+		def is_empty(self):
+			return self_size == 0
+			
+		def _insert_between(self, e, predecessor, successor):
+			newest = self._Node(e, predecessor, successor)
+			predeccessor._next = newest
+			successor._prev = newest
+			self._size += 1
+			return newest
+		
+		def _delete_node(self, node):
+			predecessor = node._prev
+			successor = node._next
+			predecessor._next = successor
+			successor._prev = predecessor
+			self._size -= 1
+			element = node._element
+			node._prev = node._next = node._element = None
+			return element
+\end{lstlisting}\bigbreak
+
+\subsubsection{Doubly-Ended Queue}\bigbreak
+
+From this data structure, we can implement a \textbf{doubly-ended queue}. This is a queue that allows adding and removing from the front and the back.\\
+
+\begin{lstlisting}
+	class Linked DoublyEndedQueue(_DoublyLinkedBase):
+		# Double eneded queue based on a doubly linked list
+		
+		def first(self):
+			if self.is_empty():
+				raise Exception("Queue empty")
+			return self._header._next._element
+		
+		def last(self):
+			if self.is_empty():
+				raise Exception("Queue empty")
+			return self._trailer._prev._element
+		
+		def insert_first(self, e):
+			self._insert_between(e, self._header, self._header._next)
+			
+		def insert_last(self, e):
+			self._insert_between(e, self._trailer, self._trailer._prev)
+		
+		def delete_first(self):
+			if self.is_empty():
+				raise Exception("Queue empty")
+			return self._delete_node(self._header._next)
+			
+		def delete_last(self):
+			if self.is_empty():
+				raise Exception("Queue empty")
+			return self._delete_node(self._trailer._prev)
+		
+\end{lstlisting}\bigbreak
+
+\subsection{Positional List}\bigbreak
+
+A positional list is another ADT (abstract data type). A positional list is a sequential container of elements that allows positional access. It is easy to assign a position in an array (the indices), but it is harder for a linked list. \\
+
+We could try to assign indices to the nodes in order, but this is not a good solution as such a reference to a node would make it hard to delete or find the node itself. \\
+
+We could also try to use the entire node as a positional reference, but this is also not good to do. The problem is that it complicates the use of the list as you would need to specify the next and previous nodes. This is also dangerous to hand out as they could change the next and previous nodes as they like. Finally, this also has a lack of encapsulation (we do not have the option to switch the underlying data structure if we like).\\
+
+Instead, we will use a subclass that wraps a node in our positional list. An implementation is
+
+\begin{lstlisting}
+	class PositionalList(DoublyLinkedBase):
+		# An implementation of a positional list
+		class Position:
+			# Abstraction representing the location of single element
+			def __init__(self, container, node):
+				self._container = container
+				self._node = node
+			
+			def element(self):
+				return self._node._element
+				
+			def __eq__(self, other):
+				return type(other) is type(self) and other._node is self._node
+				
+		def _make_position(self, node):
+			# return position instance for give node.
+			if node is self._header or self._trailer:
+				return None
+			return self.Position(self, node)
+		
+		def before(self, p):
+			node = self._validate(p) # converts a position back to a node if a validate position
+			return self._make_position(node._prev)
+			
+		def add_after(self, p, e):
+			original = self._validate(p)
+			self._insert_between(e, original, original._next)
+			
+\end{lstlisting} \bigbreak
+
+This is only some of the more important methods. The full code is available in the textbook.\\
+
+\subsection{Advantages and Disadvantages}\bigbreak
+
+The advantages of arrays compared to linked lists (LLs) are 
+
+\begin{itemize}
+	\item $O(1)$ time access to element based on index (e.g. e = A[i])
+	\item $A.append$ is $O(1)$* whereas LLs are Node(1). It is a constant factor fast than LLs for $O(1)$ operations
+	\item Less memory than LLs
+\end{itemize}\bigbreak
+
+The advantages of linked lists are
+
+\begin{itemize}
+	\item Worst case time bound (O(1) appends always, not O(1)*)
+	\item O(1) insertions and deletions at arbitrary locations (if you have the node)
+\end{itemize}\bigbreak
+
+
+
+\section{Sorting Algorithms}\bigbreak
+
+We would like to have sorted arrays so that we can easily access the array (via some algorithm like binary search) faster. Another advantage is that it's easier to compare two sorted arrays than unsorted arrays. It is also easier to merge sorted arrays.
+
+\subsection{Selection Sort}\bigbreak
+
+In this method, we search for the smallest element in the array $N$ times.
+
+\begin{lstlisting}
+	def slection_sort(arr):
+		for i in range(len(arr)):
+			smallest = inf
+			smallest_index = 0
+			for j in range(i, len(arr)):
+				if arr[j] < smallest:
+					smallest = arr[j]
+					smallest_index = j
+		temp = arr[i]
+		arr[i] = smallest_index
+		arr[smallest_index] = temp
+\end{lstlisting}\bigbreak
+
+The complexity of this algorithm is $O(n^2)$. The number of iterations is $(n-1) + (n-2) + ... + 1 = \sum_{i=1}^{n-1} i = \frac{(n-1)((n-1)+1)}{2} \approx \frac{1}{2}n^2$ for large $n$.\\
+
+\subsection{Insertion Sort}\bigbreak
+
+\begin{lstlisting}
+	def insertion_sort(arr):
+		for i in range(1, len(arr)):
+			elem = arr[i]
+			j=i-1
+			while j > -1 and arr[j]>elem
+				arr[j+1] = arr[j]
+				j-=1
+			arr[j+1] = elem
+\end{lstlisting}\bigbreak
+
+The time complexity for this algorithm is $O(n^2)$ in general. However, in the case of an already sorted list, the time complexity is $O(n)$. Selection sort does do this. The maximum number of swaps are $n^2$ here, whereas in the selection sort algorithm has only $n$ swaps. \\
+
+
+\subsection{Divide and Conquer}\bigbreak
+
+
+Insertion sort is an incremental approach where we handle elements one at a time. Divide and conquer, however, is a recursive approach that: 
+\begin{itemize}
+	\item Breaks the problem down into sub-problems that are similar to the original than the original problem but smaller in size
+	\item Combines solutions to sub-problems to solve original problem
+\end{itemize} \bigbreak
+
+This strategy has three steps
+\begin{itemize}
+	\item Divide
+	\item Conquer sub-problem by solving them recursively
+	\item Combine solutions to sub-problems into overall solutions
+\end{itemize}\bigbreak
+
+A \textbf{recursive function} is a function that calls itself. An example of this is with the factorial: $n! = n (n-1) (n-2) ... 1$. We can do this with a for loop:
+
+\begin{lstlisting}
+	fact = 1
+	for i in range(1, 5):
+		fact = fact*i
+\end{lstlisting}\bigbreak
+ 
+Recursively, this is
+
+\begin{lstlisting}
+	def factorial(n):
+		if n==1:
+			return 1
+		else:
+			return factorial(n-1)*n
+\end{lstlisting}\bigbreak
+
+\subsection{Merge Sort}\bigbreak
+
+Merge sort follows the divide and conquer approach. The steps are
+
+\begin{itemize}
+	\item Divide array to be sorted into two sub-sequences of size $\frac{n}{2}$ each
+	\item Sort sub-sequences recursively using merge sort
+	\item Merge the two sorted sub-sequences to produce the final sorted array
+\end{itemize}\bigbreak
+
+INSERT STUFF
+
+The Python code for this is 
+\begin{lstlisting}
+	def merge_sort(A, p, r):
+		if p < r:
+			q = (r-p)//2
+			merge_sort(A, p, q)
+			merge_sort(A, q+1, r)
+			merge(A, p, q, r)
+			
+	def merge(A, p, q, r):
+		n1 = q-p + 1
+		n2 = r-q
+		L=[]
+		R=[]
+		for i in range(n1):
+			L.append(arr[p+i])
+		for i in range(n2):
+			R.append(arr[q+i+1])
+		L.append(inf)
+		R.append(inf)
+		
+		i, j = 0, 0
+		for k in range(p, r+1):
+			if L[i] <= R[j]:
+				A[k] = L[i]
+				i+=1
+			else:
+				A[k] = R[j]
+				j+=1
+\end{lstlisting}\bigbreak
+
+\subsubsection{Analysis of Merge Sort}\bigbreak
+
+The time complexity of this algorithm is $O(n\log n)$. The $\log n$ comes from the splitting of the arrays in half each time and the $n$ comes from the merge operations. We will do this more concretely now.\\
+
+Assume $n$ is a power of 2. Each divide step yields sub-sequences of size exactly $\frac{n}{2}$. The divide step is $O(1)$. \\
+
+In the conquer step, we recursively solve for two sub problems each of size $\frac{n}{2}$. This will contribute $2T(\frac{n}{2})$.\\
+
+In the combine step, we merge $n$-element sub-array which is $O(n)$.\\
+
+We now that $O(n) + O(1) = O(n)$. So, $T(n) = O(1) \text{if} n=1; 2T(\frac{n}{2}) + O(n) \text{if} n > 1$. So, $T(n) = c \text{if} n=1; 2T(\frac{n}{2}) + cn \text{if} n > 1$, where $c$ represents the time required to solve problems of size 1. \\
+
+Thus, it takes $cn$ time for each merge sort call. We call merge sort $\log n$ times, so the final time complexity is $O(n \log n)$.\\
 
 
 

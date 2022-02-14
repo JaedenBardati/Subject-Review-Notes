@@ -978,11 +978,184 @@ This gives $N-2$ equations and $N$ unknowns. This leaves us with two choices:
 
 \subsection{Bulirsch-Stoer Integration}\bigbreak
 
-This is a modified midpoint method. 
+This is a modified midpoint method for advancing a solution: 
+
+\[\dv{\vec{x}}{t} = f(t, \vec{x}) \]
+
+the solution is advanced by
 
 \[H = Nh\]
 
-where $N$ is an even integer and $H$ is constant. We try different values of $N$ until we have some confidence of what the next value should be and then extrapolate to $n \to \infty$.
+where $N$ (equal sub-steps) is an even integer and $H$ (full step) is constant, and $h$ is small (small step). We try different values of $N$ until we have some confidence of what the next value should be and then extrapolate to $n \to \infty$.\\
+
+The power is that x(t+H) can be evaluated at different values of $N$ that are divisibe by 2 (2, 4, 6, ...) and combined to get a final answer. \\
+
+We estimate $\vec{x}(t+Nh)$ with N=2, 4, etc. and 
+
+\[\vec{x}_{t+H}(h) = a_0 + a_1h + a_2h^2 + ... a_{k-1}h^{k-1}\]
+
+and extrapolate to $x_n \to \infty$.\\
+
+We are fitting a polynomial of degree $k-1$ through points $h_1, h_2, ..., h_{k-1}$ with values $x_{t+H}(h_1), x_{t+H}(h_2)$, ...\\
+
+The solution is exactly the polynomial interpolation we described earlier.\\
+
+INSERT GRAPHS 1, 2\\
+
+For some problems, Bulirch-Stoer is several times faster than RK4 for the same accuracy.\\
+
+It is well suited for N-body/orbital integration because it can handle "close encounters."\\
+
+\section{Making your own N-body Integrator}\bigbreak\bigbreak
+
+The equations of motion are
+
+\[\dv[2]{\vec{x}}{t} = \sum_{j=1; i\neq j}^{N}\frac{Gm_j(\vec{x_i} - \vec{x_j})}{|\vec{x_i} - \vec{x_j}|^3}\]
+
+for i = [1, N] bodies.\\
+
+It is useful to consider the 2-body problem, as 3-body does not have an analytic solution.\\
+
+\[\vec{F_1} = \frac{Gm_1 m_2}{r^3}\vec{r} = m_1\ddot{\vec{r_1}}\]
+\[\vec{F_2} = -\frac{Gm_1 m_2}{r^3}\vec{r} = m_2\ddot{\vec{r_2}}\]
+
+Note that 
+
+\[m_1\ddot{\vec{r_1}} + m_2\ddot{\vec{r_2}}\]
+
+INSERT NEXT GRAPH
+
+Integrating,
+
+\[m_1\dot{\vec{r_1}} + m_2\dot{\vec{r_2}} = \vec{a}\]
+\[m_1\vec{r_1} + m_2\vec{r_2} = \vec{a}t + \vec{b}\]
+
+The center of mass is 
+
+\[\vec{R} = \frac{m_1\vec{r_1}+m_2\vec{r_2}}{m_1+m_2}\]
+
+Then, 
+
+\[\dot{\vec{R}} = \frac{\vec{a}}{m_1+m_2}\]
+\[\vec{R} = \frac{\vec{a}t + \vec{b}}{m_1+m_2}\]
+
+
+This means either $\vec{R}$ is stationary or moves in a straight line. Using $\ddot(\vec{r}) = \ddot(\vec{r})_1 + \ddot(\vec{r})_2$, then
+
+\[\dv[2]{\vec{r}}{t} + \mu \frac{\vec{r}}{r^3}\]
+
+Taking the vector product ($\times$) of $\vec{r}$ with the above equation, 
+
+\[\vec{r}\times \dot{\vec{r}} = \vec{h}\]
+
+where $\vec{h}$ is some constant vector that is perpendicular to both $\vec{r}$ and $\dot{\vec{r}}$. It is related to the specific angular momentum.\\
+
+Using polar coordinates, 
+
+\[\vec{r} = r\hat{r} \quad \dot{\vec{r}} = \dot{r}\hat{r} + r\dot{\theta}\hat{\theta} \quad \ddot{\vec{r}} = (\ddot{r} - r\theta^2)\hat{r} + (\frac{1}{r}\dv{}{t}(r^2\theta))\hat{\theta}\]
+
+INSERT NEXT GRAPH
+
+A change in the sweeping area $A$ is 
+
+\[\dv{A}{t} = \frac{1}{2}r^2 \dv{\theta}{t} = \frac{1}{2}h\]
+
+Rewriting our equation of motion using polar coordinates,
+
+\[\ddot{r} - r\dot{\theta}^2 = \frac{\mu}{r^2}\]
+
+Letting $u =\frac{1}{r}$ and $h=r^2\dot{\theta}$, then
+
+\[\ddot{u} + u = \frac{\mu}{h}\]
+
+Thus, the ODE has the solution 
+
+\[u = \frac{\mu}{h}(1+e\cos(\theta - \phi))\]
+
+Switching back to $r$,
+
+\[r = \frac{h^2}{\mu(1+e\cos(\theta - \phi))}\]
+
+Where $e$ is the eccentricity, and $\phi$ is the phase.
+
+INSERT GRAPH
+
+\subsection{Scale of the Problem}\bigbreak
+
+The gravitational cnonstants are $G = 6.28 \times 10^{-11} \text{m}^3/\text{kg}/\text{s}^2$. We can set 
+
+\[G = 1 \frac{[\text{L}]^2}{[\text{t}]^2 [\text{M}]}\] 
+
+We can use [t] = years, and [M] = m$_\odot$. This means that [L]  5.0939$\times 10^11$ m.\\
+
+Kepler's Third Law states that
+
+\[P^2 = \frac{4\pi^2}{GM}a^3\]
+
+We can use this to find that 1 AU $\approx$ 0.2937 length units.\\
+
+
+\subsection{Choose your Integrator}\bigbreak
+
+The ones that are available are
+
+\begin{itemize}
+	\item solve\_ivp from scipy
+	\item odeint from scipy
+	\item custom
+\end{itemize}\bigbreak
+
+Ideally you want the third option.\\
+
+
+
+\subsection{Hamiltonian Construction}\bigbreak
+
+So far, we have looked at 
+
+\[\dv[2]{\vec{r}}{t} + u \frac{\vec{r}}{r^3} = 0\]
+
+where $u = Gm_1m_2$. We are using $\vec{r}$ and $\dot{\vec{r}}$ to describe the behaviour of the system. Instead we could use
+
+\[\vec{r} = \vec{r}_x \hat{i} + \vec{r}_y \hat{j} + \vec{r}_z \hat{k}\]
+\[\vec{p} = \vec{p}_x \hat{i} + \vec{p}_y \hat{j} + \vec{p}_z \hat{k}\] 
+
+where $\vec{p} = \frac{m_1m_2}{m_1+m_2}\vec{v}$.\\
+
+We can then rewrite this as 
+
+\[\dot{\vec{r}} = \grad_p{H} \quad \dot{\vec{p}} = -\grad_r{H}\]
+
+where 
+
+\[\grad_p{} = \hat{i} \pdv{}{p_x}+ \hat{j} \pdv{}{p_y} + \hat{k} \pdv{}{p_z}\]
+\[\grad_r{} = \hat{i} \pdv{}{r_x}+ \hat{j} \pdv{}{r_y} + \hat{k} \pdv{}{r_z}\]
+
+Here, the Hamiltonian is 
+
+\[H = \frac{p^2}{2\mu_r} - \frac{\mu\mu_r}{r}\]
+
+with $\mu_r = \frac{m_1m_2}{m_1+m_2}$ and $\mu = Gm_1m_2$.\\
+
+This gives us 
+
+\[\vec{r} = \frac{\vec{p}}{\mu_r} \quad \vec{\dot{p}} = \frac{-\mu\mu_r}{r^3}\vec{r}\]
+
+
+For N-body, H is constant and is equal to the total energy of the system. The total energy of the system is
+
+\[E = \frac{1}{2}m_1\abs{\vec{v}_1}^2 + \frac{1}{2}m_2\abs{\vec{v}_2}^2 - \frac{Gm_1m_2}{\abs{\vec{r}_1 - \vec{r}_2}}\]
+
+Using the reduced mass $\mu_r = \frac{m_1m_2}{m_1+m_2}$,
+
+\[E = \frac{1}{2}\mu_r v^2 - \frac{GM\mu_r}{r} \quad p = mv\]
+
+So,
+
+\[E = \frac{p^2}{2\mu_r} - \frac{\mu\mu_r}{r}\]
+
+This is our Hamiltonian. We can then use a symplectic integrator, where the energy must be conserved. In most cases that we can write the Hamiltonian explicitly like this, we will want to use it so keep energy conserved.
+
 
 
 
