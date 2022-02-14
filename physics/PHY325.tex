@@ -1158,5 +1158,96 @@ This is our Hamiltonian. We can then use a symplectic integrator, where the ener
 
 
 
+\section{Smoothed Particle Hydrodynamics}\bigbreak\bigbreak
+
+There are two main types of SPH code
+
+\begin{itemize}
+	\item Eulerian: Grid based approach
+	\item Lagrangian: Particle based approach
+\end{itemize}\bigbreak
+
+The major difference between nbody and SPH is that gas has pressure. First, we will write down the system of equations
+
+\[\dv{\dot{\vec{r}}}{t} = \vec{v}_i\]
+\[\dv{\vec{v}}{t} = -\frac{1}{\rho_i} \vec{\grad}{P} - \grad{\Phi}\]
+
+where $\rho_i$ is the density, $P$ is the pressure, and $\Phi$ is the gravitational potential.\\
+
+We want to think of each particle as a smeared out distribution.\\
+
+\[\rho_i(\vec{r}) = m_j W(|\vec{r} - \vec{r}_j|, h)\]
+
+Where $W$ is the smoothing kernel, $|\vec{r} - \vec{r}_j|$ is the distance between to the particle $i$, and $h$ is the smoothing length. \\
+
+% INSERT GRAPH
+
+
+The equation for a Gaussian kernel is
+
+\[W(|\vec{r} - \vec{r}_j|, h) = \frac{1}{h^3\pi^\frac{3}{2}} \exp[-\left(\frac{|\vec{r} - \vec{r}_j|}{h}\right)^2]\]
+
+To get the physical density at any point we use
+
+\[\rho(\vec{r}) = \sum_{j=1}^{n} \rho_j(\vec{r})\]
+
+The kernel must be defined such that
+
+\[\int_{0}^{\infty} W(|\vec{r} - \vec{r}_j|, h)~\text{d}\vec{r} = 1\]
+
+So that mass is conserved. \\
+
+Any physical quantity (e.g. pressure, temperature, etc.) can be estimated with
+
+\[A(r) = \sum_{j=1}^{N}m_j \frac{A_j}{\rho_j} W(|\vec{r} - \vec{r}_j|, h)\]
+
+Derivatives come from the derivative of the Kernel itself.
+
+\[\grad{\vec{P}(\vec{r})} = \sum_{j=1}^N m_j \frac{P_j}{\rho_j} \grad{W(|\vec{r} - \vec{r}_j|, h)}\]
+
+The ingredients for SPH are
+
+\begin{itemize}
+	\item Initial conditions (velocities and positions)
+	\item Potential (e.g. gravity)
+	\item A physical law relating $\rho_i$ and $P_i$
+	\item A time integration scheme
+	\item Method to determine $\frac{\grad{P_i}}{\rho_i}$
+	\item Determining the smoothing length ($h$)
+\end{itemize}\bigbreak
+
+Your choice of $\delta t$ should take into account the sound speed $c_s$.
+
+\[c_s^2 = \dv{P}{\rho}\]
+\[\implies \delta t < \frac{h}{c_s}\]
+
+This is known as the Courant-Friedrichs-Levy (CFL) condition.\\
+
+Let's consider a system of particles. The adiabatic gas law is:
+
+\[P = k\rho^\gamma\]
+
+We can set the total mass to something like the mass of jupiter with 400 particles.\\
+
+We can also introduce viscosity into the equations:
+
+\[\dv{\vec{v}}{t} = -\frac{1}{\rho}\grad{\vec{P}} - \grad{\Phi} - Vv\]
+
+where $V$ is the viscosity and $v$is the speed.\\
+
+For "Jupiter", $k = 2.6 \times 10^5$ Nm$^4$/kg$^2$ ($P \approx 6.5 \times 10^12 N/m^2$ and $\rho \approx 5000 kg/m^3$). \\
+
+A dimensional analysis of $k$ yields that 
+
+\[k = \frac{[\text{length}]^5}{[\text{time}]^2[\text{mass}]}\]
+
+Let the mass be in jupiter masses, the length unit be in jupiter radii, $k = 1$, this defines the time unit. It turns out that $G$ is also close to 1.\\
+
+ 
+
+
+
+
+
 
 \end{document}
