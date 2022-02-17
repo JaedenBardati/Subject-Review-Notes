@@ -1231,9 +1231,9 @@ We can set the total mass to something like the mass of jupiter with 400 particl
 
 We can also introduce viscosity into the equations:
 
-\[\dv{\vec{v}}{t} = -\frac{1}{\rho}\grad{\vec{P}} - \grad{\Phi} - Vv\]
+\[\dv{\vec{v}}{t} = -\frac{1}{\rho}\grad{\vec{P}} - \grad{\Phi} - \nu \vec{v}\]
 
-where $V$ is the viscosity and $v$is the speed.\\
+where $\nu$ is the viscosity and $\vec{v}$ is the speed.\\
 
 For "Jupiter", $k = 2.6 \times 10^5$ Nm$^4$/kg$^2$ ($P \approx 6.5 \times 10^12 N/m^2$ and $\rho \approx 5000 kg/m^3$). \\
 
@@ -1241,9 +1241,76 @@ A dimensional analysis of $k$ yields that
 
 \[k = \frac{[\text{length}]^5}{[\text{time}]^2[\text{mass}]}\]
 
-Let the mass be in jupiter masses, the length unit be in jupiter radii, $k = 1$, this defines the time unit. It turns out that $G$ is also close to 1.\\
+Let the mass be in Jupiter masses, the length unit be in jupiter radii, $k = 1$, this defines the time unit. It turns out that $G$ is also close to 1.\\
 
- 
+
+\subsection{Choosing a Kernel}\bigbreak
+
+We do not need to choose the Gaussian kernel, we can also consider a kernel with compact-support called a "spline kernel". For example,
+
+\[W(r, h) = \frac{1}{\pi h^3}[1- \frac{3}{2}(\frac{r}{h})^2 + \frac{3}{4}(\frac{r}{h})^3] \quad \text{for } 0< \frac{r}{h} \leq 1 \]
+
+\[W(r, h) = \frac{1}{4 \pi h^3}[2- \frac{r}{h}]^3] \quad \text{for } 1 \leq \frac{r}{h} \leq 2\]
+
+\[W(r, h) = 0 \quad \text{for } \frac{r}{h} \geq 2\]
+
+
+\subsection{Variable Smoothing Length}\bigbreak
+
+If the density range of your problem is large, than a uniform smoothing length will not work well. To make this variable we could use
+
+\[\dv{h_i}{t} = -\frac{h_i}{3\rho_i} \dv{\rho_i}{t}s\]
+
+
+To use a variable smoothing length, you need to symmetrize the smoothing interaction to insure that the force seen by particle $i$ on $j$ is the same as seen by $j$ on $i$. \\
+
+\[A_i = \frac{1}{2} \sum_{j} m_j \frac{A_j}{\rho_j} [W(r_{ij}, h_j) + W(r_{ij}, h_i)]\]
+
+for any property of $i$ $A_i$. So,
+
+\[\rho_i = \frac{1}{2} \sum_{j} m_j [W(r_{ij}, h_j) + W(r_{ij}, h_i)]\]
+
+This is taking a mean, but we can also use other methods.\\
+
+\subsection{Adding energy to SPH}\bigbreak
+
+If the gas is adiabatic, then it is wasy to track internal energy:
+
+\[P = (\gamma - 1)\rho\epsilon\]
+
+where $\epsilon$ is the energy per unit mass for an ideal gas. The ideal gas law is\\
+
+\[\dv{\epsilon}{t} = -(\frac{P}{R}) \vec{\grad}\cdot{\vec{v}}\]
+
+So with the kernel,
+
+\[\dv{\epsilon}{t} = \sum_{j=1}^N m_j (\frac{\sqrt{P_iP_j}}{\rho_i\rho_j})\vec{v}_{ij} \cdot \frac{1}{2}[\grad_i{W(r_{ij}, h_i)} + \grad{W(r_{ij}, h_j)}]\]
+
+
+with $\vec{v}_{ij} = \vec{v}_i - \vec{v}_j$ 
+
+and the geometric mean is
+
+\[\grad{P} = 2\sqrt{P} \grad \sqrt{2}\]
+
+
+If we do not use the variable smoothing length, we get
+
+\[\frac{\vec{\grad}{P_j}}{\rho_i} = \sum_{j=1}^N m_j (\frac{\sqrt{P_iP_j}}{\rho_i\rho_j})[\grad_i{W(r_{ij}, h_i)} + \grad{W(r_{ij}, h_j)}]\]
+
+\subsection{Adding Heat Transfer}\bigbreak
+
+Consider conduction as a diffusive process.\\
+
+\[\dv{\epsilon}{t} = \frac{1}{\rho} \vec{\grad}\cdot(k\vec{\grad}{T})\]
+
+where $k$ is the heat conduction coefficient.\\
+
+For an ideal gas, $\epsilon = C_v T$ where $C_v$ is the heat capacity and $T$ is the temperature.\\
+
+We need the second derivative
+
+\[\dv{\epsilon_i}{t} = - \sum_{j=1}^N m_j \frac{(k_j+k_i)(T_i - T_j)(\vec{r}_{ij} \vec{\grad}_iW_{ij})}{\rho_i\rho_j |\vec{r}_{ij}|^2}\]
 
 
 
