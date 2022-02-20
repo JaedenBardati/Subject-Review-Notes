@@ -1365,6 +1365,68 @@ Randomized quick sort solves this by adding at the beginning of the partition
 In the best case quick sort is has $T(n) = 2 T(\frac{n}{2}) + O(n)$, which is done $\log n$ times, so the algorithm is $O(n \log n)$.\\
 
 
+\subsection{Lower bound of comparison sorting} \bigbreak
+
+We will show that $\Omega(n\log n)$. \\
+
+We can show this by showing the decision trees for such algorithms. These are binary trees that tell you what to do when stepping through the algorithm. \\
+
+Let $l=[a_1=6, a_2=8, a_3=5]$. Using insertion sort, the first comparison compares $6>8$, then we compare $5\leq 8$, and finally $6>5$. We can construct a decision tree using these three comparisons.\\
+
+% INSERT DECISION TREE
+
+There are $3! = 6$ permutations of leaves in the decision tree here. \\
+
+The length of the longest path from the root to any reachable leaf represents the worst-case number of comparisons that the sorting algorithm perform.\\
+
+\textbf{Theorem:} Any comparison-based sort requires $\Omega(n \log n)$ comparisons in worst case.\\
+
+\textbf{Proof:} Consider a decision tree of height $h$ with $l$ reachable leaves corresponding to comparison sort of $n$ elements because of $n!$ permutations appears as some leaf we have $n! < l$, since a binary tree of height $h$ has no more than $2^h$ leaves, we have $n! \leq l \leq 2^n \implies h \geq \log(n!) \implies \Omega(n\log n)$. \\
+
+\subsection{Counting Sort}\bigbreak
+
+Counting sort is an $O(n)$, non-comparison sort.\\
+
+Assume the input is $A[1..n]$ of integers.\\
+
+For each element $x$, count the number of element less than $x$ and then use that info to place $x$ directly in output. \\
+
+For example, if we ahve $x$ and count 17 elements that are less than $x$, then $x$ should go to index 18. \\
+
+In python,
+
+\begin{lstlisting}
+	def counting_sort(A, B, k):
+	 	# A is the input list, B is the output list
+	 	# k is the max element of the list +1
+
+		C = [0]*k
+		for j in range(len(A)): # store counts in C
+			C[A[j]] = C[A[j]] + 1
+		for j in range(1, k):   # store cummulative count in C
+			C[j] = C[j] + C[j-1]
+		for j in range(len(A) - 1, -1, -1): # store in output
+			B[C[A[j]] - 1] = A[j]
+			C[A[j]] = C[A[j]] - 1 
+\end{lstlisting}\bigbreak
+
+This algorithm is really $O(n+k)$. As a whole, this algorithm is only $O(n)$ if $k=O(n)$.\\
+
+
+\subsection{Radix sort}\bigbreak
+
+This allows us to use counting sort on large numbers. In psudeocode,
+
+\begin{lstlisting}
+	def radix_rot(A, d):
+		for i in range(d):
+			counting_sort(A) with digit i
+\end{lstlisting} \bigbreak
+
+The key to this is that counting sort is a \textbf{stable sort}. This means that elements that have the same value in the input, will continue to be the same order as in the output of the sort.\\
+
+
+
 
 
 
