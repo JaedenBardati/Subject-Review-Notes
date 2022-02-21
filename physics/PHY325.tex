@@ -1312,6 +1312,153 @@ We need the second derivative
 
 \[\dv{\epsilon_i}{t} = - \sum_{j=1}^N m_j \frac{(k_j+k_i)(T_i - T_j)(\vec{r}_{ij} \vec{\grad}_iW_{ij})}{\rho_i\rho_j |\vec{r}_{ij}|^2}\]
 
+\subsection{Navier-Stokes Equations}\bigbreak
+
+Gases and liquids are ensembles of atoms and molecules. Ideally we would want to know the position $\vec{x_i}$ and velocity $\vec{u_i}$ and force per unit mass $\vec{F_i}$ acting on the particle $i$.\\
+
+\[ \dv{\vec{x_i}}{t} = \vec{u_i} \quad \dv{\vec{u_i}}{t} = \vec{F_i}(x_j, u_j, t) \forall j  \]
+
+One mole of gas has $10^23$ particles.\\
+
+To describe gases and liquids, we will use a statistical approach with continuous media which will be described by equation of hydrodynamics.\\
+
+Let $\vec{x} = (x_1, x_2, x_3)$ be the position, $\vec{u} = (u_1, u_2, u_3)$ bet the velocity, $\vec{q} = (q_1, q_2, q_3)$ bet the momentum, and $\vec{F} = (F_1, F_2, F_3)$ is the force per unit mass.\\
+
+We will introduce the distribution function.\\
+
+\[dN = f(\vec{x}, \vec{u}, t)d\vec{x} d\vec{u}\]
+
+where $dN$ is the number of particles between $\vec{x}$ and $\vec{x} + d\vec{x}$ in position, and between $\vec{u}$ and $\vec{u} + d\vec{u}$ in velocity.\\
+
+If we ignore collisions (for now), then if $t$ changes by $dt$, then 
+
+\[\vec{q} \to \vec{q} + m\vec{F}dt\]
+\[\vec{u} \to \vec{u} + \vec{F}dt\]
+\[\vec{x} \to \vec{x} + \vec{u}dt\]
+
+and 
+
+\[f(\vec{x} + \vec{u}dt, \vec{u}+\vec{F}dt, t+dt) - f(\vec{x}, \vec{u}, t) = 0\]
+
+with collisions
+
+\[f(\vec{x} + \vec{u}dt, \vec{u}+\vec{F}dt, t+dt) - f(\vec{x}, \vec{u}, t) = [\Delta f]_{\text{coll}}\]
+
+Or 
+
+\[\pdv{f}{t} + u_i\pdv{f}{x_i} + F_i\pdv{f}{u_I} = [\pdv{f}{t}]_{\text{coll}}\]
+
+where the $i$ implies a summation over all indices. This is the Boltzmann equation. It describes the net number of particles that leave $d\vec{x}$, d$\vec{u}$ phase-space.\\
+
+At a locatoin $\vec{x}$, $f(\vec{x}, \vec{u}, t)d\vec{u}$ will be the number of particles per unit volume in the interval $\vec{u}$ to $\vec{u} + d\vec{u}$.
+
+\[\implies n(\vec{x}, t) = \int f(\vec{x}, \vec{u}, t)d\vec{u}\]
+
+is the total number of particles per unit volume.\\
+
+The mass density (or just "density") is 
+
+\[\rho(\vec{x, t}) = \int m f(\vec{x}, \vec{u}, t) d\vec{u}\]
+
+The bulk velocity will be 
+
+\[\vec{v}(\vec{x}, t) \equiv \frac{1}{\rho} \int \vec{u}mf(\vec{x}, \vec{u}, t)d\vec{u}\]
+
+If collisions are elastic and singular, then you get the Maxwell-Boltzmann Distribution:
+
+\[f(\vec{x}, \vec{u}, t)d\vec{u} = n(\vec{x}, t)\left[(\frac{m}{2\pi k_B T(\vec{x}, t)})^\frac{3}{2} \exp(\frac{-m(\vec{u}-\vec{v})^2}{2 k_B T(\vec{x}, t)})du \right]\]
+
+where $k_B$ is the Boltzmann constant and $T$ is the temperature. This is better suited for equilibrium and not shocks.\\
+
+The fd$\vec{u}$ from the Maxwell-Boltzmann equation gives the number of particles per unit volume between $\vec{u}$ and $\vec{u} + d\vec{u}$ in an equilibrium state.\\
+
+The specific internal energy $\epsilon$ (per unit mass) will be 
+
+\[\epsilon = \frac{3}{2} \frac{k_b}{m} T\]
+
+where temperature is a measure of the kinetic energy associated with peculiar motions (motions relative to the bulk flow).\\
+
+Note: Phase space can be defined using momentum $\vec{q}$ instead of velocity ($\vec{u}$). This is useful when dealing with massless particles.\\
+
+The equations of hydrodynamics come from the moments of the Boltzmann Equation. For $k$th order moment ($k = 0, 1, 2$), we multiply by $U_k = (1, \vec{u}, u^2)$ and integrate over the whole velocity space. These are the mean, variance, etc.\\ 
+
+%\[\int U_k [\pdv{f}{t} + u_i \pdv{f}{x_i} + F_i \pdv{f}_u_i]d\vec{u} \equiv \int U_k [\pdv{f}{t}]_\text{coll} d\vec{u}\]
+
+If collisions converse the number of particles, mass momentum, and energy, then
+
+\[\int [\pdv{f}{t}]_\text{coll} d\vec{u} = 0\] since the number of particles is conserved
+\[\int [\pdv{f}{t}]_\text{coll} u_i d\vec{u} = 0\] (for $i=1, 2, 3$) since the momentum is conserved
+
+Multiplying the Boltzmann Equation by $m$ and integrating,
+
+\[m\int \pdv{f}{t} d\vec{u} + \int u_i \pdv{f}{x} d\vec{u} + m F_i \int \pdv{f}{u_i} d\vec{u} =0 \]
+
+To converve particles the $\int \pdv{f}{u_i} d\vec{u} $ term goes to zero, and the collision cancel out (total is zero) since the number of particles is conserved.\\
+
+This gives 
+
+\[\pdv{}{t} \int m ff\vec{u} + \pdv{}{x_i} \int u_i m fd\vec{u} = 0\]
+
+or
+
+\[\pdv{\rho}{t} + \pdv{}{x_i}(\rho v_i) = 0\]
+
+or 
+
+\[\pdv{\rho}{t} + \grad \cdot(\rho \vec{v}) = 0\]
+
+This is known as the \textbf{continuity equation}. It describes how a fluid conserves mass in its motion.\\
+
+If we multiply the Boltzmann Equation by $m u_i$ ($i=1, 2, 3$) and integrate, we find
+
+\[\pdv{}{t}(\rho v_i) + \pdv{}{x_j} \int m u_i v_j f d\vec{u} - \rho F_i = 0\]
+
+for each $i$ and summing over $j=1,2, 3$.\\
+
+The term 
+
+\[\int m u_i v_j f d\vec{u} = \int m v_i v_j f d\vec{u} + \int m \tilde{u_i} \tilde{u_j} f d\vec{u}\]
+
+The first integral is the bulk terms and the second is the peculiar terms. The pressure is defined as
+
+\[P_{ij} \equiv \int m \tilde{u_i} \tilde{u_j} \]
+
+If the pressure is isotropic ($P_{ij} = P_{ji}$), then 
+
+\[P= \frac{1}{3} \int m \tilde{u_i}^2 f d\vec{u}\]
+
+\[\implies \pdv{}{t}(\rho v_i) + \pdv{}{x_j}(\rho v_i v_j) = - \pdv{P}{x_i} + \rho_i F_i\]
+
+This is the \textbf{momentum equation}. Here, $\rho v_i$ is the momentum density and $\rho v_i v_j$ is the momentum flux. This can also be written as 
+
+\[\pdv{}{t}(\rho \vec{v}) + \grad{}\cdot \vec{\Pi} = \rho \vec{F}\]
+
+where 
+
+\[\Pi_{ij} = \rho v_i v_j + P \delta_{ij}\]
+
+is the momentum flux density tensor.\\
+
+The internal energy can be derived from the momentum and continuity equations.
+
+\[\pdv{e}{t} + \pdv{}{x_j}(ev_j) = - P \dv{v_{ij}}{x_i}\]
+
+where $e$ is the internal energy per unit volume.\\
+
+The momentum and continuity equations along with the above equation for the internal energy are known as the Euler Equations.\\
+
+We have $\rho, v_1, v_2, v_3, P, \epsilon$ plus an external force $F_i$ (for example, gravity). \\
+
+These are 5 equations with 6 unknowns so we are missing an equation. This equation is the equation of state.\\
+
+To solve we need a relationship between $P$ and $\rho$. For example,
+
+\[P= \frac{2}{3}\rho \epsilon\]
+
+In general the equation of state can be very complicated.\\
+
+
+
 
 
 
