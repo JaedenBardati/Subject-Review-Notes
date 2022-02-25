@@ -1458,6 +1458,93 @@ To solve we need a relationship between $P$ and $\rho$. For example,
 In general the equation of state can be very complicated.\\
 
 
+% SKIPPED SOME STUFF: PEOPLE NOT HERE
+
+
+\subsection{Diffusion Equation}\bigbreak
+
+\[\pdv{}{t} = \pdv{}{x}(v_d \pdv{u}{x})\]
+
+where $u$ is some physical quantity and $v_d > 0$ is the diffusion coefficient.\\
+
+We will start at $t=0$, over the domain $0 \leq x \leq 1$ with $u(x, 0) = \delta_D(x-0.5)$, where $x$ is the position and $\delta_D$ is the Dirac delta function. The boundary conditions are $u(0, t) = u(1, t) = 0 \forall t$.\\
+
+The analytical solution is
+
+\[u(x, t) = 2 \sum_{n=1}^{\infty} \sin(\frac{\pi n}{2}) \sin(\pi n x) \exp(-\pi^2 n^2 v_d t)\]
+
+To solve this non-analytically, we will construct a grid. \\
+
+% INSERT GRID PLOT HERE
+
+The forward derivative here is
+
+\[\pdv{u}{x}|_j = \frac{u_{j+1}^n - u_j^n}{\Delta x}\]
+
+The backwards derivative here is 
+ 
+\[\pdv{u}{x}|_j = \frac{u_{j}^n - u_{j-1}^n}{\Delta x}\]
+
+The centered derivative here is 
+
+\[\pdv{u}{x}|_j = \frac{u_{j+1}^n - u_{j-1}^n}{2\Delta x}\]
+
+The second derivative can also be found similarly in the same grid space.\\
+
+The equation we will use then is
+
+\[u_j^{n+1} = u^n_j + \frac{v_d \Delta t}{\Delta x^2}(u_{j+1}^n + u_{j-1}^n - 2u^n_{j})\]
+
+
+\subsection{Modeling a sound wave}\bigbreak
+
+Consider the equations of continuity and momentum for a 1D flow.
+
+\[\pdv{\rho}{t} + \pdv{(\rho v)}{x} = 0\]
+
+\[\pdv{v}{t} + v\pdv{v}{x} = \frac{1}{\rho} \pdv{P}{x}\]
+
+Let's assume the fluid is isothermal in space and time. Therefore,
+
+\[c_s^2 \equiv \frac{P}{\rho} \equiv \text{constant}\]
+
+The initial conditions we will use are 
+
+\[\rho(x, 0) = \rho_0 \quad P(x, 0) = P_0 \quad v(x, 0) = v_0 = 0\]
+
+The fluid is perturbed such that 
+
+\[\rho = \rho_0 + \rho_1 \quad P= P_0 + P_1 \quad v = v_1\]
+
+$\rho$ is small compared to $P$ and $P_0$.\\
+
+The equations then become:
+
+\[\pdv{\rho_1}{t} - \rho_0 \pdv{v_1}{x}\]
+
+\[\pdv{v_1}{t} = -\frac{1}{\rho_0} \pdv{\rho}{x}\]
+
+If we let $\phi = P_1$ and $\psi = v_1c_s\rho_0$. This allows us to rewrite this equations with
+
+\begin{equation} \label{eq:speedspund1}
+	\dv{\psi}{t} = -c_s\pdv{\phi}{x}
+\end{equation}
+
+\begin{equation} \label{eq:speedspund2}
+	\dv{\phi}{t} = -c_s\pdv{\psi}{x}
+\end{equation}
+
+Take now the partial derivative with respect to $x$ of equation \ref{eq:speedspund1} and the partial derivative with respect to $t$ of \ref{eq:speedspund2}. Then, we obtain the wave equation
+
+\[\pdv[2]{\phi}{t} = c_s^2\pdv[2]{\phi}{x}\]
+
+When implementing, we want to look at the quantity
+
+\[S = \frac{c_s \Delta t}{\Delta}\]
+
+We would like $0<S<1$ and generally $S\approx 0.5$. And we would like $\Delta t$ sufficiently small.\\
+
+
 
 
 
