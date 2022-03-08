@@ -1458,42 +1458,116 @@ To solve we need a relationship between $P$ and $\rho$. For example,
 In general the equation of state can be very complicated.\\
 
 
-% SKIPPED SOME STUFF: PEOPLE NOT HERE
+% new lecture
+
+Euler's equations describe a collection of particles as a continuous motion. This approximation is valid if the free mean path between collision is less than the characteristic length scale of the problem
+
+\[\lambda \ll l_ch\]
+
+where $\lambda$ is the free mean path and $l_ch$ is the characteristic length. \\
+
+The number of particles here should be very large.\\
+
+This means the distribution function should not vary over a length scale of $l_ch$.\\
+
+Inter-particle forces should be short range. Therefore, there must be no interaction between particles separated by distances greater than $l_ch$. E.g. Gravity is from a source external to the fall medium.\\
+
+Euler equations describe the state of the medium at a fixed location in space "x". This is called \textbf{"Eulerian"}. \\
+
+$\pdv{}{t} $ describes changes due to a "flow" of the medium past $\vec{x}$.\\
+
+In the \textbf{Lagrangian} method, comoving spatial coordinates $(r_1, r_2, r_3)$.\\
+
+$\dv{}{t} $ describes changes occurring within the element as it changes its state and location.\\
+
+Eulerian equations become
+
+
+\[\dv{\rho}{t} + \rho\dv{v_i}{x_j} = 0\]
+\[\dv{v_j}{t} = -\frac{1}{\rho}\dv{P}{x_i} + F_i \]
+\[\dv{\epsilon}{t} = -\frac{P}{\rho}\dv{\rho}{t} = 0\]
+
+The Euler Equations neglect the interchange of particles between adjacent fluid elements. When these effects are significant, we have to consider internal friction or \textbf{viscosity} of the fluid.\\
+
+The momentum equation describes macroscopic transport of momentum through space and time due to external forces. In a viscous fluid, we need to consider the microscopic transport of momentum due to friction.\\
+
+In a viscous fluid, we introduce a new momentum flux density.\\
+
+\[\Pi_{ij} = \rho v_i v_j + P\delta_{ij} - \sigma_{ij}\]
+
+where we introduce $\sigma_{ij}$ as the viscous stress.\\
+
+\[ \sigma_{ij} = \nu (\dv{v_i}{x_j} + \dv{v_j}{x_i} - \frac{2}{3}\dv{v_k}{x_k}\delta_{ij}) + \eta \pdv{v_k}{x_k}\delta_{ij}\]
+
+
+$\nu$ and $\eta$ are the shear and bulk viscosity coefficients.\\
+
+The momentum equation becomes 
+
+\begin{equation}\label{eq:Navier-stokes-1}
+	\pdv{}{t}\left(\rho v_i\right) + \pdv{}{x_j}\left(\rho v_iv_j\right) = -\pdv{P}{x_j} + \pdv{\sigma_{ij}}{x_j} + \rho F_i
+\end{equation}
+
+And,
+
+\begin{equation}\label{eq:Navier-stokes-2}
+	\pdv{\rho}{t} + \pdv{}{x_j}(\rho v_j) = -P \pdv{v_j}{x_j} + \sigma_{ij}\pdv{v_j}{x_k}
+\end{equation}
+
+And the continuity equation does not change.\\
+
+\begin{equation}\label{eq:Navier-stokes-3}
+	\pdv{P}{t} + \pdv{}{x_j}\left(\rho v_j\right) = 0
+\end{equation}
+
+These three equations (\ref{eq:Navier-stokes-1}, \ref{eq:Navier-stokes-2}, and \ref{eq:Navier-stokes-3}) are known as the Navier-Stokes equations.
+
 
 
 \subsection{Diffusion Equation}\bigbreak
 
-\[\pdv{}{t} = \pdv{}{x}(v_d \pdv{u}{x})\]
+\[\pdv{u}{t} = \pdv{}{x} \left(v_d \pdv{u}{x}\right)\]
 
 where $u$ is some physical quantity and $v_d > 0$ is the diffusion coefficient.\\
 
-We will start at $t=0$, over the domain $0 \leq x \leq 1$ with $u(x, 0) = \delta_D(x-0.5)$, where $x$ is the position and $\delta_D$ is the Dirac delta function. The boundary conditions are $u(0, t) = u(1, t) = 0 \forall t$.\\
+If we consider $v_d$ to be constant, then 
+
+\[\pdv{u}{t} = v_d \pdv[2]{u}{x}\]
+
+
+We will start at $t=0$, over the domain $0 \leq x \leq 1$ with $u(x, 0) = \delta_D(x-0.5)$, where $x$ is the position and $\delta_D$ is the Dirac delta function. The boundary conditions are $u(0, t) = u(1, t) = 0~\forall~t$.\\
 
 The analytical solution is
 
-\[u(x, t) = 2 \sum_{n=1}^{\infty} \sin(\frac{\pi n}{2}) \sin(\pi n x) \exp(-\pi^2 n^2 v_d t)\]
+\[w(x, t) = 2 \sum_{n=1}^{\infty} \sin(\frac{\pi n}{2}) \sin(\pi n x) \exp(-\pi^2 n^2 v_d t)\]
 
 To solve this non-analytically, we will construct a grid. \\
 
 % INSERT GRID PLOT HERE
 
+The space derivative is
+
+\[u_{j+1}^n = u_j^n + \pdv{u}{x_j}\biggr|_j \delta x + \frac{1}{2} \pdv[2]{u}{x}\biggr|_j (\delta x)^2 + O(\delta x)^3\]
+
 The forward derivative here is
 
-\[\pdv{u}{x}|_j = \frac{u_{j+1}^n - u_j^n}{\Delta x}\]
+\[\pdv{u}{x}\biggr|_j = \frac{u_{j+1}^n - u_j^n}{\Delta x}\]
 
 The backwards derivative here is 
- 
-\[\pdv{u}{x}|_j = \frac{u_{j}^n - u_{j-1}^n}{\Delta x}\]
+
+\[\pdv{u}{x}\biggr|_j = \frac{u_{j}^n - u_{j-1}^n}{\Delta x}\]
 
 The centered derivative here is 
 
-\[\pdv{u}{x}|_j = \frac{u_{j+1}^n - u_{j-1}^n}{2\Delta x}\]
+\[\pdv{u}{x}\biggr|_j = \frac{u_{j+1}^n - u_{j-1}^n}{2\Delta x}\]
 
 The second derivative can also be found similarly in the same grid space.\\
 
+\[\pdv[2]{u}{x} \approx \frac{u_{j+1}^n - 2u_j^n + u_{j-1}^n}{(\delta x)^2}\]
+
 The equation we will use then is
 
-\[u_j^{n+1} = u^n_j + \frac{v_d \Delta t}{\Delta x^2}(u_{j+1}^n + u_{j-1}^n - 2u^n_{j})\]
+\[u_j^{n+1} = u^n_j + v_d\frac{\Delta t}{\Delta x^2}(u_{j+1}^n + u_{j-1}^n - 2u^n_{j})\]
 
 
 \subsection{Modeling a sound wave}\bigbreak
@@ -1502,21 +1576,23 @@ Consider the equations of continuity and momentum for a 1D flow.
 
 \[\pdv{\rho}{t} + \pdv{(\rho v)}{x} = 0\]
 
-\[\pdv{v}{t} + v\pdv{v}{x} = \frac{1}{\rho} \pdv{P}{x}\]
+\[\pdv{v}{t} + v\pdv{v}{x} = -\frac{1}{\rho} \pdv{P}{x}\]
 
-Let's assume the fluid is isothermal in space and time. Therefore,
+Let's assume the fluid is \textbf{isothermal} in space and time. Therefore, the sound speed is
 
 \[c_s^2 \equiv \frac{P}{\rho} \equiv \text{constant}\]
 
 The initial conditions we will use are 
 
-\[\rho(x, 0) = \rho_0 \quad P(x, 0) = P_0 \quad v(x, 0) = v_0 = 0\]
+\[\rho(x, 0) = \rho_0 \qquad P(x, 0) = P_0 \qquad v(x, 0) = 0\]
 
 The fluid is perturbed such that 
 
-\[\rho = \rho_0 + \rho_1 \quad P= P_0 + P_1 \quad v = v_1\]
+\[\rho = \rho_0 + \rho_1 \qquad P= P_0 + P_1 \qquad v = v_1\]
 
-The equations then become:
+where $\rho_!$ and $P_1$ are small compared to $\rho_0$ and $P_0$.\\
+
+The equations then simplify to be
 
 \[\pdv{\rho_1}{t} - \rho_0 \pdv{v_1}{x}\]
 
@@ -1524,28 +1600,33 @@ The equations then become:
 
 If we let $\phi = P_1$ and $\psi = v_1c_s\rho_0$. This allows us to rewrite this equations with
 
-\begin{equation} \label{eq:speedspund1}
+\begin{equation} \label{eq:speedsound1}
 	\dv{\psi}{t} = -c_s\pdv{\phi}{x}
 \end{equation}
 
-\begin{equation} \label{eq:speedspund2}
+\begin{equation} \label{eq:speedsound2}
 	\dv{\phi}{t} = -c_s\pdv{\psi}{x}
 \end{equation}
 
-Take now the partial derivative with respect to $x$ of equation \ref{eq:speedspund1} and the partial derivative with respect to $t$ of \ref{eq:speedspund2}. Then, we obtain the wave equation
+Take now the partial derivative with respect to $x$ of equation \ref{eq:speedsound1} and the partial derivative with respect to $t$ of \ref{eq:speedsound2}. Then, we obtain the wave equation
 
 \[\pdv[2]{\phi}{t} = c_s^2\pdv[2]{\phi}{x}\]
 
+
+We will use a staggered grid with $\phi$ defined at $j+\frac{1}{2}$ and $\psi$ at $j$.
+
+% INSERT GRAPH HERE (56)
+
+\[\frac{1}{\Delta t} (\psi_j^{n + \frac{1}{2}} - \psi_j^{n - \frac{1}{2}}) = -\frac{c_s}{\Delta x} ( \phi^n_{j+\frac{1}{2}} - \phi^n_{j-\frac{1}{2}})\]
+\[\frac{1}{\Delta t} (\phi^{n+1}_{j+\frac{1}{2}} - \phi^n_{j+\frac{1}{2}}) = -\frac{c_s}{\Delta x} (\psi_{j+1}^{n + \frac{1}{2}} - \psi_j^{n + \frac{1}{2}})\]
+
+We start with $\phi$ at $t^n$ and $\psi$ at $t^{n+\frac{1}{2}}$, then we get $\phi$ at $t^{n+1}$ and proceed to get $\psi$ at $t^{n+\frac{3}{2}}$.\\
+
 When implementing, we want to look at the quantity
 
-\[S = \frac{c_s \Delta t}{\Delta}\]
+\[S = \frac{c_s \Delta t}{\Delta x}\]
 
-We would like $0<S<1$ and generally $S\approx 0.5$. And we would like $\Delta t$ sufficiently small.\\
-
-
-
-
-
+We would like $0<S<1$ and generally $S \approx 0.5$. And we would like $\Delta t$ sufficiently small.\\
 
 
 
