@@ -1601,11 +1601,11 @@ The equations then simplify to be
 If we let $\phi = P_1$ and $\psi = v_1c_s\rho_0$. This allows us to rewrite this equations with
 
 \begin{equation} \label{eq:speedsound1}
-	\dv{\psi}{t} = -c_s\pdv{\phi}{x}
+	\pdv{\psi}{t} = -c_s\pdv{\phi}{x}
 \end{equation}
 
 \begin{equation} \label{eq:speedsound2}
-	\dv{\phi}{t} = -c_s\pdv{\psi}{x}
+	\pdv{\phi}{t} = -c_s\pdv{\psi}{x}
 \end{equation}
 
 Take now the partial derivative with respect to $x$ of equation \ref{eq:speedsound1} and the partial derivative with respect to $t$ of \ref{eq:speedsound2}. Then, we obtain the wave equation
@@ -1613,20 +1613,109 @@ Take now the partial derivative with respect to $x$ of equation \ref{eq:speedsou
 \[\pdv[2]{\phi}{t} = c_s^2\pdv[2]{\phi}{x}\]
 
 
-We will use a staggered grid with $\phi$ defined at $j+\frac{1}{2}$ and $\psi$ at $j$.
+When implementing, we want to look at the quantity
 
-% INSERT GRAPH HERE (56)
+\[S = \frac{c_s \Delta t}{\Delta x}\]
+
+We would like $0<S<1$ and generally $S \approx 0.5$. And we would like $\Delta t$ sufficiently small.\\
+
+
+\subsubsection{Staggered Grid} \bigbreak
+
+We will use a staggered grid with $\phi$ defined at $j+\frac{1}{2}$ and $\psi$ at $j$.\\
+
+% INSERT GRAPH HERE (57)
+
+This method is good for conservation of energy (similar to the leap frog method for ODEs).\\
+
+We can now write our equations for as finite difference equations:
 
 \[\frac{1}{\Delta t} (\psi_j^{n + \frac{1}{2}} - \psi_j^{n - \frac{1}{2}}) = -\frac{c_s}{\Delta x} ( \phi^n_{j+\frac{1}{2}} - \phi^n_{j-\frac{1}{2}})\]
 \[\frac{1}{\Delta t} (\phi^{n+1}_{j+\frac{1}{2}} - \phi^n_{j+\frac{1}{2}}) = -\frac{c_s}{\Delta x} (\psi_{j+1}^{n + \frac{1}{2}} - \psi_j^{n + \frac{1}{2}})\]
 
 We start with $\phi$ at $t^n$ and $\psi$ at $t^{n+\frac{1}{2}}$, then we get $\phi$ at $t^{n+1}$ and proceed to get $\psi$ at $t^{n+\frac{3}{2}}$.\\
 
-When implementing, we want to look at the quantity
+For the wave propagation to be stable, 
 
-\[S = \frac{c_s \Delta t}{\Delta x}\]
+\[\Delta t \leq \frac{\Delta x}{v} \quad \text{or} \quad \Delta t \leq \frac{\Delta x}{v}\]
 
-We would like $0<S<1$ and generally $S \approx 0.5$. And we would like $\Delta t$ sufficiently small.\\
+where $v$ is the propagation speed of the wave. Here it is the speed of sound $c_s$. This is known as the CFL condition.\\
+
+We can define 
+
+\[S \equiv \frac{c_s \Delta t}{\Delta x}\]
+
+and note that if $S \leq 1$ then the CFL condition is met.\\
+
+The "courant number" is $C_0$ where $0 \leq C_0 \leq 1$ and $\Delta t = C_0 \frac{\Delta x}{c_s}$. This courant factor is a sort of "safety factor". In general, you should choose $C_0 < 0.5$.\\
+
+
+\section{Curve Fitting}\bigbreak\bigbreak
+
+\subsection{Modelling of Data}\bigbreak
+
+Given a set of observations one wants to summarize the data by fitting a model.\\ 
+
+A model could be a simple function. For example, $y=mx+b$, where $x$ and $y$ are the independent and dependent variables, respectively, and where $m$ and $b$ are the model parameters.\\
+
+To fit our model to observations, we need a "figure of merit" function that measures agreement between the model and observations. We need to consider 
+
+\begin{itemize}
+	\item Measurement error
+	\item Accuracy of fitted model parameters
+	\item Are there multiple solutions
+\end{itemize}\bigbreak
+
+
+\subsection{Least Squares Estimator}\bigbreak
+
+We are fitting $N$ data points ($x_i$, $y_i$), where $i=1, ..., N$, to a model with $M$ adjustable parameters $a_j$, where $j=1, ..., M$. \\
+
+The simplest metric to minimize is 
+
+\[\sum_{i+1}^{N}[y_i - y(x_i, a_1, ..., a_m)]^2 \]
+
+This does not answer the question regarding probability. We can only answer this if we understand the uncertainty on $y_i$. \\
+
+% insert graph 60
+
+If we assume a Gaussian distribution and that the error on each $y_i$ is independent then we can consider the Gaussian probability function
+
+\[P_g(x) = \frac{1}{\sigma \sqrt{2\pi}}\exp(-\frac{1}{2\sigma^2}(x-\mu)^2)\]
+
+where $\sigma$ is the width (standard deviation) of the distribution and $\mu$ is the mean.\\
+
+% insert graph 61
+
+It is most common to see error bars represent 1$\sigma$.\\
+
+The \textbf{Central Limit Theorem} states that the probability distribution of adding up a large number of small random deviates almost always converges to a Gaussian.\\
+
+We can write down the probability of the dataset 
+
+\[P = \prod_{i=1}^{N} \frac{1}{\sigma_i \sqrt{2\pi}}\exp(-\frac{1}{2}\left(\frac{y_i - y(x_i)}{\sigma_i}\right)^2)\]
+
+where $\sigma_i$ is the measured error of each measurement.\\
+
+Maximizing $P$ is equivalent to maximizing $\log P$ (natural logarithm). 
+
+\[\log P = \frac{1}{2}\left[ \sum_{i=1}^N \left(\frac{y_i - y(x_i)}{\sigma_i}\right)^2 - \frac{1}{2}N\left(\log(2\pi) + \sum_{i=1}^N \log(\sigma_i)^2\right)\right] \]
+
+Note that the last term is a constant.\\
+
+We can now define
+
+\[\chi^2 \equiv \sum_{i=1}^N \left(\frac{y_i - y(x_i)}{\sigma_i}\right)^2\]
+
+This is known as \textit{chi-square}.\\
+
+We say that the "likelihood" $L$ is
+
+\[\log L = -\frac{1}{2}x^2 + C\]
+
+Where $C$ is a constant.\\
+
+
 
 
 
