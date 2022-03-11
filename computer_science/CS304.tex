@@ -1425,6 +1425,191 @@ This allows us to use counting sort on large numbers. In psudeocode,
 
 The key to this is that counting sort is a \textbf{stable sort}. This means that elements that have the same value in the input, will continue to be the same order as in the output of the sort.\\
 
+\break
+\section{Trees}\bigbreak\bigbreak
+
+A tree is an ADT that stores elements hierarchically. \textbf{Parent} nodes have \textbf{children} nodes. The top node in the tree is called the \textbf{root} and the bottom-most nodes in the tree are the \textbf{leaves}.\\
+
+% insert graph 18
+
+A tree T is a set of nodes, each node storing elements such that the nodes have a parent-child relationship, which satisfies the following properties:
+
+\begin{itemize}
+	\item If T is non-empty, then it has a root
+	\item Each node V of T different from the root has a unique parent node W, and every node with a parent W is a child W
+\end{itemize}\bigbreak
+
+Two nodes that have the same parent are called \textbf{sibilings}. The leaves are also called \textbf{external} nodes (any node that do not have children). Any node with children nodes are \textbf{internal} nodes.\\
+
+A tree could, for instance, represent a file-system of directories.\\
+
+An \textbf{edge} of a tree is a pair of nodes such that one of them is the parent of the other. A \textbf{path} of T is a sequence of nodes such that any two consecutive nodes in the sequence form an edge.\\
+
+A tree is \textbf{ordered} if there is a meaningful order among the children of each node.\\
+
+Let p be the position of a node in a tree T, then the \textbf{depth} of p is the number of ancestors of p, excluding itself.\\
+
+The height of position p in tree T is defined recursively as
+
+\begin{itemize}
+	\item If p is a leaf, then the height is 0.
+	\item Otherwise, the height of p is one more than the maximum of the heights of the children of p.
+\end{itemize}\bigbreak
+
+
+
+
+We will now implement an abstract base class for a tree in Python.\\
+
+\begin{lstlisting}
+	class Tree:
+		"""Abstract base class representing a tree structure."""
+		
+		class Position:
+			"""An abstraction representing the location of a single element in the tree."""
+			
+			def element(self):
+				"""Returns the element stored at this position."""
+				raise NotImplementedError
+				
+			def __eq__(self, other):
+				"""Returns true if other position represents the same location"""
+				raise NotImplementedError
+				
+			def __ne__(self, other):
+				"""Returns true if other position represents a different location"""
+				return not (self == other)
+			
+		def root(self):
+			""" Gets the root of the tree."""
+			raise NotImplementedError
+			
+		def parent(self, p):
+			""" Gets the parent of p."""
+			raise NotImplementedError
+			
+		def num_children(self, p):
+			""" Gets the number of children of p."""
+			raise NotImplementedError
+			
+		def children(self, p):
+			""" A generator for positions representing position p's children."""
+			raise NotImplementedError
+			
+		def __len__(self):
+			"""Gets the number of elements in the tree."""
+			raise NotImplementedError
+	 
+	 	def is_root(self, p):
+	 		"""Returns true if p is the root."""
+	 		return self.root() == p
+	 		
+	 	def is_leaf(self, p):
+	 		"""Returns true if p is a leaf."""
+	 		return self.num_children(p) == 0
+	 		
+	 	def is_empty(self):
+	 		return len(self) == 0
+	 		
+	 	def depth(self, p):
+	 		"""Returns the number of levels separating p from the root."""
+	 		if self.is_root(p):
+	 			return 0
+	 		else:
+	 			return 1 + self.depth(self.parent(p))
+	 			
+	 	def _height1(self, p):
+	 		"""Returns the height of the tree. This is bottom-up approach: O(n^2) worst-case."""
+	 		return max(self.depth(p) for p in self.positions() if self.is_leaf())
+	 		
+	 	def _height2(self, p):
+	 		"""Returns the height of the subtree rooted at position p. This is top-down approach: O(n) worst-case."""
+	 		if self.is_leaf(p):
+	 			return 0
+	 		else:
+	 			return 1 + max(self._height2(p) for c in self.children())
+	 			
+	 	def height(self, p=None):
+	 		"""Returns the height of the subtree rooted at position p."""
+	 		if p is None:
+	 			p = self.root()
+	 		return self._height2(p)
+\end{lstlisting}\bigbreak
+
+
+\subsection{Binary Trees}\bigbreak
+
+A binary tree is an ordered tree with the properties
+
+\begin{itemize}
+	\item Every node has at most 2 children
+	\item Each node is labeled as either a left or a right child
+	\item The left child proceeds the right child in the order of children
+\end{itemize}\bigbreak
+
+For example, decision trees are binary trees (yes or no).\\
+
+We can also express an arithmetic expression as a binary tree. In that case, we would place each operation as an internal node and each number as a external node.\\
+
+% insert graph 19
+
+We can write a binary tree in Python.\\
+
+\begin{lstlisting}
+	class BinaryTree(Tree):	
+		"""Abstract bas class representing a binary tree structure."""
+		
+	def left(self, p):
+		"""Returns a postion representing p's left child."""
+		raise NotImplementedError
+		
+	def left(self, p):
+		"""Returns a postion representing p's right child."""
+		raise NotImplementedError
+		
+	def sibiling(self, p):
+		"""Returns a postion representing p's sibiling."""
+		parent = self.parent(p)
+		if parent is None:
+			return None
+		else:
+			if p == self.left(parent)
+				return self.right(parent)
+			else:
+				return self.left(parent)
+				
+	def children(self, p):
+		""" A generator for positions representing position p's children."""
+		if self.left(p) is not None:
+			yield self.left(p)
+		if self.right(p) is not None:
+			yield self.right(p)
+			
+\end{lstlisting}\bigbreak
+
+%% insert graph 20
+
+Let T be a non-empty binary tree and let $n$, $n_E$, $n_I$ and $h$ be the number of nodes, number of external nodes, number of internal nodes, and height of T, respectively. Then, T has the properties:
+
+\begin{itemize}
+	\item $h+1 \leq n \leq 2^{h+1} - 1$
+	\item $1 \leq n_E \leq 2^h$
+	\item $h \leq n_I \leq 2^h - 1$
+	\item $\log(n+1) - 1 \leq h \leq n - 1$
+\end{itemize}\bigbreak
+
+T is a \textbf{proper} tree if T has no nodes with only one leaf. If T is a proper tree, then it has the properties:
+
+\begin{itemize}
+	\item $2h+1 \leq 2^{h+1} - 1$
+	\item $h+1 \leq n_E \leq 2^h$ 
+	\item $h \leq n_I \leq 2^h - 1$
+	\item $\log(n+1) - 1 \leq h \leq \frac{1}{2}(n - 1)$
+\end{itemize}\bigbreak
+
+
+
+
 
 
 
