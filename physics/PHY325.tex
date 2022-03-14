@@ -1716,6 +1716,108 @@ We say that the "likelihood" $L$ is
 Where $C$ is a constant.\\
 
 
+\subsection{Straight Line Fitting}\bigbreak
+
+We would like to fit data to the model $y(x) = y(x_i, a, b) = a+bx$. This is commonly called "Linear Regression."\\
+
+\[\chi^2(a, b) \equiv \sum_{i=1}^N \left(\frac{y_i - a - bx_i}{\sigma_i}\right)^2\]
+
+We want to find $a$ and $b$ that minimize $\chi^2$. \\
+
+\[0=\pdv{\chi^2}{a} = -2\sum_{i=1}^N \frac{y_i - a - bx_i}{\sigma_i^2} \]
+\[0=\pdv{\chi^2}{b} = -2\sum_{i=1}^N \frac{x_i(y_i - a - bx_i)}{\sigma_i^2} \]
+
+If we let 
+
+\[S \equiv \sum_{i=1}^N \frac{1}{\sigma} \quad S_x \equiv \sum_{i=1}^N \frac{x_i}{\sigma} \quad S_y \equiv \sum_{i=1}^N \frac{y_i}{\sigma}\]
+\[S_{xx} \equiv \sum_{i=1}^N \frac{x_i^2}{\sigma} \quad S_{xy} \equiv \sum_{i=1}^N \frac{x_iy_i}{\sigma}\]
+
+Then our equations become
+
+\[aS + bS_x = S_y \quad aS_x + bS_{xx} = S_{xy}\]
+
+which has the solution
+
+\[a = \frac{S_{xx}S_{y} - S_{x}S_{xy}}{S S_{xx} - (S_{x})^2}\]
+\[b = \frac{S S_{xy} - S_{x}S_{y}}{S S_{xx} - (S_{x})^2}\]
+
+The reduced chi square statistic is  $\chi^2_2 = \frac{\chi^2}{N-1}$. A good fit would be $\chi^2_2 < 1$.\\
+
+Now we need to estimate the uncertainty on the model parameters $a$ and $b$.\\
+
+If $\sigma_i$ are independent then we can do a simple propagation of errors.\\
+
+For any function $f$,
+
+\[\sigma_f^2 = \sum_{i=1}^N \sigma_i^2 \left(\pdv{f}{y_i}\right)^2\] 
+
+For a straight line,
+
+\[\pdv{a}{y_i} = \frac{S_{xx} - S_{x}Sx_i}{\sigma_i^2 \Delta}\]
+\[\pdv{b}{y_i} = \frac{Sx_i - S_{x}}{\sigma^2 \Delta}\]
+
+where $\Delta = S S_{xx} - (S_x)^2$.
+
+Summing for all $i$,
+
+\[\sigma_a^2 = \frac{S_{xx}}{\Delta} \quad \sigma_b^2 = \frac{S}{\Delta}\]
+
+will give the variances for $a$ and $b$.\\
+
+
+\subsection{General Least Squares Fit}\bigbreak
+
+Instead of simple straight line, consider a polynomial of order $M-1$
+
+\[y(x) = a_1 + a_2x + a_3x^2 + ... + a_m x^{M-1}\]
+
+This could easily be a series of sines or cosines or another other function. For example,
+
+\[y(x) = a_1 + a_2\sin(x) + a_3\sin^2(x) + ... + a_m \sin^{M-1}(x)\]
+
+What is important is that the function is linear with respect to the model parameters.\\
+
+The general form is
+
+\[y(x) = \sum_{k=1}^M a_k X_k(x) \]
+
+where $X_i(x), ..., X_M(x)$ are arbitrary fixed functions called "basis functions".\\
+
+\[\chi^2 = \sum_{i=1}^N \left[\frac{y_i - \sum_{k=1}^M a_k X_k(x_i)}{\sigma_i^2}\right]^2\]
+
+Let
+
+\[A_{ij} \equiv \frac{X_j(x_i)}{\sigma_i}\]
+
+This is the "design matrix." It is a $N$ (data points) by $M$ (model parameters) matrix. Traversing the rows, we have the data points and traversing the columns, we have the basis functions. In general, $N\geq M$ (more rows than columns). We will also define $b_i \equiv \frac{y_i}{\sigma_i}$, with $i = 1, ... n$, and model parameters $a_k = a_1, ..., a_M$. \\
+
+Starting with 
+
+\[\chi^2 = \sum_{i=1}^N \left(\frac{y_i - y(x_i, a_1, ..., a_M)}{\sigma_i^2}\right)^2\]
+
+Taking the derivative with respect to $a_k$, for $k = 1, ... , M$,
+
+\[0 = \sum_{i=1}^N \left( \frac{y_i - y(x_i)}{\sigma_i^2}\right)\left( \pdv{y(x_1, ..., a_k, ...)}{a_k}\right) \]
+
+\[0 = \sum_{i=1}^N \frac{1}{\sigma_i^2}\left( y_i - \sum_{k=1}^M a_k X_k(x_i)\right)X_k(x_i) \]
+
+If 
+
+\[\alpha_{kj} = \sum_{i=1}^N \frac{X_j(x_i)X_k(x_i)}{\sigma_i^2}\]
+\[\beta_{kj} = \sum_{i=1}^N \frac{y_iX_k(x_i)}{\sigma_i^2}\]
+
+Note that $\alpha = A^T\cdot A$ and  $\beta = A^T\cdot b$. Then we have 
+
+\[\sum_{j=1}^M \alpha_{kj}a_j = \beta_k \]
+
+This is known as the "Normal" equations of the Least Squares Problem.\\
+
+\[\implies \alpha \cdot \alpha = \beta\]
+\[\implies (A^T\cdot A)\cdot a = A^T \cdot b\]
+
+We can solve for $a$ using matrix methods (such as Gauss-Jordan, LU Decomposition, or Singular Value Decomposition (SVD)), and $\sigma^2(a_j) = \alpha_{jj}^{-1}$.\\
+
+
 
 
 
