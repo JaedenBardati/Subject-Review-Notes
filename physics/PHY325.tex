@@ -1818,6 +1818,45 @@ This is known as the "Normal" equations of the Least Squares Problem.\\
 We can solve for $a$ using matrix methods (such as Gauss-Jordan, LU Decomposition, or Singular Value Decomposition (SVD)), and $\sigma^2(a_j) = \alpha_{jj}^{-1}$.\\
 
 
+\subsection{Non-Linear Models}\bigbreak
+
+The least squares method is linear and so we can only solve for the best parameters for certain models.\\
+
+We cannot, for instance, solve
+
+\[f(x) = a_0 + a_1 \exp(-\frac{(a_2 - x^2)^2}{a_3})\]
+
+Non-linear problems require initial guesses for your fitted parameter.\\
+
+The Levenberg-Marquadt method is done with
+
+$\chi^2(a) \to \grad{\chi(a)} \lambda a' \to \chi^2(a')$
+
+Where $a'$ in the first part is a guess. Using the gradient to get closer to the desired value of the true best model parameter. \\
+
+Let us say we have 3 data points, with 3 solutions. There are multiple solutions that are valid, so we are not looking for very precise values of this. For instance, we could have a sinusoidal wave model and a line model that map to the data points. Which one is best fit? It is the line model, because it has less model parameters (1 or 2) instead of the sinuosidal model (which has 3 parameters). This is occam's razor. It is tracked by the evidence term in Bayesian statistics, which is not so present in frequentist stats. \\
+
+\subsection{Bayesian Statistics}\bigbreak
+
+The formula for Bayesian stats is 
+
+\[ P(n|d) = \frac{P(n) P(d|n)}{P(d)} \]
+
+where $P(n|d)$ is the posterior, $P(n)$ is the prior, $P(d|n)$ is the likelihood, and $P(d)$ is the evidence.\\
+
+The Bayesian Information Criteria (BIC) can be used to determine the better model. It is\\
+
+\[\text{BIC} = \chi^2 + k\log(n)\]
+
+where $\chi^2$ is the chi square, $k$ is the number of parameters and $n$ is the number of data points.\\
+
+In the case of the line and sinusodial models (2 and 3 parameters) with the same $\chi^2$. We have a change in the BIC of 
+
+\[\Delta \text{BIC} = 3\log(3)  - 2\log(3) = \log(3)\]
+
+So we should pick the line model.\\
+
+
 
 
 
