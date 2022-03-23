@@ -1857,6 +1857,74 @@ In the case of the line and sinusodial models (2 and 3 parameters) with the same
 So we should pick the line model.\\
 
 
+\subsection{Monte-Carlo Simulations}\bigbreak
+
+We can use Monte-Carlo simulations to assess model parameters.\\
+
+We can start with a set of true value for the parameters. We can then do repeated measurements using the model. For each of the measurements, we can do chi-square minimization for each of the to obtain a set of parameters for each of the measurements. 
+
+% graph 150
+
+% graph 151
+
+What are the uncertainties on the model parameters? One thing we could do is look at a histogram of the measurements of the model parameters?
+
+% graph 152
+
+If the histograms follow a Gaussian we can find a standard deviation. If not, then we have to be careful about it. For example, we can take the 68 percentile around the median, mean, or mode. \\
+
+However, we need to tackle the scenario where we do not have many measurements.\\
+
+\textbf{Scenario 1:} I have some measurements and I understand the measurement errors. \\
+
+% graph 153
+
+We have seen how to generate uniform random numbers. How do we generate a Gaussian random distribution? We could use the cumulative distribution function, or pick random numbers in a set volume and see if the value is inside or outside of the distribution function.\\
+
+Then, we can generate trail sets by gaussian random picking for each of the data given the measurement uncertainties. And then create a histogram and find the 68 percentile as before.\\
+
+\textbf{Scenario 2:} I have measurements but I do not know or understand the measurement errors. \\
+
+% graph 154
+
+A technique that is very good for this scenario is the Bootstrap method. It goes as follows. If I have $m$ measurements,
+
+\begin{itemize}
+	\item Generate a new dataset with $m$ measurements using replacement
+	\item This means that some measurements are duplicated and some are not included.
+\end{itemize}\bigbreak
+
+This is case replacement means that we could take a value out of the distribution and check the value, and then replace it and repeat. This is called sampling with replacement. \\
+
+The procedure is 
+
+\begin{enumerate}
+	\item Draw new sample with replacement (this means ~ 1/e of the sample is duplicated)
+	\item Calculate $\chi^2$
+	\item Repeat 1 and 2
+	\item Measure $\sigma$ on your model
+\end{enumerate}\bigbreak
+
+The assumption here is that the scatter of the underlying points are equal. The bootstrap method will not work when your model depends on time sampling intervals (very regular sampling). For instance, Fourier problems are not well suited. \\
+
+
+\subsection{Markov-Chain-Monte-Carlo}\bigbreak
+
+Recall that the likelihood $L$ is
+
+\[\log L = -\frac{1}{2}\chi^2 + C\]
+
+% graph 155
+
+It is intractable to simply generate the chi-squared values for a bunch of model parameters (over all parameter space). 
+
+% graph 156
+
+Instead, we would like to have a method to travel the parameter space. This is Markov-Chain-Monte-Carlo (MCMC).\\
+
+We start at a certain spot in parameter space and then find the likelihood for that value and then we make a trail at a small step in a certain direction. If the likelihood of this trail value is higher than that of the current likelihood, then, based on a certain probability, we either accept or decline the jump.\\
+
+
 
 
 
