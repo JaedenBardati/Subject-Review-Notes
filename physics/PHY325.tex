@@ -1908,6 +1908,22 @@ The procedure is
 The assumption here is that the scatter of the underlying points are equal. The bootstrap method will not work when your model depends on time sampling intervals (very regular sampling). For instance, Fourier problems are not well suited. \\
 
 
+\subsection{Summary of Techniques}\bigbreak
+
+For estimating errors on fitted parameters when you know your measurement errors $\sigma_i$.
+
+\begin{enumerate}
+	\item Generate synthetic dataset using $\sigma_i$
+	\item Find $\chi^2_{\text{min}}$ to get $m'$ and $b'$
+	\item Repeat 1 and 2 to create a sample of $m$ and $b$
+	\item Measure standard deviation
+\end{enumerate}\bigbreak
+
+For estimating errors on fitted parameters when do not know your measurement errors $\sigma_i$.
+
+For the bootstrap method, you create new sample by drawing from your data with replacement. \\
+
+
 \subsection{Markov-Chain-Monte-Carlo}\bigbreak
 
 Recall that the likelihood $L$ is
@@ -1923,6 +1939,39 @@ It is intractable to simply generate the chi-squared values for a bunch of model
 Instead, we would like to have a method to travel the parameter space. This is Markov-Chain-Monte-Carlo (MCMC).\\
 
 We start at a certain spot in parameter space and then find the likelihood for that value and then we make a trail at a small step in a certain direction. If the likelihood of this trail value is higher than that of the current likelihood, then, based on a certain probability, we either accept or decline the jump.\\
+
+\subsubsection{Metropolis-Hastings Sampler}\bigbreak
+
+The algorithm is
+
+\begin{enumerate}
+	\item Initialize a "chain" with $n=1$, $x_n = x_1$
+	\item Generate a trial state $x'$ using a transition function $g(x' | x_n)$
+	\item Calculate the likelihood for the trial state
+	\item Determine the acceptance probability $\alpha(x'|x)$
+	\item Draw a certain number $u = [0, 1]$
+	\item If $u \leq \alpha(x'|x)$ then $x_{n+1} = x'$, otherwise $x_{n+1} = x_n$.
+	\item $n = n+1$
+	\item Go to step 2 
+\end{enumerate}\bigbreak
+
+where $n$ is the chain element and $x$ is the state (model parameters). For example, a straight line model has $x_1 = {m_1, b_1}$.\\
+
+An example of a \textbf{transition function} is 
+
+\[g(x_\mu' | x_\mu) = \frac{1}{\sqrt{2\pi B_\mu}}\exp\left[-\frac{(x_\mu' - x_\mu)^2}{2\beta_\mu^2} \right]\]
+ 
+with $\beta$ is the "beta parameter", which we choose. It should be "close" to your expectation for the error in your model parameters. This is known as the Gibbs sampler.\\
+
+The \textbf{acceptance probability} is 
+
+\[\alpha(x'|x) = \min{\abs{\frac{p(x'|d)}{p(x|d)}, 1}}\] 
+
+where $p(x'|d)$ is the probability of the state $x'$ given your dataset "d". For the moment, $p(x'|d) = L(x'|d)$l , where $L$ is the likelihood.\\
+
+
+
+
 
 
 
