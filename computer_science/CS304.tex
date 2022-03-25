@@ -2165,7 +2165,7 @@ We could implement this in a BST and get $O(\log n)$ complexity for M[k] and M[k
 
 \subsection{Hash Table}\bigbreak
 
-A hash map is a data structure that uses a \textbf{hash function} which converts an arbitrary object into a integer using a \textbf{hash code} and then, uses a \textbf{compression function} to compress it down to the size of the map we want. This function is deterministic, since we do not want randomness in the function which would make it hard to repeat. \\
+A hash map is a data structure that uses a \textbf{hash function} which converts an arbitrary object (typically a string) into a integer using a \textbf{hash code} and then, uses a \textbf{compression function} to compress it down to the size of the map we want. This function is deterministic, since we do not want randomness in the function which would make it hard to repeat. \\
 
 % graph 23
 
@@ -2205,7 +2205,16 @@ However, there is yet another problem. This is because in the English language, 
 
 Once again, there is a problem. The problem comes from the fact that very similar words will have very different hashvals. Here, 37 is used simply because it is a good number with few collisions found by experiment.\\
 
-There are a few ways to combat the remaining collisions.\\
+For the hash function, we would like 
+
+\begin{itemize}
+	\item deterministic
+	\item two keys close in value to hash to very different values
+	\item a uniform distribution (evenly)
+	\item minimizes collisions
+\end{itemize}
+
+However, there will always be collisions. There are a few ways to combat these remaining collisions.\\
 
 \textbf{Separate chaining} is done by simply using a linked list as the elements of the table so that it can have multiple values at a particular hash table key. This is only good if it is possible to keep this linked list very short, so a lot of time is not spent in its traversal.\\
 
@@ -2217,8 +2226,141 @@ A \textbf{load factor} $\lambda$ tells us the fraction of data that is in the ar
 
 \textbf{Quadratic probing} uses a index of $f(i) = i^2$ instead (hence the quadratic). Using this method, on the second probe, we increase by an index of $2^2 = 4$. This eliminates the primary clustering from linear probing. There is, however, secondary clustering, where we continue to jump over the same elements over and over. The disadvantage is that we might never fill the . If $\lambda = 1/2$ and the table size is prime, then quadratic is guaranteed to find an empty spot.\\
 
+We can code a hash table in Python as follows.
 
+\begin{lstlisting}
+	from collections.abc import MutableMapping
+	from random import randrange
+	
+	class MapBase(MutableMapping):
+		""" Our abstract bas class that includes a nonpublic _Item class."""
+		raise NotImplementedError
+		
+		
+	class HashMapBase(MapBase):
+		""" Abstract base class for a map using a hadh table with multiply and divide (MAD) compression."""
+		def __init__(self, cap=11, p=109345121):
+			""" create empty hash table map"""
+			self._table = cap * [None]
+			self._n = 0
+			self._prime = p
+			self._scale = 1 + randrange(p - 1)
+			self._shift = randrange(p)
+		
+		def _hash_function(self, k):
+			return ((hash(k))*self._scale + self_shift) % self._prime % len(self._table)
+			
+		def __len__(self):
+			return self._n
+			
+		def __getitem__(self, k):
+			j = self._hash_function(k)
+			return self._bucket_getitem(j, k)
+			
+		def __setitem__(self, k, v):
+			j = self._hash_function(k)
+			self._bucket_setitem(j, k, v)
+			if self._n > len(self._table) // 2:
+				self._resize(2* len(self._table) - 1)
+		
+		def __delitem__(self, k):
+			j = self._hash_function(k)
+			self._bucket_delitem(j, k)
+			self._n -= 1
+			
+		def _resize(self, c):
+			old = list(self.items())
+			self._table = c * [None]
+			self._n = c
+			for (k, v) in old:
+				self[k] = v
+		
+\end{lstlisting}\bigbreak
 
+Separate chaining can be implemented with
+
+\begin{lstlisting}
+	class UnsortedTableMap(MapBase):
+		raise NotImplementedError
+	
+	class ChainHashMap(HashMapBase):
+		"""hash map implemented with separate chaining for collision resolution."""
+		
+		def _bucket_getitem(self, j, k):
+			bucket = self._table[j]
+			if bucket is None:
+				raise KeyError("Key Error")
+			return bucket[k]
+			
+		def _bucket_setitem(self, j, k, v):
+			if self._table[j] is None:
+				self._table[j] = UnsortedTableMap()
+			oldsize = len(self._table[j])
+			self._table[j][k] = v
+			
+		def __bucket_delitem(self, j, k):
+			bucket = self._table[j]
+			if bucket is None:
+				raise KeyError("Key Error")
+			del bucket[k]
+		
+\end{lstlisting}\bigbreak
+
+We can implement linear probing with
+
+\begin{lstlisting}
+	class ProbeHashMap(HashMapBase):
+	"""hash map implemented with linear probing for collision resolution."""
+	
+	_AVAIL = object()
+	
+	def _is_available(self, j):
+		""" return true if index j is available in the table"""
+		return self.table[j] is None or self._table[j] is ProbeHashMap._AVAIL
+	
+	def _find_slot(self, j, k):
+		""" 
+		Searches for the key k in bucket at index j 
+		Returns (success, index) tuple described as follows
+		if match was found, sucess=True and index denotes its location
+		if no match was found, sucess=False, and index denotes the first available slot
+		"""
+		
+		firstAvail = None
+		while True: # probe until slot is available
+			if self._is_available(j):
+				if firstAvail is None:
+					firstAvail = j
+				if self._table[j] is None:
+					return (False, firstAvail)
+			elif k == self._table[j]._key:
+				return (True, j)
+			
+			j = (j+1) % len(self._table)
+	
+	def _bucket_getitem(self, j, k):
+		found, s = self._find_slot(j, k)
+		if not found:
+			raise KeyError("Key Error")
+		return self._table[s]._value
+	
+	def _bucket_setitem(self, j, k, v):
+		found, s = self._find_slot(j, k)
+		if not found:
+			self._table[s] = self._Item(k, v)
+			self._n += 1
+		else:
+			self._table[s]._value = s
+		
+	
+	def __bucket_delitem(self, j, k):
+		found, s = self._find_slot(j, k)
+		if not found:
+			raise KeyError("Key Error")
+		else:
+			self._table[s] = ProbeHashMap._AVAIL
+	
+\end{lstlisting}\bigbreak
 
 
 
