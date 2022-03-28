@@ -1970,7 +1970,46 @@ The \textbf{acceptance probability} is
 where $p(x'|d)$ is the probability of the state $x'$ given your dataset "d". For the moment, $p(x'|d) = L(x'|d)$l , where $L$ is the likelihood.\\
 
 
+% new lecture
+We would like to choose the $\beta$ parameter such that we get an acceptance of ~20\% to 30\%.\\
 
+MCMC requires that $q(x'|x) = q(x|x')$, so we must be careful when changing $\beta$ dynamically. After the burn in phase, $\beta$ must be constant for the chain generation.\\
+
+After the simulation, we obtain a Markov chain, which is a series of states for the system (model parameters). This allows us to obtain information such as the average, standard deviation, or even correlation between the model parameters.\\
+
+Returning to the chi square implementation,
+
+\[\chi^2 = \sum_{i = 1}^{N} \left(\frac{f_i - d_i}{\sigma_i}\right)^2\]
+
+where $f_i$ is the model function, $d_i$ is the data, and $\sigma_i$ is the data uncertainty. Then the likelihood $L$ is 
+
+\[\log L = -\frac{1}{2}\chi^2 + C\]
+
+However, what if we are not certain about the values of $\sigma_i$. We could try adding a $\xi$ model parameter such that \\ 
+
+\[\chi^2 = \sum_{i = 1}^{N} \left(\frac{f_i - d_i}{\xi \sigma_i}\right)^2\]
+
+Note that $C$ has to do with the normalization, so it must be changed when changing the uncertainties like this.\\
+
+If we expect to have multiple maximum likelihood locations in parameter space, we can simply run a lot of MCMC simulations with different initial parameters to explore parameter space properly.\\
+
+% graph 160
+
+If we have $\chi^2$ contours where the parameters are highly correlated, then the MCMC will not have a clean distribution in the end. We would like to have our Markow-chain to be random and have no discernible features.\\ 
+
+%graph 162
+
+To evaluate whether a dataset has converged or not, we can use a sinusoidal parameter with a small periodicity.\\
+
+We can use decorrelated MCMC (DeMCMC) to get past issues with model parameter correlation. This is done by first running an initial state using Metropolis-Hastings (M-H) and hten save the result in a buffer. Using a random variable we will decide to either run M-H again, or do DeMCMC on a trial state. Afterwards, if we can tell that the Markov-chain converged, then we are done, otherwise, we save in the buffer and repeat again.\\
+
+% graph 170
+
+\textbf{DeMCMC} is done with 
+
+\[x' = x_n +\delta(x_{B_2} - x_{B_1}) \]
+
+where $x_{B_1}$ and $x_{B_2}$ are two random states taken from the buffer and $\delta$ is a factor similar in its role to $\beta$.\\
 
 
 
