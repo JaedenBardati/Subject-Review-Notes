@@ -2363,5 +2363,71 @@ We can implement linear probing with
 \end{lstlisting}\bigbreak
 
 
+\subsection{Ordered Map}\bigbreak
+
+For the BST, it takes $O(\log n)$ time to insert into the tree. Whereas the hash table takes $O(1)$ time. Can we build an ordered map using $O(1)$ time insertions? The answer is no. It is because it would imply that would mean that it would take $O(n)$ time to sort a map, which was proven to not be true earlier. \\
+
+\subsubsection{Skip List}\bigbreak
+
+A skip list is a way to do a binary search on a linked list than looking for each element. We can traverse it in $O(\log n)$ as opposed to $O(n)$. A skip list consists of a series of lists ${S_0, S_1, ..., S_h}$ each storing a subset of items $M$, sorted by increasing key, plus sentinels $-\infty$ and $+\infty$.\\
+
+% graph 25
+
+The lowest level of the skip list has all the elements and the next levels have less and less levels. Each node has pointers to the lower and to the upper list. To generate a level, we flip a coin and if it is heads, we insert the node again, otherwise, we do not. The skip list has a pointer to the top, first element. \\
+
+Let's say we want to find an item with key 44, we could use psuedocode
+
+\begin{lstlisting}
+	S.find(44)
+	item = S[44]
+	def SkipSearch(k):
+		p = start
+		while below(p) is not None:
+			p = below(p)
+			while k >= key(next(p)):
+				p = next(p)
+		return p
+\end{lstlisting}\bigbreak
+
+
+To insert into the skip list we can do
+
+\begin{lstlisting}
+	def SkipInsert(k, v):
+		p = SkipSearch(k) # bottom level item with the largest key <= k
+		q = None
+		i = -1
+		if (key(p) == k):
+			#overwrite value with v
+		else:
+			#create new node after p and before p.next
+			
+		repeat:
+			i = i+1
+			if i >= h:
+				h = h+1
+				t = next(S)
+				S = insertAfterAbove(None, S, (-infinity, None))
+				insetAfterAbove(S, t, (+infinity, None))
+				
+			while above(p) is None:
+				p = prev(p)
+				
+			p = above(p)
+			q = insertAfterAbove(p, q, (k, v))
+		until coinflip() == tails
+		n = n+1
+		return q
+\end{lstlisting}\bigbreak
+
+
+
+
+
+
+
+
+
+
 
 \end{document}
