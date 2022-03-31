@@ -2012,6 +2012,69 @@ We can use decorrelated MCMC (DeMCMC) to get past issues with model parameter co
 where $x_{B_1}$ and $x_{B_2}$ are two random states taken from the buffer and $\delta$ is a factor similar in its role to $\beta$.\\
 
 
+\subsection{Introduction to Gaussian Processes}\bigbreak
+
+
+Thus far, we have considered noise to be independent. This is not always the case. A good textbook on this is found at \url{http://www.gaussianprocess.org/gpml/chapters/}.\\
+
+The reduced chi-square is 
+
+\[\chi^2_R = \frac{\chi^2}{N-1}\]
+
+If the error is representative of the scatter in the dataset, we would have $\chi^2_R \approx 1$. If we have a large $chi^2_R$ adn we expect the model to be correct, we can set teh reduced chi-square to be 1, but this is dangerous.\\
+
+
+Definition of Gaussian processes is \_\_.\\
+
+
+Instead of using chi-square, we can use the likelihoods
+
+\[\log p(y|x, \sigma) = -\frac{1}{2}\sum_{i=1}^N \frac{y_i - f(x_i)}{\sigma_i^2} + \log2\pi\sigma_n^2 \]
+
+
+This is identical as writing this in matrix form as 
+
+\[\log p(y|x, \sigma) = -\frac{1}{2}r^T C^{-1} - \frac{1}{2}\log\det C - \frac{N}{2}\log 2\pi\]
+
+where $C$ is a diagonal matrix containing the uncertainties, and $r = [y_1 - f(x_1), y_2 - f(x_2), ...]$.\\
+
+We can then substitute $C$ with a kernel $K$
+
+\[K(x_i, x_j, \theta) = k_\theta(x_i, x_j) + \delta_{ij} \sigma{i}\]
+
+This describes the covariance between data points. This gives us a multi-variate Gaussian. We can now model noise.\\
+
+One example we can choose is the squared exponential model:
+
+\[ k_A = \sigma_A^2 \exp\left[\frac{(x_i - x_j)^2}{2l^2}\right]\]
+
+for a length scale $l$ which determines the wiggles in the function. This says that the correlation between any two points to decrease with time.\\
+
+A linear model using Bayesian linear regression is 
+
+\[k_B(x_i, x_j) = \sigma_B^2 + \sigma_\nu^2(x_i - c)(x_j - c)\]
+
+The extra parameters are called hyper-parameters, which are parameters for the model of the noise we have. We can take 
+
+\[k = k_A + k_B\]
+
+From this, we can get a predictive mean and covariance.\\
+
+Something that is important to do is to choose a correct kernel. If we make the kernel too complicated, we will over-fit the data. This needs to match what we expect for the correlation of the noise in the dataset.\\
+
+Inverting matrices is a very intensive computational task, so we can use Cholesky decomposition for $K$ since it is a Hermitian, positive-definite matrix,
+
+\[K = LL^T\]
+
+where $L$ is a lower-triangular matrix. We also get the determinant for free using this decomposition also, since the determinant of K is the trace of L. \\
+
+We can optimize these hyper-parameters using the Broyden-Fletcher-Goldfarb-Shanno algorithm, for example.\\
+
+Something to consider is that we are still treating errors and uncertainties as Gaussian. This is convenient, but not necessarily true. Also note that the Kernel model should be motivated by something physical. We can also combine MCMC with these Gaussian processes to get distributions of parameters and hyper parameters.\\
+
+
+
+
 
 
 
