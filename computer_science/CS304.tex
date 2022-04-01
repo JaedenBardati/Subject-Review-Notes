@@ -2423,7 +2423,109 @@ To insert into the skip list we can do
 
 
 
+\subsection{AVL tree}\bigbreak
 
+An \textbf{AVL} tree is a binary search tree (BST) with a balance condition. This guarantees that the tree's height is $O(\log n)$.\\
+
+We could enforce this balance condition in a few different ways. 
+
+For instance, consider a tree where the left and the right child subtrees of the root has the same height. This is not the best and we could still get $O(n^2)$ for its height.\\ 
+
+We could also consider the cases where every subtree has the same amount of elements in its left and right subtrees. This will have a height of $O(\log n)$, but it is hard to insert into. This is too strict of a condition.
+
+The condition that we will use instead is the the \textit{left and right subtrees can differ by at most 1}.\\
+
+%graph 27
+
+
+There are 4 methods of insertion that will destroy our condition. They are
+
+\begin{enumerate}
+	\item An insertion into left subtree of left child of $\alpha$
+	\item An insertion into right subtree of left child of $\alpha$
+	\item An insertion into left subtree of right child of $\alpha$
+	\item An insertion into right subtree of right child of $\alpha$
+\end{enumerate}\bigbreak
+
+Where $\alpha$ is the node which is the root of the subtree that fails the condition.\\
+
+Case 1 and 4 can be solved with a single rotation. That is to say, we replace the subtree with $\alpha$ and then make $\alpha$ the child (left or right) of the new tree. The C++ code for case 4 is\\
+
+\begin{lstlisting}
+	void rotateWithRightChild(AvlNode *&k1) {
+		AvlNode *k2 = k1 -> right;
+		k1 -> right = k2 -> left;
+		k2 -> left = k2;
+		updateheight(k2);
+		updateheight(k1);
+		k1 = k2;
+	}
+\end{lstlisting}\bigbreak
+
+For case 1 it is
+
+\begin{lstlisting}
+	void rotateWithLeftChild(AvlNode *&k2) {
+		AvlNode *k1 = k2 -> left;
+		k2 -> left = k1 -> right;
+		k1 -> right = k2;
+		updateheight(k1);
+		updateheight(k2);
+		k2 = k1;
+	}
+\end{lstlisting}\bigbreak
+
+For case 2 and 3, we need to do a double rotation. This is two single rotations. The C++ code for case 3 is\\
+
+\begin{lstlisting}
+	void doubleWithRightChild(AvlNode *&k1) {
+		rotateWithLeftChild(k1 -> right);
+		rotateWithRightChild(k1);
+	}
+\end{lstlisting}\bigbreak
+
+The code to actually insert a node in an AVL tree is
+
+\begin{lstlisting}
+	void insert(const Comparable &x, AvlNode *&t) {
+		if (t == nullptr){
+			t = new AvlNode(x, nullptr, nullptr)
+		} 
+		else if (x < t->element) {
+			insert(x, t->left);
+		}
+		else if (t->element < x) {
+			insert(x, t->right);	
+		}
+		balance(t);
+	}
+\end{lstlisting}\bigbreak
+
+Where the we balance the tree with
+
+\begin{lstlisting}
+	void balance(AvlNode *&t) {
+		if (t == nullptr){
+			return;
+		}
+		if (height(t->left) - height(t -> right) > 1) {
+			if (height(t->left->left) >= height(t->left->right)) {  // case 1
+				rotateWithLeftChild(t);
+			}
+			else{
+				doubleWithLeftChild(t);
+			}
+		}
+		if (height(t->right) - height(t -> left) > 1) {
+			if (height(t->right->left) >= height(t->right->right)) {  // case 1
+				rotateWithRightChild(t);
+			}
+			else{
+				doubleWithRightChild(t);
+			}
+		} 
+	}
+\end{lstlisting}\bigbreak
 
 
 
