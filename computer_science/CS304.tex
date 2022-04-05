@@ -2530,6 +2530,123 @@ Where the we balance the tree with
 
 
 
+\section{Graphs}\bigbreak\bigbreak
+
+A \textbf{graph} $G$ consists of a set of \textit{vertices} $V$ and a set of \textit{edges} $E$. Each edge is a pair of vertices $(v, w)$, where $v, w \in V$.\\
+
+% insert graph 600
+
+Vertex $w$ is \textit{adjacent} to vertex $v$ if and only if $(v, w) \in E$ (there is a edge between them).\\
+
+A \textit{path} in a graph is a sequence of vertices $w_1, w_2, ..., w_n$ such that $(w_i, w_{i+1}) \in E~\forall i = 1, 2, ..., n$.\\
+
+A \textit{directed graph} has directed edges (ordered parings pf vertices). A DAG (directed .. ..) is a directed graph that has no cycles.\\
+
+% graph 601
+
+An adjacency matrix is matrix containing a true if the vertex pair corresponding to that row and column is connected, as follows.
+
+\begin{table}[H]\centering
+	\begin{tabular}{|c|c|c|c|c|c|c|}\hline
+		~~~& T & T & T & & & \\\hline
+		&   &   & T & T& & \\\hline
+		&   &   &   &  & T& \\\hline
+		&   &   &   &  & T&T \\\hline
+		&   &   & T &  & & T\\\hline
+		&   &   &   &  & & \\\hline
+		&   &   &   &  & T& \\\hline
+	\end{tabular}\bigbreak
+\end{table}
+
+Summing the number of trues along a row/column gives you the number of nodes going in or out of the node. A more compact way to store a graph is by storing a list of connected elements for each node in the graph.\\
+
+\subsection{Topological Sort}\bigbreak
+
+A topological sort produces ordering of vertices in a DAG such that if there is a path from $v_i$ to $v_j$, then $v_i$ appears after $v_j$ in ordering.\\
+
+The \textit{indegree} of vertex $v$ is the number of edges $(u, v)$ (number of vertexes going into the node). \\
+
+The psudeocode for this algorithm is 
+
+\begin{lstlisting}
+	topsort () {
+		for (int counter=0; counter<NUM_VERTS;counter++}{
+			vertex v = findVertexOfIndegreeZero();
+			v.topNum = counter;
+			for (each vertex w adjacent to v){
+				w.indegree--;
+			}
+		}
+	}
+\end{lstlisting}\bigbreak
+
+This implementation is $O(V^2)$ where $V$ is the number of vertices. A more efficient implementation is
+
+\begin{lstlisting}
+	topsort(){
+		Queue(vertex) q;
+		int counter = 0;
+		for each vertex v:
+			if (v.indegree == 0)
+				q.enque(v);
+		while not q.isempty():
+			vertex v = q.dequeue();
+			v.topNum = ++counter;
+			for each vertex w adjacent to v:
+				if --w.indegree == 0:
+					q.enqueue(w);
+	}
+\end{lstlisting}\bigbreak
+
+This implementation is $O(|V| + |E|)$ (number of vertexes + number of edges).\\
+
+
+\subsection{Shortest Path Algorithm}\bigbreak
+
+\subsubsection{Single source shortest path}\bigbreak
+
+The \textbf{single source shortest path} works as follows. Given the input G = (V, E) weighted graph (a graph with weights on the edges) and a distinguished vertex S, find the shortest weighted path from S to all other vertices in V.\\
+
+The algorithm for an unweighted graph shortest path is
+
+\begin{lstlisting}
+	unweighted(vertex s){
+		for each vertex v:
+			v.dist = infinity
+			v.known = false
+		s.dist = 0
+		for (in currdist=0; currdist<Num_Vertices; currdist++):
+			for each vertex v :
+				if (not v.known and v.dist = currdist):
+					v.known = true;
+					for each vertex w adjacent to v:
+						if (w.dist == infinity):
+							w.dist = currdist;
+							w.path = v;	
+\end{lstlisting}\bigbreak
+
+This implementation is $O(|V|^2)$. A better unweighted implementation is
+
+\begin{lstlisting}
+	unweighted(vertex s):
+		Queue<vertex> q;  # contains the cndidates to be known
+		for each vertex v:
+			v.dist = infinity;
+		s.dist = 0;
+		q.enqueue(s);
+		while(!v,is_empty()):
+			Vertex v = q.dequeue();
+			for each vertex w adjacent to v:
+				if w.dist = infinity:
+					w.dist = v.dist +1;
+					w.path = v;
+					q.enqueue(w);
+\end{lstlisting}\bigbreak
+
+This is $O(|V|+|E|)$.\\
+
+
+
 
 
 \end{document}
