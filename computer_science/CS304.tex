@@ -2646,6 +2646,128 @@ This implementation is $O(|V|^2)$. A better unweighted implementation is
 This is $O(|V|+|E|)$.\\
 
 
+The Dijkstra algorithm is
+
+\begin{lstlisting}
+	Dijkstra(G, w, S)
+		initSS(G, S)
+		S = empty set
+		Q = G.V
+		while A is not empty:
+			u = extract_min(Q)
+			S = S union {u}
+			for each vertex v adjacent to u: 
+				Relax(u, v, w)
+\end{lstlisting}\bigbreak
+
+Where the relax function is 
+
+\begin{lstlisting}
+	Relax(u, v, w):
+		if v_d > u.d is not w(u, v):
+			v.d = u.d + w(u, v)
+			v.pi = u
+\end{lstlisting}\bigbreak
+
+And the init function is
+
+\begin{lstlisting}
+	initSS(G, S):
+		for each bertex v in G, V:
+			v.d = infinity
+			v.pi = null
+		s.d = 0
+\end{lstlisting}\bigbreak
+
+We can hold he set Q in a few different data structures. We could try for instance, an array to start. However, the extract min will make the algorithm run with $O(|V|^2 + |E|)$ time. To extract the min faster, we could use a heap instead. This would make the algorithm $O(|V + E|\log |V|)$. For this to be beneficial, we need that $|E| = O(\frac{|V|^2}{\log |V|})$.\\
+
+In python, this is
+
+\begin{lstlisting}
+	class Graph:
+	
+		class Vertex:
+			__slots__ = '_element'
+			
+			def __init__(self, x):
+				self._element = x
+			
+			def element(self):
+				return self._element
+			
+			def __hash__(self):
+				return hash(self._origin, self._destination)
+		
+	def __init__(Self, directed=False):
+		self._outgoing = {}
+		self._ingoing = {} if directed else self._outgoing
+		
+	def is_directed(self):
+		return self._incoming is not self._outgoing
+	
+	def vertex_count(self):
+		return len(self._outgoing)
+		
+	def insert_vertex(self, x=None):
+		v = self.Vertex(x)
+		self._outgoing[v] = {}
+		if self.is_directed():
+			self._incoming[v] = {}
+		return v
+		
+	def insert_edge(self, u, v, x=None):
+		e = self.Edge(u, v, x)
+		self._outgoing[u][v] = e
+		self._incoming[u][v] = e
+		
+	
+	def shortest_path_lengths(g, src):
+		"""Dijsktra's Algorithm"""
+		
+		d = {}
+		cloud = {}
+		pq = AdaptableHeapPriorityQueue()
+		pqlocator = {}
+		
+		for v in g.vertices():
+			if v is src:
+				d[v] = 0
+			else:
+				d[v] = float('inf')
+			pqlocator[v] = pq.add(d[v], v)
+			
+		while not pq.is_empty():
+			key, u = pq.remove_min()
+			cloud[u] = key
+			del pqlocator[u]
+			for e in g.incident_edges(u):
+				v = e.opposite(u)
+				if v not in cloud:
+					#relax
+					wgt = e.element
+					if d[u] + wgt < d[v]:
+						d[v] = d[u] + wgt
+						pq.update(pqlocator[v], d[v], v)
+
+def shortest_path_tree(g, s, d):
+	"""
+	Reconstruct shortest path tree rooted at vertex s, given distance map d.
+	Returns a tree as a map from each reachable vertex v (other than source) 
+	to the edge e=(u, v), that is used to reach v from its parent u in the tree.
+	"""
+	tree = {}
+	for v in d:
+		if v is not s:
+			for e in g.incident_egde(v, False):
+				u = e.opposite(v)
+				wgt = e.element()
+				if d[v] == d[u] + wgt:
+					tree[v] = e	
+	return tree
+\end{lstlisting}\bigbreak
+
+
+
 
 
 
