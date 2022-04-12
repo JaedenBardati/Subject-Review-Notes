@@ -2768,6 +2768,85 @@ def shortest_path_tree(g, s, d):
 
 
 
+\section{Review}\bigbreak\bigbreak
+
+\subsection{Arrays}\bigbreak
+
+An \textbf{array} is a list of element referred to by an index.
+
+\textbf{Compact arrays} are arrays that store the values directly in the array. This is opposed to a \textbf{referential array} which stores pointers to values in the array.\\
+
+There are some mutating operations. Setting the value of an array takes $O(1)$ time. Appending to an array takes $O(1)*$ time if it is amortized (occasional resizing). This is the same for deletion. If we instead want to remove an element in the array, we need to first loop over all elements in the array and then remove and occasionally resize: It takes $O(n)*$. This is the same for insertion at an arbitrary location.
+
+The array is good for random access, but it is not good for inserting at an arbitrary location or removing of elements. An array also requires that all cells be contiguous.
+
+\subsection{Linked List}\bigbreak
+
+A \textbf{singly-linked list} is a list of nodes that each contain a pointer to the element and a pointer to the next node in the list. A \textbf{doubly linked list} also contain pointers to the previous node.\\
+
+To insert into a doubly linked list we do
+
+\begin{lstlisting}
+	n2 = new node
+	n1.next.prev = n2
+	n2.next = n1.next
+	n2.prev = n1
+	n1.next = n2
+\end{lstlisting}\bigbreak
+
+A linked list does not require that all cells be contiguous.\\
+
+The linked list and the array are data structures. These are used to implement abstract data types (ADT). Examples of ADTs include Queues, Stacks, etc.\\
+
+\subsection{Sorting Algorithms}\bigbreak
+
+\subsubsection{Merge Sort}\bigbreak
+
+A divide and conquer problem follows the procedure
+
+\begin{itemize}
+	\item \textbf{Divide} problem into sub-problems (smaller instances of original problems)
+	\item \textbf{Conquer} sub-problems by solving recursively, if problem is small enough, solve straightforwardly
+	\item \textbf{Combine} solution to sub-problem into solution for original problem
+\end{itemize}\bigbreak
+
+Merge sort is a divide and conquer algorithm. The basic algorithm is found earlier in this document. Merge sort has a complexity of $O(n \log n).$\\
+
+
+\subsection{Trees}\bigbreak
+
+\subsubsection{Binary Search Trees}\bigbreak
+
+A \textbf{binary search tree} (BST) is a binary tree where for every internal node, the left child is always less than the parent and the right child is greater than or equal to the parent.\\
+
+To find the minimum in a BST, it takes $O(\log n)$ time. It also takes the same amount of time to find an element in the tree. Inserting into a BST is also simple. Deletion is more complicated. There are three cases (0, 1, or 2 children). The case of 0 and 1 children is straight forward, but when dealing with a node that has two children, wee need to find the successor of a node (\textit{see notes above on that}).\\
+
+\subsubsection{AVL Tree}\bigbreak
+
+The condition for a BST to be a AVL tree is that for every node in the height of the left and right subtrees differ by at most one. Note that empty children of an element have a height of -1.\\
+
+AVL trees have their condition mantained upon insertion by using rotation operations (single or double). See the above notes for more details.\\
+
+\subsection{Heap}\bigbreak
+
+A heap is not a BST, but it has the property that every node' parent is less than its children. To keep the condition upon insertions, we use "bubble up" operations. In a priority queue, we can only delete the min (root). When deleting, we do "bubble down" operations to keep the property condition.\\
+
+
+\subsection{Map}\bigbreak
+
+\subsubsection{Hash Table}\bigbreak
+
+The python dictionary is an example of a hash function. A hash table takes an arbitrary object (often a string) and computes a hash code (obtaining an arbitrary integer number). It then compresses the hash code into indices of an array.\\
+
+There are a few different hash functions.\\
+
+When collision occurs, we must choose a way to resolve it. There are a few ways of doing this:
+
+\begin{itemize}
+	\item Separate chaining
+	\item Linear or quadratic probing
+\end{itemize}\bigbreak
+
 
 
 
